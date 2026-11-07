@@ -1369,5 +1369,96 @@ export const ruleSections = [
               </div>
           </div>
       `,
-    }
-];
+    },
+    {
+        id: "enhancer_rules",
+        title: "練體士規則",
+        icon: "fa-person-running",
+        content: `
+          <div class="space-y-6 text-zinc-200">
+            <!-- 標題與基本資訊 -->
+            <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-md">
+              <div class="flex flex-wrap justify-between items-center mb-3">
+                <h2 class="text-xl md:text-2xl font-bold text-amber-400 flex items-center">
+                  <i class="fa-solid fa-person-running mr-2.5 text-amber-500"></i>練體士技能（Enhancer）規則
+                </h2>
+                <div class="flex gap-2">
+                  <span class="text-xs bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded border border-zinc-700 font-medium">其他系技能</span>
+                  <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">經驗點表 B</span>
+                </div>
+              </div>
+              <p class="text-sm text-zinc-300 leading-relaxed">
+                透過瑪那（Mana）使肉體產生變容，以在戰鬥中取得優勢的技能。使用練體士技能的角色稱為<strong class="text-amber-400">「練體士」</strong>。
+                本技能並非駕馭武器的技能，但能使用與魔法不同的特殊招式<strong class="text-amber-400">「練技」</strong>。
+                練體士技能基本上<strong class="text-red-400">無法進行行為判定</strong>，且不屬於施法者系技能，因此<strong class="text-red-400">不會增加角色 MP</strong>。
+              </p>
+            </div>
+      
+            <!-- 核心規則卡片網格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+              <!-- 練技的獲得 -->
+              <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-base font-bold text-amber-400 flex items-center border-b border-zinc-800 pb-2">
+                  <i class="fa-solid fa-book-medical mr-2 text-amber-500"></i>練技的獲得
+                </h3>
+                <ul class="text-xs text-zinc-300 space-y-2 list-disc list-inside leading-relaxed">
+                  <li><strong>等級取得：</strong>練體士技能每提升 1 級，即可從練技列表中選擇 1 個練技習得。</li>
+                  <li><strong>習得需求：</strong>部分練技設有最低技能等級限制（例如 Lv 5），練體士技能等級未達標前無法選擇。</li>
+                  <li><strong>選擇彈性：</strong>當技能達到 Lv 5 時，即可選擇最低需求 Lv 5 的練技。即使等級達 Lv 5 以上，仍可選擇未設最低需求（Lv 1 可用）的練技。</li>
+                </ul>
+              </div>
+      
+              <!-- 練技的使用條件 -->
+              <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-base font-bold text-amber-400 flex items-center border-b border-zinc-800 pb-2">
+                  <i class="fa-solid fa-person-running mr-2 text-amber-500"></i>使用條件與限制
+                </h3>
+                <ul class="text-xs text-zinc-300 space-y-2 list-disc list-inside leading-relaxed">
+                  <li><strong>移動限制：</strong>使用練技的手番移動僅限「限制移動」或「通常移動」。宣告「全力移動」的手番無法使用練技。</li>
+                  <li><strong>呼吸需求：</strong>練技透過特殊呼吸引發效果。角色在無法呼吸的狀態下無法使用練技（但不需要發出聲音）。</li>
+                  <li><strong>對象限制：</strong>對象僅限「練體士本人」。即使有多部位角色，亦無法對其他部位施加（但各部位可各自選擇練技發動）。</li>
+                </ul>
+              </div>
+      
+              <!-- 練技的使用與機制 -->
+              <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-base font-bold text-amber-400 flex items-center border-b border-zinc-800 pb-2">
+                  <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>使用方式與重複限制
+                </h3>
+                <ul class="text-xs text-zinc-300 space-y-2 list-disc list-inside leading-relaxed">
+                  <li><strong>動作類型：</strong>以<strong class="text-cyan-300">「輔助動作」</strong>發動。不需進行行為判定即可自動生效，達成值視為「0」。無法以主動作發動來獲得達成值。</li>
+                  <li><strong>使用次數：</strong>原則上 1 回合內可使用任意次數不同練技。</li>
+                  <li><strong>效果累積：</strong>同名練技效果原則上無法重複或累積（少數練技有 1 回合 1 次或可發動多次累積加成的特例）。</li>
+                </ul>
+              </div>
+      
+              <!-- MP 消耗與解除 -->
+              <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 space-y-3">
+                <h3 class="text-base font-bold text-amber-400 flex items-center border-b border-zinc-800 pb-2">
+                  <i class="fa-solid fa-flask-vial mr-2 text-amber-500"></i>MP 消耗與效果解除
+                </h3>
+                <ul class="text-xs text-zinc-300 space-y-2 list-disc list-inside leading-relaxed">
+                  <li><strong>MP 消耗：</strong>每次使用共通消耗 <strong class="text-cyan-300">3 MP</strong>。可使用〈魔晶石〉替代部分或全部消耗（一次限用 1 顆）。</li>
+                  <li><strong>主動解除：</strong>具持續時間的練技，使用者可於自身手番以「輔助動作」隨時主動解除。</li>
+                  <li><strong>解除手段：</strong>練技非魔法，無法被【魔法解除】（Dispel Magic）解除；但戰鬥特技《破言》（Word Break）可以解除練技。</li>
+                </ul>
+              </div>
+      
+            </div>
+      
+            <!-- 重點觀念區塊 (非魔法) -->
+            <div class="bg-amber-950/30 p-5 rounded-xl border border-amber-800/60 space-y-2">
+              <h3 class="text-sm font-bold text-amber-400 flex items-center">
+                <i class="fa-solid fa-circle-exclamation mr-2 text-amber-500"></i>重點提示：練體士屬於「非魔法」效果
+              </h3>
+              <p class="text-xs text-zinc-300 leading-relaxed">
+                練技並非魔法，因此不會對【魔法感知】或【瑪那探測】等感知魔法產生反應。<br>
+                《魔法擴大／＊＊》等強化魔法的戰鬥特技無法套用於練技；練體士亦非施法者，無法指定《MP減輕／＊＊》。<br>
+                相對地，遊戲中存在專為練技設計的專用戰鬥特技（例如《練體之極意》）。
+              </p>
+            </div>
+          </div>
+        `
+      }
+    ]

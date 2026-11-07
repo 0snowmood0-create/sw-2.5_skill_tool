@@ -14,8 +14,14 @@ import { geomancerPhases }  from './data-geomancer.js';
 import { abyssgazerData }  from './data-abyssgazer.js';
 import { riderdata }  from './data-rider.js';
 import { bibliomancerSpellsData }  from './data-bibliomancer.js';
+import { enhancerData }  from './data-enhancer.js';
 
-
+import { 
+  declaredFeatsData, 
+  passiveFeatsData, 
+  majorActionFeatsData, 
+  autoFeatsData 
+} from './data-combatFeats.js';
 
 // 聚合所有技能與魔法資料
 export const allSkillsData = [
@@ -35,4 +41,9 @@ export const allSkillsData = [
   ...abyssgazerData,
   ...riderdata,
   ...bibliomancerSpellsData,
+  ...enhancerData,
+  ...declaredFeatsData,
+  ...passiveFeatsData,
+  ...majorActionFeatsData,
+  ...autoFeatsData
 ];

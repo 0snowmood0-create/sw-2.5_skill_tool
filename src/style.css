@@ -3,3 +3,84 @@ body { background-color: #121215; color: #e4e4e7; font-family: 'Noto Sans TC', s
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: #18181b; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+
+/* 戰鬥特技專用卡片 CSS */
+.combat-feat-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+  
+  .feat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
+  }
+  
+  .feat-title-group h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .feat-jp-name {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-left: 6px;
+  }
+  
+  .feat-type-badge {
+    font-size: 0.75rem;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+  }
+  
+  /* 特技類型專用配色 */
+  .feat-type-badge.type-被動 { background-color: #f1f5f9; color: #334155; border-color: #cbd5e1; }
+  .feat-type-badge.type-宣言 { background-color: #fef3c7; color: #92400e; border-color: #fcd34d; }
+  .feat-type-badge.type-主動作 { background-color: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+  .feat-type-badge.type-自動 { background-color: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  
+  .feat-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    background-color: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 0.8125rem;
+  }
+  
+  .feat-meta-label {
+    color: #64748b;
+    font-size: 0.75rem;
+    display: block;
+  }
+  
+  .feat-summary-box {
+    background-color: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.8125rem;
+    color: #78350f;
+    margin-bottom: 12px;
+  }
+  
+  .feat-effect-body {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #334155;
+    white-space: pre-line;
+  }

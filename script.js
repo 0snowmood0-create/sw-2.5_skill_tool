@@ -14,7 +14,6 @@ window.switchMainTab = function(tabName) {
         secBards.classList.remove('hidden');
         secRules.classList.add('hidden');
 
-        // 主按鈕高亮樣式
         if (tabBardsBtn) {
             tabBardsBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
         }
@@ -32,14 +31,12 @@ window.switchMainTab = function(tabName) {
             tabBardsBtn.className = "py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent";
         }
 
-        // 預設切換至第一個規則子頁籤 (吟遊詩人)
         switchRuleSubTab('bard_rules');
     }
 };
 
 // ==================== 2. 規則子頁籤切換 (職業規則區塊) ====================
 window.switchRuleSubTab = function(ruleKey) {
-    // 1. 更新所有子頁籤按鈕高亮樣式
     const subTabBtns = document.querySelectorAll('.rule-subtab-btn');
     subTabBtns.forEach(btn => {
         btn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all border border-transparent";
@@ -50,18 +47,15 @@ window.switchRuleSubTab = function(ruleKey) {
         activeBtn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium";
     }
 
-    // 2. 隱藏所有規則內文區塊，僅顯示當前選擇的職業規則
     const allRuleSections = document.querySelectorAll('#rules-container > section');
     allRuleSections.forEach(sec => sec.classList.add('hidden'));
 
-    // 支援包含 sec- 前綴或純 ruleKey 的 ID
     const targetSec = document.getElementById(`sec-${ruleKey}`) || document.getElementById(ruleKey);
     if (targetSec) {
         targetSec.classList.remove('hidden');
     }
 };
 
-// 相容性向後支援舊 switchTab 呼叫
 window.switchTab = function(tabId) {
     if (tabId === 'bards') {
         switchMainTab('bards');
@@ -78,7 +72,6 @@ window.filterBardSongs = function() {
     const levelField = document.getElementById('bard-level-filter');
 
     const rawQuery = queryField ? queryField.value.toLowerCase().trim() : '';
-    // 將「奈洛」自動規範化為「奈落」，確保搜尋「奈洛魔法」也能命中
     const query = rawQuery.replace(/奈洛/g, '奈落');
 
     const categoryFilter = categoryField ? categoryField.value : '';
@@ -89,6 +82,7 @@ window.filterBardSongs = function() {
     const filtered = dataset.filter(b => {
         const matchesQuery = !query || 
             (b.name && b.name.toLowerCase().includes(query)) || 
+            (b.nameJp && b.nameJp.toLowerCase().includes(query)) ||
             (b.summary && b.summary.toLowerCase().includes(query)) ||
             (b.effect && b.effect.toLowerCase().includes(query)) ||
             (b.category && b.category.toLowerCase().includes(query)) ||
@@ -96,13 +90,14 @@ window.filterBardSongs = function() {
             (b.target_monsters && b.target_monsters.toLowerCase().includes(query)) ||
             (b.applicable_parts && b.applicable_parts.toLowerCase().includes(query)) ||
             (b.prerequisite && b.prerequisite.toLowerCase().includes(query)) ||
+            (b.usage && b.usage.toLowerCase().includes(query)) ||
             (b.expansion && b.expansion.toLowerCase().includes(query));
 
         const matchesCategory = !categoryFilter || 
             b.category === categoryFilter || 
             (categoryFilter === "吟遊詩人" && (b.type === "咒歌" || b.type === "終律"));
 
-        const matchesLevel = !levelFilterVal || b.req_level <= parseInt(levelFilterVal);
+        const matchesLevel = !levelFilterVal || (b.req_level !== undefined && b.req_level <= parseInt(levelFilterVal));
 
         return matchesQuery && matchesCategory && matchesLevel;
     });
@@ -110,7 +105,65 @@ window.filterBardSongs = function() {
     renderBardSongs(filtered);
 };
 
-// ==================== 4. 渲染技能/魔法卡片列表 ====================
+// ==================== 4. 戰鬥特技專用卡片渲染函數 (暗色系主題風格) ====================
+export function renderCombatFeatCard(feat) {
+    const typeBadgeStyles = {
+        '被動': 'bg-slate-900 text-slate-300 border-slate-700',
+        '宣言': 'bg-amber-950 text-amber-300 border-amber-800',
+        '主動作': 'bg-purple-950 text-purple-300 border-purple-800',
+        '自動': 'bg-emerald-950 text-emerald-300 border-emerald-800'
+    };
+
+    const badgeClass = typeBadgeStyles[feat.type] || 'bg-zinc-800 text-zinc-300 border-zinc-700';
+
+    return `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col justify-between">
+            <!-- 標題與類型徽章 -->
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 rounded border bg-amber-950 text-amber-300 border-amber-800 font-medium">
+                        ${feat.category || '戰鬥特技'}
+                    </span>
+                    <span class="text-xs px-2 py-0.5 rounded border ${badgeClass} font-medium">
+                        ${feat.type || '被動'}
+                    </span>
+                    <h3 class="text-base font-bold text-amber-400 ml-1">
+                        <i class="fa-solid fa-shield-halved mr-1.5 text-amber-500"></i>${feat.name}
+                        ${feat.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${feat.nameJp})</span>` : ''}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-3">
+                <!-- 屬性與限制區塊 -->
+                <div class="grid grid-cols-2 gap-2 text-xs bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80">
+                    <div>
+                        <span class="text-zinc-500 font-medium block mb-0.5">前提條件</span>
+                        <span class="text-cyan-300 font-medium">${feat.prerequisite || '無'}</span>
+                    </div>
+                    <div>
+                        <span class="text-zinc-500 font-medium block mb-0.5">使用限制 / 裝備</span>
+                        <span class="text-amber-300 font-medium">${feat.usage || '無'}</span>
+                    </div>
+                </div>
+
+                <!-- 概要與效果內文 -->
+                <div class="space-y-2">
+                    ${feat.summary ? `
+                        <div class="text-xs font-bold text-amber-500 flex items-center">
+                            <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${feat.summary}
+                        </div>
+                    ` : ''}
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
+                        ${feat.effect || ''}
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== 5. 渲染技能/魔法卡片列表 ====================
 function renderBardSongs(list) {
     const container = document.getElementById('bard-list');
     const countEl = document.getElementById('song-count');
@@ -130,7 +183,14 @@ function renderBardSongs(list) {
     }
 
     list.forEach(b => {
-        // 類別判定變數宣告
+        // 1. 優先判斷是否為戰鬥特技，如果是則套用戰鬥特技專用卡片格式
+        const isCombatFeat = b.category === "戰鬥特技" || ['被動', '宣言', '主動作', '自動'].includes(b.type);
+        if (isCombatFeat) {
+            container.innerHTML += renderCombatFeatCard(b);
+            return;
+        }
+
+        // 2. 其餘魔法/技能維持原本的渲染邏輯
         const isSong = b.type === "咒歌" || b.category === "咒歌";
         const isFinale = b.type === "終律" || b.category === "終律";
         const isCommand = b.type === "鼓咆" || b.category === "鼓咆";
@@ -349,13 +409,12 @@ function renderBardSongs(list) {
     });
 }
 
-// ==================== 5. 動態渲染規則內容 ====================
+// ==================== 6. 動態渲染規則內容 ====================
 function renderRules() {
     const container = document.getElementById('rules-container');
     if (!container || !Array.isArray(ruleSections)) return;
 
     container.innerHTML = ruleSections.map(rule => {
-        // 自動確認 ID 格式 (確保有 sec- 前綴)
         const secId = rule.id.startsWith('sec-') ? rule.id : `sec-${rule.id}`;
         return `
             <section id="${secId}" class="space-y-6 hidden">
@@ -365,11 +424,10 @@ function renderRules() {
     }).join('');
 }
 
-// ==================== 6. 頁面初始化 ====================
+// ==================== 7. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
     renderRules();
     
-    // 預設顯示技能檢索頁面
     switchMainTab('bards');
 
     if (typeof filterBardSongs === 'function') {
