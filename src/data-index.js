@@ -16,6 +16,12 @@ import { riderdata }  from './data-rider.js';
 import { bibliomancerSpellsData }  from './data-bibliomancer.js';
 import { enhancerData }  from './data-enhancer.js';
 
+import { 
+  declaredFeatsData, 
+  passiveFeatsData, 
+  majorActionFeatsData, 
+  autoFeatsData 
+} from './data-combatFeats.js';
 
 // 聚合所有技能與魔法資料
 export const allSkillsData = [
@@ -36,4 +42,8 @@ export const allSkillsData = [
   ...riderdata,
   ...bibliomancerSpellsData,
   ...enhancerData,
+  ...declaredFeatsData,
+  ...passiveFeatsData,
+  ...majorActionFeatsData,
+  ...autoFeatsData
 ];
