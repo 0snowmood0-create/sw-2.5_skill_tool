@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SW2.5 技能速查工具</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        swGold: '#d97706',
+                        swGoldDark: '#b45309',
+                        swDarkBg: '#18181b',
+                        swCardBg: '#27272a',
+                        swBorder: '#3f3f46'
+                    },
+                    fontFamily: {
+                        title: ['Cinzel', 'Noto Sans TC', 'serif'],
+                        sans: ['Noto Sans TC', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+    <!-- 頁頭 Header -->
+    <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid font-bold text-amber-500 text-2xl fa-book-bookmark"></i>
+                <h1 class="text-xl md:text-2xl font-bold font-title text-amber-500 tracking-wider">SW2.5 技能速查表</h1> 
+            </div>
+            
+            <!-- 一級主頁籤導覽列 (精簡為 2 個主頁籤) -->
+            <nav class="flex gap-2 text-sm md:text-base">
+                <button onclick="switchMainTab('bards')" id="tab-bards" class="py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30">
+                    <i class="fa-solid fa-list-check mr-1"></i> 技能檢索
+                </button>
+                <button onclick="switchMainTab('rules')" id="tab-rules" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
+                    <i class="fa-solid fa-book mr-1"></i> 技能規則
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主內容區 Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- ==================== TAB 1: 檢索介面 ==================== -->
+        <section id="sec-bards" class="space-y-6">
+            <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-md">
+                <div class="md:col-span-2 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-zinc-500"></i>
+                    <input type="text" id="bard-search" oninput="filterBardSongs()" placeholder="搜尋名稱、概要或效果描述..." 
+                        class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-amber-500 text-sm">
+                </div>
+                <div>
+                    <select id="bard-category-filter" onchange="filterBardSongs()" class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm">
+                        <option value="">所有分類</option>  
+                        <option value="吟遊詩人">吟遊詩人</option>
+                        <option value="魔動機術">魔動機術</option>
+                        <option value="操靈魔法">操靈魔法</option>
+                        <option value="真語魔法">真語魔法</option>
+                        <option value="深智魔法">深智魔法</option>
+                        <option value="神聖魔法">神聖魔法</option>
+                        <option value="妖精魔法">妖精魔法</option>
+                        <option value="賦術">賦術</option>
+                        <option value="操氣">操氣</option>
+                        <option value="森羅魔法">森羅魔法</option>
+                        <option value="軍師">軍師</option>
+                        <option value="天地使">天地使</option>
+                        <option value="奈洛魔法">奈洛魔法</option>
+                        <option value="騎藝">騎藝</option>
+                        <option value="典籍魔導士">祕奧魔法</option>
+                    </select>
+                </div>
+                <div>
+                    <select id="bard-level-filter" onchange="filterBardSongs()" class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm">
+                        <option value="">所有等級需求 (Lv 1~15)</option>
+                        <option value="1">Lv 1 以下可習得</option>
+                        <option value="2">Lv 2 以下可習得</option>
+                        <option value="3">Lv 3 以下可習得</option>
+                        <option value="4">Lv 4 以下可習得</option>
+                        <option value="5">Lv 5 以下可習得</option>
+                        <option value="6">Lv 6 以下可習得</option>
+                        <option value="7">Lv 7 以下可習得</option>
+                        <option value="8">Lv 8 以下可習得</option>
+                        <option value="9">Lv 9 以下可習得</option>
+                        <option value="10">Lv 10 以下可習得</option>
+                        <option value="11">Lv 11 以下可習得</option>
+                        <option value="12">Lv 12 以下可習得</option>
+                        <option value="13">Lv 13 以下可習得</option>
+                        <option value="14">Lv 14 以下可習得</option>
+                        <option value="15">Lv 15 以下可習得</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center text-xs text-zinc-400 px-1">
+                <span>顯示結果：<strong id="song-count" class="text-amber-400">0</strong> 筆資料</span>
+                <span>經驗點表：<strong>經驗表 A / B</strong></span>
+            </div>
+
+            <div id="bard-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+        <!-- ==================== TAB 2: 完整規則頁面 (含職業規則二級分頁) ==================== -->
+        <section id="sec-rules" class="space-y-6 hidden">
+            <!-- 二級選單：可橫向滑動的職業規則分頁按鈕 -->
+            <div class="flex overflow-x-auto gap-2 border-b border-zinc-800 pb-3 custom-scrollbar">
+                <button onclick="switchRuleSubTab('bard_rules')" id="subtab-bard_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium">
+                    <i class="fa-solid fa-feather mr-1"></i> 吟遊詩人
+                </button>
+                <button onclick="switchRuleSubTab('magitech_rules')" id="subtab-magitech_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-gears mr-1"></i> 魔動機術
+                </button>
+                <button onclick="switchRuleSubTab('sorcerer_rules')" id="subtab-sorcerer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-hand-sparkles mr-1"></i> 操靈魔法
+                </button>
+                <button onclick="switchRuleSubTab('sorcery_rules')" id="subtab-sorcery_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-scroll mr-1"></i> 真語魔法
+                </button>
+                <button onclick="switchRuleSubTab('wizard_rules')" id="subtab-wizard_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-hat-wizard mr-1"></i> 深智魔法
+                </button>
+                <button onclick="switchRuleSubTab('divine_rules')" id="subtab-divine_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-hands-praying mr-1"></i> 神聖魔法
+                </button>
+                <button onclick="switchRuleSubTab('fairy_rules')" id="subtab-fairy_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-gem mr-1"></i> 妖精魔法
+                </button>
+                <button onclick="switchRuleSubTab('alchemist_rules')" id="subtab-alchemist_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-layer-group mr-1"></i> 賦術
+                </button>
+                <button onclick="switchRuleSubTab('bibliomancer_rules')" id="subtab-bibliomancer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-book-bookmark mr-1"></i> 典籍魔導士
+                </button>
+                <button onclick="switchRuleSubTab('darkhunter_rules')" id="subtab-darkhunter_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-crosshairs mr-1"></i> 暗獵者
+                </button>
+                <button onclick="switchRuleSubTab('druid_rules')" id="subtab-druid_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-leaf mr-1"></i> 森羅魔法
+                </button>
+                <button onclick="switchRuleSubTab('warleader_rules')" id="subtab-warleader_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-bullhorn mr-1"></i> 軍師技能
+                </button>
+                <button onclick="switchRuleSubTab('geomancer_rules')" id="subtab-geomancer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-earth-asia mr-1"></i> 天地使技能
+                </button>
+                <button onclick="switchRuleSubTab('abyssgazer_rules')" id="subtab-abyssgazer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-eye-low-vision mr-1"></i> 奈洛魔法
+                </button>
+                <button onclick="switchRuleSubTab('rider_rules')" id="subtab-rider_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-horse mr-1"></i> 騎手規則
+                </button>
+            </div>
+
+            <!-- 規則動態渲染區塊 -->
+            <div id="rules-container" class="space-y-6"></div>
+        </section>
+
+    </main>
+
+    <!-- 頁腳 Footer -->
+    <footer class="bg-zinc-950 border-t border-zinc-800 py-4 mt-8 text-center text-xs text-zinc-500">
+        <p>SW2.5 規則與資料版權屬於 Group SNE / KADOKAWA 所有。本工具僅供 TRPG 玩家帶團與查閱使用。</p>
+    </footer>
+
+    <!-- 主入口 JavaScript -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
