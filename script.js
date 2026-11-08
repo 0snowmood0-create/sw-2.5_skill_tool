@@ -1,16 +1,18 @@
-import { allSkillsData } from './src/data-index.js';
+import { allSkillsData, allItemsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
 
 // ==================== 1. 主頁籤切換 (技能檢索 vs 道具檢索 vs 技能規則) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
+    const secItems = document.getElementById('sec-items');
     const secRules = document.getElementById('sec-rules');
+
     const tabBardsBtn = document.getElementById('tab-bards');
     const tabItemsBtn = document.getElementById('tab-items');
     const tabRulesBtn = document.getElementById('tab-rules');
-    const categoryField = document.getElementById('bard-category-filter');
 
-    if (!secBards || !secRules) return;
+    // 隱藏所有 Section
+    [secBards, secItems, secRules].forEach(sec => sec && sec.classList.add('hidden'));
 
     // 重置主頁籤按鈕樣式
     [tabBardsBtn, tabItemsBtn, tabRulesBtn].forEach(btn => {
@@ -19,29 +21,20 @@ window.switchMainTab = function(tabName) {
         }
     });
 
-    if (tabName === 'bards') {
-        secBards.classList.remove('hidden');
-        secRules.classList.add('hidden');
-        if (tabBardsBtn) {
-            tabBardsBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
-        }
-    } else if (tabName === 'items') {
-        secBards.classList.remove('hidden');
-        secRules.classList.add('hidden');
-        if (tabItemsBtn) {
-            tabItemsBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
-        }
-    } else if (tabName === 'rules') {
-        secBards.classList.add('hidden');
-        secRules.classList.remove('hidden');
-        if (tabRulesBtn) {
-            tabRulesBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
-        }
-        switchRuleSubTab('bard_rules');
-    }
+    const activeBtnStyle = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
 
-    if (typeof filterBardSongs === 'function') {
-        filterBardSongs();
+    if (tabName === 'bards') {
+        if (secBards) secBards.classList.remove('hidden');
+        if (tabBardsBtn) tabBardsBtn.className = activeBtnStyle;
+        if (typeof filterBardSongs === 'function') filterBardSongs();
+    } else if (tabName === 'items') {
+        if (secItems) secItems.classList.remove('hidden');
+        if (tabItemsBtn) tabItemsBtn.className = activeBtnStyle;
+        if (typeof filterItems === 'function') filterItems();
+    } else if (tabName === 'rules') {
+        if (secRules) secRules.classList.remove('hidden');
+        if (tabRulesBtn) tabRulesBtn.className = activeBtnStyle;
+        switchRuleSubTab('bard_rules');
     }
 };
 
@@ -69,26 +62,28 @@ window.switchRuleSubTab = function(ruleKey) {
 window.switchTab = function(tabId) {
     if (tabId === 'bards') {
         switchMainTab('bards');
+    } else if (tabId === 'items') {
+        switchMainTab('items');
     } else {
         switchMainTab('rules');
         switchRuleSubTab(tabId.replace('sec-', ''));
     }
 };
 
-// ==================== 3. 效能優化變數與防抖機制 ====================
-let currentFilteredList = [];
-let currentPage = 1;
-const pageSize = 20; // 限制單次載入上限為 20 筆
+// ==================== 3. 技能檢索 - 防抖與篩選邏輯 ====================
+let currentFilteredSkills = [];
+let currentSkillPage = 1;
+const pageSize = 20;
 let debounceTimer = null;
 
 window.filterBardSongs = function() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
-        executeFilter();
+        executeSkillFilter();
     }, 250);
 };
 
-function executeFilter() {
+function executeSkillFilter() {
     const queryField = document.getElementById('bard-search');
     const categoryField = document.getElementById('bard-category-filter');
     const levelField = document.getElementById('bard-level-filter');
@@ -99,10 +94,9 @@ function executeFilter() {
     const categoryFilter = categoryField ? categoryField.value : '';
     const levelFilterVal = levelField ? levelField.value : '';
 
-    // 防護機制：確保 dataset 為有效陣列，避免 allSkillsData 未載入時直接報錯
     const dataset = (typeof allSkillsData !== 'undefined' && Array.isArray(allSkillsData)) ? allSkillsData : [];
 
-    currentFilteredList = dataset.filter(b => {
+    currentFilteredSkills = dataset.filter(b => {
         if (!b) return false;
         
         const matchesQuery = !query || 
@@ -127,11 +121,64 @@ function executeFilter() {
         return matchesQuery && matchesCategory && matchesLevel;
     });
 
-    currentPage = 1;
+    currentSkillPage = 1;
     renderBardSongs(true);
 }
 
-// ==================== 4. 戰鬥特技專用卡片 HTML 生成 ====================
+// ==================== 4. 道具檢索 - 獨立篩選與渲染邏輯 ====================
+let itemDebounceTimer = null;
+
+window.filterItems = function() {
+    clearTimeout(itemDebounceTimer);
+    itemDebounceTimer = setTimeout(() => {
+        executeItemFilter();
+    }, 200);
+};
+
+function executeItemFilter() {
+    const searchInput = document.getElementById('item-search');
+    const categoryFilter = document.getElementById('item-category-filter');
+    const container = document.getElementById('item-list');
+    const countEl = document.getElementById('item-count');
+
+    if (!container) return;
+
+    const rawQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const selectedCategory = categoryFilter ? categoryFilter.value : '';
+
+    const dataset = (typeof allItemsData !== 'undefined' && Array.isArray(allItemsData)) ? allItemsData : [];
+
+    const filtered = dataset.filter(item => {
+        if (!item) return false;
+
+        const matchesCategory = !selectedCategory || item.category === selectedCategory;
+        const matchesQuery = !rawQuery ||
+            (item.name && item.name.toLowerCase().includes(rawQuery)) ||
+            (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
+            (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
+            (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
+            (item.description && item.description.toLowerCase().includes(rawQuery)) ||
+            (item.price && item.price.toString().toLowerCase().includes(rawQuery));
+
+        return matchesCategory && matchesQuery;
+    });
+
+    if (countEl) countEl.textContent = filtered.length;
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
+                <i class="fa-solid fa-box-open text-4xl text-zinc-600 mb-3"></i>
+                <p class="text-zinc-400 text-sm">查無符合條件的道具或裝備。</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map(item => renderItemCard(item)).join('');
+}
+
+// ==================== 5. 戰鬥特技專用卡片 HTML 生成 ====================
 export function renderCombatFeatCard(feat) {
     const typeBadgeStyles = {
         '被動': 'bg-slate-900 text-slate-300 border-slate-700',
@@ -186,10 +233,10 @@ export function renderCombatFeatCard(feat) {
     `;
 }
 
-// ==================== 5. 道具與裝備專用卡片 HTML 生成 ====================
+// ==================== 6. 道具與裝備專用卡片 HTML 生成 ====================
 export function renderItemCard(item) {
-    const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍"].includes(item.category);
-    const isArmor = ["非金屬鎧", "金屬鎧", "盾"].includes(item.category);
+    const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
+    const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isGeograph = item.name && item.name.includes("地貌儀");
 
     let attrTableHTML = '';
@@ -240,7 +287,7 @@ export function renderItemCard(item) {
             </div>
             <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
                 <span class="text-zinc-500 font-medium">天/地/人脈</span>
-                <span class="col-span-5 text-emerald-300 font-medium">天:${item.sky_limit} / 地:${item.earth_limit} / 人:${item.human_limit}</span>
+                <span class="col-span-5 text-emerald-300 font-medium">天:${item.sky_limit || 0} / 地:${item.earth_limit || 0} / 人:${item.human_limit || 0}</span>
             </div>
         `;
     } else {
@@ -280,7 +327,7 @@ export function renderItemCard(item) {
                         </div>
                     ` : ''}
                     <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
-                        ${item.effect || ''}
+                        ${item.effect || item.description || ''}
                     </p>
                 </div>
             </div>
@@ -442,57 +489,40 @@ function createSkillCardHTML(b) {
     `;
 }
 
-// ==================== 6. 批次 DOM 渲染與分頁懶載入 ====================
+// ==================== 7. 技能 DOM 渲染與捲動懶載入 ====================
 function renderBardSongs(isNewSearch = false) {
     const container = document.getElementById('bard-list');
     const countEl = document.getElementById('song-count');
     if (!container || !countEl) return;
 
-    countEl.innerText = currentFilteredList.length;
+    countEl.innerText = currentFilteredSkills.length;
 
     if (isNewSearch) {
         container.innerHTML = '';
     }
 
-    if (currentFilteredList.length === 0) {
+    if (currentFilteredSkills.length === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
                 <i class="fa-solid fa-ghost text-4xl text-zinc-600 mb-3"></i>
-                <p class="text-zinc-400 text-sm">沒有找到符合條件的技能、魔法或道具。</p>
+                <p class="text-zinc-400 text-sm">沒有找到符合條件的技能或魔法。</p>
             </div>
         `;
         return;
     }
 
-    const startIndex = (currentPage - 1) * pageSize;
+    const startIndex = (currentSkillPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const pageItems = currentFilteredList.slice(startIndex, endIndex);
+    const pageItems = currentFilteredSkills.slice(startIndex, endIndex);
 
     if (pageItems.length === 0) return;
-
-    const itemCategories = [
-        // 武器類
-        "劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "彈藥",
-        // 防具與盾牌
-        "非金屬鎧", "金屬鎧", "盾",
-        // 冒險者道具與技能專用道具
-        "冒險者道具", "特殊樂器", "魔導書", "地貌儀", "技能道具", "冒險工具", "消耗品",
-        // 各類裝飾品與部位
-        "裝飾品", "頭部裝飾", "臉部裝飾", "耳部裝飾", "頸部裝飾", "背部裝飾", "手部裝飾", "腰部裝飾", "足部裝飾", "其他裝飾",
-        // 藥品、資材與其他
-        "藥品與藥草", "賦術資材", "魔動機術資材", "樂器", "神聖象徵", "妖精依代"
-    ];
 
     const fragment = document.createElement('template');
     let htmlChunk = '';
 
     pageItems.forEach(b => {
-        const isItem = itemCategories.includes(b.category);
         const isCombatFeat = b.category === "戰鬥特技" || ['被動', '宣言', '主動作', '自動'].includes(b.type);
-
-        if (isItem) {
-            htmlChunk += renderItemCard(b);
-        } else if (isCombatFeat) {
+        if (isCombatFeat) {
             htmlChunk += renderCombatFeatCard(b);
         } else {
             htmlChunk += createSkillCardHTML(b);
@@ -503,17 +533,20 @@ function renderBardSongs(isNewSearch = false) {
     container.appendChild(fragment.content);
 }
 
-// 捲動到底部自動載入下一頁 (每頁 20 筆)
+// 捲動到底部自動載入技能下一頁
 window.addEventListener('scroll', () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
-        if (currentPage * pageSize < currentFilteredList.length) {
-            currentPage++;
-            renderBardSongs(false);
+    const secBards = document.getElementById('sec-bards');
+    if (secBards && !secBards.classList.contains('hidden')) {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+            if (currentSkillPage * pageSize < currentFilteredSkills.length) {
+                currentSkillPage++;
+                renderBardSongs(false);
+            }
         }
     }
 });
 
-// ==================== 7. 動態渲染規則內容 ====================
+// ==================== 8. 動態渲染規則內容 ====================
 function renderRules() {
     const container = document.getElementById('rules-container');
     if (!container || !Array.isArray(ruleSections)) return;
@@ -528,12 +561,8 @@ function renderRules() {
     }).join('');
 }
 
-// ==================== 8. 頁面初始化 ====================
+// ==================== 9. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
     renderRules();
     switchMainTab('bards');
-
-    if (typeof filterBardSongs === 'function') {
-        filterBardSongs();
-    }
 });

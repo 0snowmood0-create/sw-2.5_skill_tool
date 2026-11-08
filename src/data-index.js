@@ -85,3 +85,30 @@ export const allSkillsData = [
     ...(typeof warhammerItemsData !== 'undefined' ? warhammerItemsData : []),
     ...(typeof geographItemsData !== 'undefined' ? geographItemsData : [])
 ];
+
+// ==================== 統一標記分類並合併為全域道具陣列 ====================
+export const allItemsData = [
+    ...(accessoryItemsData || []).map(i => ({ ...i, category: '飾品裝備' })),
+    ...(ammoItemsData || []).map(i => ({ ...i, category: '彈藥/消耗品' })),
+    ...(axeItemsData || []).map(i => ({ ...i, category: '武器-斧' })),
+    ...(bowItemsData || []).map(i => ({ ...i, category: '武器-弓' })),
+    ...(crossbowItemsData || []).map(i => ({ ...i, category: '武器-弩' })),
+    ...(flailItemsData || []).map(i => ({ ...i, category: '武器-連枷' })),
+    ...(golemData || []).map(i => ({ ...i, category: '魔像/強化物件' })),
+    ...(grappleItemsData || []).map(i => ({ ...i, category: '武器-格鬥/抓握' })),
+    ...(gunItemsData || []).map(i => ({ ...i, category: '武器-魔導槍' })),
+    ...(specialItemData || []).map(i => ({ ...i, category: '特殊道具' })),
+    ...(instrumentItemsData || []).map(i => ({ ...i, category: '樂器/吟遊詩人' })),
+    ...(itemData || []).map(i => ({ ...i, category: '一般冒險道具' })),
+    ...(livingAndTransitItemsData || []).map(i => ({ ...i, category: '生活與交通工具' })),
+    ...(maceItemsData || []).map(i => ({ ...i, category: '武器-鈍器/錘' })),
+    ...(metalArmorItemsData || []).map(i => ({ ...i, category: '防具-金屬鎧甲' })),
+    ...(potionItemsData || []).map(i => ({ ...i, category: '藥水/練金卡片' })),
+    ...(shieldItemsData || []).map(i => ({ ...i, category: '防具-盾牌' })),
+    ...(spearItemsData || []).map(i => ({ ...i, category: '武器-槍' })),
+    ...(staffItemsData || []).map(i => ({ ...i, category: '武器-長杖' })),
+    ...(swordItemsData || []).map(i => ({ ...i, category: '武器-劍' })),
+    ...(throwingItemsData || []).map(i => ({ ...i, category: '武器-投擲' })),
+    ...(warhammerItemsData || []).map(i => ({ ...i, category: '武器-戰錘' })),
+    ...(geographItemsData || []).map(i => ({ ...i, category: '相導具/相動軌跡' }))
+];

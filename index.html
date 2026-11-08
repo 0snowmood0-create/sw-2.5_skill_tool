@@ -59,70 +59,34 @@
     <!-- 主內容區 Main Container -->
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
 
-        <!-- ==================== TAB 1: 檢索介面 ==================== -->
+        <!-- ==================== TAB 1: 技能檢索介面 ==================== -->
         <section id="sec-bards" class="space-y-6">
             <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-md">
                 <div class="md:col-span-2 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-zinc-500"></i>
-                    <input type="text" id="bard-search" oninput="filterBardSongs()" placeholder="搜尋名稱、日文名、概要、效果或道具說明..." 
+                    <input type="text" id="bard-search" oninput="filterBardSongs()" placeholder="搜尋技能名稱、日文名、概要或效果..." 
                         class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-amber-500 text-sm">
                 </div>
                 <div>
                     <select id="bard-category-filter" onchange="filterBardSongs()" class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm">
-                        <option value="">所有分類</option>  
-
-                        <!-- 魔法與技能分類 -->
-                        <optgroup label="魔法 / 技能">
-                            <option value="吟遊詩人">吟遊詩人 (咒歌/終律)</option>
-                            <option value="魔動機術">魔動機術</option>
-                            <option value="操靈魔法">操靈魔法</option>
-                            <option value="真語魔法">真語魔法</option>
-                            <option value="深智魔法">深智魔法</option>
-                            <option value="神聖魔法">神聖魔法</option>
-                            <option value="妖精魔法">妖精魔法</option>
-                            <option value="賦術">賦術</option>
-                            <option value="操氣">操氣 (暗獵者)</option>
-                            <option value="森羅魔法">森羅魔法</option>
-                            <option value="軍師">軍師 (鼓咆/陣率)</option>
-                            <option value="天地使">天地使</option>
-                            <option value="奈洛魔法">奈洛魔法</option>
-                            <option value="騎藝">騎藝</option>
-                            <option value="典籍魔導士">祕奧魔法</option>
-                            <option value="練體士">練技</option>
-                            <option value="戰鬥特技">戰鬥特技</option>
-                        </optgroup>
-
-                        <!-- 依據 SW2.5 道具工作表新增的武器/防具/道具分類 -->
-                        <optgroup label="武器">
-                            <option value="劍">劍</option>
-                            <option value="槍">槍</option>
-                            <option value="斧">斧</option>
-                            <option value="打擊">打擊</option>
-                            <option value="拋射">拋射</option>
-                            <option value="格鬥">格鬥</option>
-                            <option value="投擲">投擲</option>
-                            <option value="魔動機槍">魔動機槍</option>
-                        </optgroup>
-
-                        <optgroup label="防具">
-                            <option value="非金屬鎧">非金屬鎧</option>
-                            <option value="金屬鎧">金屬鎧</option>
-                            <option value="盾">盾</option>
-                        </optgroup>
-
-                        <optgroup label="專用裝備與資材">
-                            <option value="賦術資材">賦術資材</option>
-                            <option value="魔動機術資材">魔動機術資材</option>
-                            <option value="樂器">樂器</option>
-                            <option value="神聖象徵">神聖象徵</option>
-                            <option value="妖精依代">妖精依代</option>
-                        </optgroup>
-
-                        <optgroup label="冒險通用道具">
-                            <option value="冒險者道具">冒險者道具</option>
-                            <option value="裝飾品">裝飾品</option>
-                            <option value="藥品與藥草">藥品與藥草</option>
-                        </optgroup>
+                        <option value="">所有技能分類</option>  
+                        <option value="吟遊詩人">吟遊詩人 (咒歌/終律)</option>
+                        <option value="魔動機術">魔動機術</option>
+                        <option value="操靈魔法">操靈魔法</option>
+                        <option value="真語魔法">真語魔法</option>
+                        <option value="深智魔法">深智魔法</option>
+                        <option value="神聖魔法">神聖魔法</option>
+                        <option value="妖精魔法">妖精魔法</option>
+                        <option value="賦術">賦術</option>
+                        <option value="操氣">操氣 (暗獵者)</option>
+                        <option value="森羅魔法">森羅魔法</option>
+                        <option value="軍師">軍師 (鼓咆/陣率)</option>
+                        <option value="天地使">天地使</option>
+                        <option value="奈洛魔法">奈洛魔法</option>
+                        <option value="騎藝">騎藝</option>
+                        <option value="典籍魔導士">祕奧魔法</option>
+                        <option value="練體士">練技</option>
+                        <option value="戰鬥特技">戰鬥特技</option>
                     </select>
                 </div>
                 <div>
@@ -152,13 +116,65 @@
                 <span>經驗點表：<strong>經驗表 A / B</strong></span>
             </div>
 
-            <!-- 技能與道具卡片顯示容器 -->
             <div id="bard-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
 
-        <!-- ==================== TAB 2: 完整規則頁面 (含職業規則二級分頁) ==================== -->
+        <!-- ==================== TAB 2: 道具與裝備檢索介面 ==================== -->
+        <section id="sec-items" class="space-y-6 hidden">
+            <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 grid grid-cols-1 md:grid-cols-3 gap-4 shadow-md">
+                <div class="md:col-span-2 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-zinc-500"></i>
+                    <input type="text" id="item-search" oninput="filterItems()" placeholder="搜尋道具/裝備名稱、日文名、效果、價格或說明..." 
+                        class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-amber-500 text-sm">
+                </div>
+                <div>
+                    <select id="item-category-filter" onchange="filterItems()" class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm">
+                        <option value="">所有道具與裝備分類</option>
+                        <optgroup label="冒險與通用道具">
+                            <option value="一般冒險道具">一般冒險道具</option>
+                            <option value="特殊道具">特殊道具</option>
+                            <option value="生活與交通工具">生活與交通工具</option>
+                            <option value="藥水/練金卡片">藥水/練金卡片</option>
+                            <option value="彈藥/消耗品">彈藥/消耗品</option>
+                            <option value="樂器/吟遊詩人">樂器/吟遊詩人</option>
+                        </optgroup>
+                        <optgroup label="武器分類">
+                            <option value="武器-劍">武器-劍</option>
+                            <option value="武器-斧">武器-斧</option>
+                            <option value="武器-槍">武器-槍</option>
+                            <option value="武器-鈍器/錘">武器-鈍器/錘</option>
+                            <option value="武器-戰錘">武器-戰锤</option>
+                            <option value="武器-長杖">武器-長杖</option>
+                            <option value="武器-弓">武器-弓</option>
+                            <option value="武器-弩">武器-弩</option>
+                            <option value="武器-魔導槍">武器-魔導槍</option>
+                            <option value="武器-連枷">武器-連枷</option>
+                            <option value="武器-格鬥/抓握">武器-格鬥/抓握</option>
+                            <option value="武器-投擲">武器-投擲</option>
+                        </optgroup>
+                        <optgroup label="防具與飾品">
+                            <option value="防具-金屬鎧甲">防具-金屬鎧甲</option>
+                            <option value="防具-盾牌">防具-盾牌</option>
+                            <option value="飾品裝備">飾品裝備</option>
+                        </optgroup>
+                        <optgroup label="特殊物件與軌跡">
+                            <option value="魔像/強化物件">魔像/強化物件</option>
+                            <option value="相導具/相動軌跡">相導具/相動軌跡</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center text-xs text-zinc-400 px-1">
+                <span>顯示結果：<strong id="item-count" class="text-amber-400">0</strong> 筆資料</span>
+            </div>
+
+            <!-- 道具卡片渲染容器 -->
+            <div id="item-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+        </section>
+
+        <!-- ==================== TAB 3: 技能規則頁面 ==================== -->
         <section id="sec-rules" class="space-y-6 hidden">
-            <!-- 二級選單：可橫向滑動的職業規則分頁按鈕 -->
             <div class="flex overflow-x-auto gap-2 border-b border-zinc-800 pb-3 custom-scrollbar">
                 <button onclick="switchRuleSubTab('bard_rules')" id="subtab-bard_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium">
                     <i class="fa-solid fa-feather mr-1"></i> 吟遊詩人
@@ -210,7 +226,6 @@
                 </button>
             </div>
 
-            <!-- 規則動態渲染區塊 -->
             <div id="rules-container" class="space-y-6"></div>
         </section>
 
@@ -222,6 +237,6 @@
     </footer>
 
     <!-- 主入口 JavaScript -->
-    <script type="module" src="script.js"></script>
+    <script type="module" src="./script.js"></script>
 </body>
 </html>
