@@ -1333,7 +1333,7 @@ export const combatFeatsData = [
       effect: "HP+15"
     },
     {
-      name: "舞流",
+      name: "舞動流轉",
       nameJp: "舞い流し",
       category: "戰鬥特技",
       type: "自動",
