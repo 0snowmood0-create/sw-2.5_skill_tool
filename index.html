@@ -41,16 +41,22 @@
                 <h1 class="text-xl md:text-2xl font-bold font-title text-amber-500 tracking-wider">SW2.5 速查對照表</h1> 
             </div>
             
-            <!-- 一級主頁籤導覽列 (技能檢索 / 道具檢索 / 技能規則) -->
-            <nav class="flex gap-2 text-sm md:text-base">
-                <button id="tab-bards" onclick="switchMainTab('bards')" class="py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30">
+            <!-- 一級主頁籤導覽列 (同一層平鋪) -->
+            <nav class="flex gap-2 text-sm md:text-base overflow-x-auto custom-scrollbar pb-1 max-w-full">
+                <button id="tab-bards" onclick="switchMainTab('bards')" class="main-tab-btn py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 whitespace-nowrap">
                     <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>技能檢索
                 </button>
-                <button id="tab-items" onclick="switchMainTab('items')" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
+                <button id="tab-items" onclick="switchMainTab('items')" class="main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap">
                     <i class="fa-solid fa-bag-shopping mr-1"></i>道具檢索
                 </button>
-                <button id="tab-rules" onclick="switchMainTab('rules')" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
+                <button id="tab-rules" onclick="switchMainTab('rules')" class="main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap">
                     <i class="fa-solid fa-scroll mr-1"></i>技能規則
+                </button>
+                <button id="tab-advanced_combat_rules" onclick="switchMainTab('advanced_combat_rules')" class="main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-swords mr-1"></i>上級戰鬥規則
+                </button>
+                <button id="tab-power_table_rules" onclick="switchMainTab('power_table_rules')" class="main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-dice-d6 mr-1"></i>威力表
                 </button>
             </nav>
         </div>
@@ -173,9 +179,10 @@
             <div id="item-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
 
-        <!-- ==================== TAB 3: 技能規則頁面 ==================== -->
+        <!-- ==================== TAB 3: 技能規則與獨立規則頁面 ==================== -->
         <section id="sec-rules" class="space-y-6 hidden">
-            <div class="flex overflow-x-auto gap-2 border-b border-zinc-800 pb-3 custom-scrollbar">
+            <!-- 技能職業子頁籤 (加上 id="rule-subtabs-nav"，點擊獨立規則時會隱藏) -->
+            <div id="rule-subtabs-nav" class="flex overflow-x-auto gap-2 border-b border-zinc-800 pb-3 custom-scrollbar">
                 <button onclick="switchRuleSubTab('bard_rules')" id="subtab-bard_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium">
                     <i class="fa-solid fa-feather mr-1"></i> 吟遊詩人
                 </button>
@@ -224,8 +231,15 @@
                 <button onclick="switchRuleSubTab('enhancer_rules')" id="subtab-enhancer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
                     <i class="fa-solid fa-person-running mr-1"></i> 練體士規則
                 </button>
+                <button onclick="switchRuleSubTab('battle_dancer_rules')" id="subtab-battle_dancer_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-shoe-prints mr-1"></i> 舞鬥士
+                </button>
+                <button onclick="switchRuleSubTab('feat_rules')" id="subtab-feat_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all">
+                    <i class="fa-solid fa-burst mr-1"></i>戰鬥特技規則
+                </button>
             </div>
 
+            <!-- 規則內文動態渲染區 -->
             <div id="rules-container" class="space-y-6"></div>
         </section>
 

@@ -1,40 +1,65 @@
 import { allSkillsData, allItemsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
 
-// ==================== 1. 主頁籤切換 (技能檢索 vs 道具檢索 vs 技能規則) ====================
+// ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
     const secItems = document.getElementById('sec-items');
     const secRules = document.getElementById('sec-rules');
+    const subtabsNav = document.getElementById('rule-subtabs-nav');
+    const rulesContainer = document.getElementById('rules-container');
 
-    const tabBardsBtn = document.getElementById('tab-bards');
-    const tabItemsBtn = document.getElementById('tab-items');
-    const tabRulesBtn = document.getElementById('tab-rules');
-
-    // 隱藏所有 Section
-    [secBards, secItems, secRules].forEach(sec => sec && sec.classList.add('hidden'));
-
-    // 重置主頁籤按鈕樣式
-    [tabBardsBtn, tabItemsBtn, tabRulesBtn].forEach(btn => {
-        if (btn) {
-            btn.className = "py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent";
-        }
+    // 1. 【重置高亮】徹底清除頂層導覽列所有按鈕的高亮樣式
+    document.querySelectorAll('.main-tab-btn').forEach(btn => {
+        btn.className = "main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap";
     });
 
-    const activeBtnStyle = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
+    // 2. 【單一高亮】僅對目前點擊的按鈕加上金色高亮
+    const activeBtn = document.getElementById(`tab-${tabName}`);
+    if (activeBtn) {
+        activeBtn.className = "main-tab-btn py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 whitespace-nowrap";
+    }
 
+    // 3. 隱藏所有主要 Section 區塊
+    [secBards, secItems, secRules].forEach(sec => sec && sec.classList.add('hidden'));
+
+    // 4. 根據傳入的 tabName 決定要顯示的內容
     if (tabName === 'bards') {
         if (secBards) secBards.classList.remove('hidden');
-        if (tabBardsBtn) tabBardsBtn.className = activeBtnStyle;
-        if (typeof filterBardSongs === 'function') filterBardSongs();
+        if (typeof window.filterBardSongs === 'function') window.filterBardSongs();
     } else if (tabName === 'items') {
         if (secItems) secItems.classList.remove('hidden');
-        if (tabItemsBtn) tabItemsBtn.className = activeBtnStyle;
-        if (typeof filterItems === 'function') filterItems();
-    } else if (tabName === 'rules') {
+        if (typeof window.filterItems === 'function') window.filterItems();
+    } else {
+        // 開啟規則頁面主要容器
         if (secRules) secRules.classList.remove('hidden');
-        if (tabRulesBtn) tabRulesBtn.className = activeBtnStyle;
-        switchRuleSubTab('bard_rules');
+
+        // 判斷是否為「技能規則」總頁面
+        if (tabName === 'rules') {
+            // 顯示職業技能子選單
+            if (subtabsNav) subtabsNav.classList.remove('hidden');
+            // 預設切換至第一個技能規則 (吟遊詩人)
+            if (typeof window.switchRuleSubTab === 'function') {
+                window.switchRuleSubTab('bard_rules');
+            }
+        } else {
+            // 切換至獨立頁面 (上級戰鬥規則 / 威力表 / 戰鬥特技規則 / 舞鬥士 等) -> 隱藏職業技能子選單
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+
+            // 尋找並渲染對應規則內容
+            const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === tabName) : null;
+            if (rulesContainer && sectionData) {
+                rulesContainer.innerHTML = sectionData.content;
+            }
+
+            // 若點擊的是威力表，自動渲染表格與算牌器
+            if (tabName === 'power_table_rules') {
+                setTimeout(() => {
+                    if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
+                    if (typeof window.calcPowerResult === 'function') window.calcPowerResult();
+                }, 50);
+            }
+        }
     }
 };
 
@@ -50,12 +75,18 @@ window.switchRuleSubTab = function(ruleKey) {
         activeBtn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium";
     }
 
-    const allRuleSections = document.querySelectorAll('#rules-container > section');
-    allRuleSections.forEach(sec => sec.classList.add('hidden'));
+    const rulesContainer = document.getElementById('rules-container');
+    const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === ruleKey) : null;
+    
+    if (rulesContainer && sectionData) {
+        rulesContainer.innerHTML = sectionData.content;
+    }
 
-    const targetSec = document.getElementById(`sec-${ruleKey}`) || document.getElementById(ruleKey);
-    if (targetSec) {
-        targetSec.classList.remove('hidden');
+    if (ruleKey === 'power_table_rules') {
+        setTimeout(() => {
+            if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
+            if (typeof window.calcPowerResult === 'function') window.calcPowerResult();
+        }, 50);
     }
 };
 
@@ -182,7 +213,7 @@ function executeItemFilter() {
 export function renderCombatFeatCard(feat) {
     const typeBadgeStyles = {
         '被動': 'bg-slate-900 text-slate-300 border-slate-700',
-        '宣言': 'bg-amber-950 text-amber-300 border-amber-800',
+        '宣告': 'bg-amber-950 text-amber-300 border-amber-800',
         '主動作': 'bg-purple-950 text-purple-300 border-purple-800',
         '自動': 'bg-emerald-950 text-emerald-300 border-emerald-800'
     };
@@ -546,23 +577,160 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// ==================== 8. 動態渲染規則內容 ====================
-function renderRules() {
-    const container = document.getElementById('rules-container');
-    if (!container || !Array.isArray(ruleSections)) return;
-
-    container.innerHTML = ruleSections.map(rule => {
-        const secId = rule.id.startsWith('sec-') ? rule.id : `sec-${rule.id}`;
-        return `
-            <section id="${secId}" class="space-y-6 hidden">
-                ${rule.content}
-            </section>
-        `;
-    }).join('');
-}
-
-// ==================== 9. 頁面初始化 ====================
+// ==================== 8. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
-    renderRules();
     switchMainTab('bards');
 });
+
+// ==================== SW2.5 威力表完整資料矩陣 (0~100) ====================
+export const powerTableData = {
+    0:  [0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4],
+    1:  [0, 0, 0, 0, 1, 2, 3, 3, 3, 4, 4],
+    2:  [0, 0, 0, 1, 1, 2, 3, 4, 4, 4, 4],
+    3:  [0, 0, 0, 1, 1, 2, 3, 4, 4, 4, 5],
+    4:  [0, 0, 0, 1, 2, 2, 3, 4, 4, 5, 5],
+    5:  [0, 0, 1, 1, 2, 2, 3, 4, 5, 5, 5],
+    6:  [0, 0, 1, 1, 2, 3, 3, 4, 5, 5, 5],
+    7:  [0, 0, 1, 1, 2, 3, 4, 4, 5, 5, 6],
+    8:  [0, 0, 1, 2, 2, 3, 4, 4, 5, 6, 6],
+    9:  [0, 0, 1, 2, 3, 3, 4, 4, 5, 6, 7],
+    10: [0, 1, 1, 2, 3, 3, 4, 5, 5, 6, 7],
+    11: [0, 1, 2, 2, 3, 3, 4, 5, 6, 6, 7],
+    12: [0, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7],
+    13: [0, 1, 2, 3, 3, 4, 4, 5, 6, 7, 7],
+    14: [0, 1, 2, 3, 4, 4, 4, 5, 6, 7, 8],
+    15: [0, 1, 2, 3, 4, 4, 5, 5, 6, 7, 8],
+    16: [0, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8],
+    17: [0, 1, 2, 3, 4, 5, 5, 6, 7, 7, 8],
+    18: [0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 8],
+    19: [0, 1, 2, 3, 4, 5, 6, 7, 7, 8, 9],
+    20: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    21: [0, 1, 2, 3, 4, 6, 6, 7, 8, 9, 10],
+    22: [0, 1, 2, 3, 5, 6, 6, 7, 8, 9, 10],
+    23: [0, 2, 2, 3, 5, 6, 7, 7, 8, 9, 10],
+    24: [0, 2, 3, 4, 5, 6, 7, 7, 8, 9, 10],
+    25: [0, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10],
+    26: [0, 2, 3, 4, 5, 6, 8, 8, 9, 9, 10],
+    27: [0, 2, 3, 4, 6, 6, 8, 8, 9, 9, 10],
+    28: [0, 2, 3, 4, 6, 6, 8, 9, 9, 10, 10],
+    29: [0, 2, 3, 4, 6, 7, 8, 9, 9, 10, 10],
+    30: [0, 2, 4, 4, 6, 7, 8, 9, 10, 10, 10],
+    31: [0, 2, 4, 5, 6, 7, 8, 9, 10, 10, 11],
+    32: [0, 3, 4, 5, 6, 7, 8, 10, 10, 10, 11],
+    33: [0, 3, 4, 5, 6, 8, 8, 10, 10, 10, 11],
+    34: [0, 3, 4, 5, 6, 8, 9, 10, 10, 11, 11],
+    35: [0, 3, 4, 5, 7, 8, 9, 10, 10, 11, 12],
+    36: [0, 3, 5, 5, 7, 8, 9, 10, 11, 11, 12],
+    37: [0, 3, 5, 6, 7, 8, 9, 10, 11, 12, 12],
+    38: [0, 3, 5, 6, 7, 8, 10, 10, 11, 12, 13],
+    39: [0, 4, 5, 6, 7, 8, 10, 11, 11, 12, 13],
+    40: [0, 4, 5, 6, 7, 9, 10, 11, 11, 12, 13],
+    41: [0, 4, 6, 6, 7, 9, 10, 11, 12, 12, 13],
+    42: [0, 4, 6, 7, 7, 9, 10, 11, 12, 13, 13],
+    43: [0, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    44: [0, 4, 6, 7, 8, 10, 10, 11, 12, 13, 14],
+    45: [0, 4, 6, 7, 9, 10, 10, 11, 12, 13, 14],
+    46: [0, 4, 6, 7, 9, 10, 10, 12, 13, 13, 14],
+    47: [0, 4, 6, 7, 9, 10, 11, 12, 13, 13, 15],
+    48: [0, 4, 6, 7, 9, 10, 12, 12, 13, 13, 15],
+    49: [0, 4, 6, 7, 10, 10, 12, 12, 13, 14, 15],
+    50: [0, 4, 6, 8, 10, 10, 12, 12, 13, 15, 15],
+    51: [0, 5, 7, 8, 10, 10, 12, 12, 13, 15, 15],
+    52: [0, 5, 7, 8, 10, 11, 12, 12, 13, 15, 15],
+    53: [0, 5, 7, 9, 10, 11, 12, 12, 14, 15, 15],
+    54: [0, 5, 7, 9, 10, 11, 12, 13, 14, 15, 16],
+    55: [0, 5, 7, 10, 10, 11, 12, 13, 14, 16, 16],
+    56: [0, 5, 8, 10, 10, 11, 12, 13, 15, 16, 16],
+    57: [0, 5, 8, 10, 11, 11, 12, 13, 15, 16, 17],
+    58: [0, 5, 8, 10, 11, 12, 12, 13, 15, 16, 17],
+    59: [0, 5, 9, 10, 11, 12, 12, 14, 15, 16, 17],
+    60: [0, 5, 9, 10, 11, 12, 13, 14, 15, 16, 18],
+    61: [0, 5, 9, 10, 11, 12, 13, 14, 16, 17, 18],
+    62: [0, 5, 9, 10, 11, 13, 13, 14, 16, 17, 18],
+    63: [0, 5, 9, 10, 11, 13, 13, 15, 17, 17, 18],
+    64: [0, 5, 9, 10, 11, 13, 14, 15, 17, 17, 18],
+    65: [0, 5, 9, 10, 12, 13, 14, 15, 17, 18, 18],
+    66: [0, 5, 9, 10, 12, 13, 15, 15, 17, 18, 19],
+    67: [0, 5, 9, 10, 12, 13, 15, 16, 17, 19, 19],
+    68: [0, 5, 9, 10, 12, 14, 15, 16, 17, 19, 19],
+    69: [0, 5, 9, 10, 12, 14, 16, 16, 17, 19, 19],
+    70: [0, 5, 9, 10, 12, 14, 16, 17, 18, 19, 19],
+    71: [0, 5, 9, 10, 13, 14, 16, 17, 18, 19, 20],
+    72: [0, 5, 9, 10, 13, 15, 16, 17, 18, 19, 20],
+    73: [0, 5, 9, 10, 13, 15, 16, 17, 19, 20, 21],
+    74: [0, 6, 9, 10, 13, 15, 16, 18, 19, 20, 21],
+    75: [0, 6, 9, 10, 13, 16, 16, 18, 19, 20, 21],
+    76: [0, 6, 9, 10, 13, 16, 17, 18, 19, 20, 21],
+    77: [0, 6, 9, 10, 13, 16, 17, 18, 20, 21, 22],
+    78: [0, 6, 9, 10, 13, 16, 17, 19, 20, 22, 23],
+    79: [0, 6, 9, 10, 13, 16, 18, 19, 20, 22, 23],
+    80: [0, 6, 9, 10, 13, 16, 18, 20, 21, 22, 23],
+    81: [0, 6, 9, 10, 13, 17, 18, 20, 21, 22, 23],
+    82: [0, 6, 9, 10, 14, 17, 18, 20, 21, 22, 24],
+    83: [0, 6, 9, 11, 14, 17, 18, 20, 21, 23, 24],
+    84: [0, 6, 9, 11, 14, 17, 19, 20, 21, 23, 24],
+    85: [0, 6, 9, 11, 14, 17, 19, 21, 22, 23, 24],
+    86: [0, 7, 10, 11, 14, 17, 19, 21, 22, 23, 25],
+    87: [0, 7, 10, 12, 14, 17, 19, 21, 22, 24, 25],
+    88: [0, 7, 10, 12, 14, 18, 19, 21, 22, 24, 25],
+    89: [0, 7, 10, 12, 15, 18, 19, 21, 22, 24, 26],
+    90: [0, 7, 10, 12, 15, 18, 19, 21, 23, 25, 26],
+    91: [0, 7, 11, 13, 15, 18, 19, 21, 23, 25, 26],
+    92: [0, 7, 11, 13, 15, 18, 20, 21, 23, 25, 27],
+    93: [0, 8, 11, 13, 15, 18, 20, 22, 23, 25, 27],
+    94: [0, 8, 11, 13, 16, 18, 20, 22, 23, 25, 28],
+    95: [0, 8, 11, 14, 16, 18, 20, 22, 23, 26, 28],
+    96: [0, 8, 11, 14, 16, 19, 20, 22, 23, 26, 28],
+    97: [0, 8, 12, 14, 16, 19, 20, 22, 24, 26, 28],
+    98: [0, 8, 12, 15, 16, 19, 20, 22, 24, 27, 28],
+    99: [0, 8, 12, 15, 17, 19, 20, 22, 24, 27, 29],
+    100:[0, 8, 12, 15, 18, 19, 20, 22, 24, 27, 30]
+};
+
+// 威力算牌器計算邏輯
+window.calcPowerResult = function() {
+    const powerInput = document.getElementById('calc-power-input');
+    const diceInput = document.getElementById('calc-dice-input');
+    const outputEl = document.getElementById('calc-power-output');
+
+    if (!powerInput || !diceInput || !outputEl) return;
+
+    let p = parseInt(powerInput.value) || 0;
+    p = Math.max(0, Math.min(100, p));
+    const roll = parseInt(diceInput.value) || 7;
+
+    const row = powerTableData[p];
+    if (row) {
+        const val = row[roll - 2];
+        outputEl.textContent = val === 0 ? '*' : val;
+    }
+};
+
+// 渲染威力表 HTML 內容
+window.renderPowerTableRows = function() {
+    const tbody1 = document.getElementById('power-table-body-1');
+    const tbody2 = document.getElementById('power-table-body-2');
+
+    if (!tbody1 || !tbody2 || tbody1.children.length > 0) return;
+
+    let html1 = '';
+    let html2 = '';
+
+    for (let p = 0; p <= 100; p++) {
+        const rowData = powerTableData[p];
+        const rowHTML = `
+            <tr class="hover:bg-amber-500/10 transition-colors">
+                <td class="py-1 px-1.5 font-bold text-amber-400 bg-zinc-900 border-r border-zinc-800">${p}</td>
+                ${rowData.map(v => `<td class="py-1 px-1 ${v === 0 ? 'text-zinc-600 font-normal' : 'text-zinc-200'}">${v === 0 ? '*' : v}</td>`).join('')}
+            </tr>
+        `;
+        if (p <= 50) {
+            html1 += rowHTML;
+        } else {
+            html2 += rowHTML;
+        }
+    }
+
+    tbody1.innerHTML = html1;
+    tbody2.innerHTML = html2;
+};

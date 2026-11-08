@@ -1460,5 +1460,667 @@ export const ruleSections = [
             </div>
           </div>
         `
-      }
-    ]
+      },
+      {
+        id: "advanced_combat_rules",
+        content: `
+            <div class="space-y-6">
+                <!-- 頁面標題區 -->
+                <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                            <i class="fa-solid fa-swords text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 上級戰鬥規則 (Advanced Combat)</h2>
+                            <p class="text-xs text-zinc-400">以 1m (整數米) 為單位精確管理戰場座標、自由移動、動態亂戰區域與精密的射程/移動妨害機制。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 1. 上級戰鬥的核心特徵 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-ruler-combined mr-2 text-amber-500"></i>1. 上級戰鬥的核心特徵
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-amber-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-crosshairs"></i> 一維直線座標管理 (m)
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                戰場假設為一條直線，所有角色位置均以與基準點的相對距離（以<strong class="text-amber-300">整數米</strong>管理，無未滿 1m 單位）標記。同一座標可同時存在多個角色（不分敵我）。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-cyan-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-expand"></i> 多重與動態亂戰區域
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                不再局限於單一前線。敵對角色在同一座標發生近接攻擊或魔法交戰時會自動產生「亂戰區域」，半徑隨參與人數（部位數）擴大。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-emerald-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-person-running"></i> 移動力與妨害機制
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                角色的移動距離受限於「敏捷度/移動力」。通過敵方控場範圍時，敵方可實施「移動妨害」截停移動。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 2. 移動種類與距離 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-person-boot mr-2 text-amber-500"></i>2. 移動種類與限制
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-zinc-300 border border-zinc-800 rounded-lg overflow-hidden">
+                            <thead class="bg-zinc-950 text-amber-400 font-bold border-b border-zinc-800">
+                                <tr>
+                                    <th class="p-2.5">移動類別</th>
+                                    <th class="p-2.5">可移動距離</th>
+                                    <th class="p-2.5">動作限制 / 修正</th>
+                                    <th class="p-2.5">適用情況與說明</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-800/60 bg-zinc-900/50">
+                                <tr>
+                                    <td class="p-2.5 font-bold text-emerald-400">制限移動</td>
+                                    <td class="p-2.5 text-cyan-300 font-mono">固定 3 m</td>
+                                    <td class="p-2.5 text-zinc-400">可執行 主動作 + 補助動作</td>
+                                    <td class="p-2.5">若移動力未滿 3m 則降至移動力上限。不可被移動妨害。</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-amber-400">通常移動</td>
+                                    <td class="p-2.5 text-cyan-300 font-mono">移動力 (m)</td>
+                                    <td class="p-2.5 text-zinc-400">可執行 主動作 + 補助動作</td>
+                                    <td class="p-2.5">最常見的移動方式。移動途中可能遭受敵方移動妨害。</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2.5 font-bold text-pink-400">全力移動</td>
+                                    <td class="p-2.5 text-cyan-300 font-mono">移動力 × 3 (m)</td>
+                                    <td class="p-2.5 text-pink-300">迴避判定修正 <strong class="font-bold">-4</strong>，不可執行主動作</td>
+                                    <td class="p-2.5">高速長距離奔跑。僅可於移動前後執行補助動作。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    
+                <!-- 3. 亂戰區域 (發生、半徑、狀態與變化) -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-users-rays mr-2 text-amber-500"></i>3. 亂戰區域的規則與動態變化
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-amber-300 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-circle-dot"></i> 亂戰發生與半徑對照表
+                            </h4>
+                            <p class="text-zinc-400">敵對角色在同一座標執行攻擊、近接交戰或魔法時自動生成。亂戰半徑依<strong class="text-zinc-200">參與角色總數（部位數計）</strong>決定：</p>
+                            
+                            <div class="overflow-hidden rounded border border-zinc-800/80 mt-2">
+                                <table class="w-full text-center text-xs">
+                                    <thead class="bg-zinc-900 text-amber-400 font-semibold border-b border-zinc-800">
+                                        <tr>
+                                            <th class="py-1.5 px-2">參與人數 (含部位)</th>
+                                            <th class="py-1.5 px-2">亂戰區域範圍 (前後寬度)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-zinc-800/60 bg-zinc-950 text-zinc-300 font-mono">
+                                        <tr><td class="py-1 px-2">2 ～ 5 人</td><td class="py-1 px-2 text-emerald-400 font-bold">前後半徑 3 m</td></tr>
+                                        <tr><td class="py-1 px-2">6 ～ 10 人</td><td class="py-1 px-2 text-emerald-400 font-bold">前後半徑 4 m</td></tr>
+                                        <tr><td class="py-1 px-2">11 ～ 15 人</td><td class="py-1 px-2 text-emerald-400 font-bold">前後半徑 5 m</td></tr>
+                                        <tr><td class="py-1 px-2">16 ～ 20 人</td><td class="py-1 px-2 text-emerald-400 font-bold">前後半徑 6 m (上限20人)</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="text-[11px] text-zinc-500 italic">※GM 指引：單一亂戰區域上限為 20 人（部位）。多部位魔物依部位數量計算人數。</p>
+                        </div>
+    
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-amber-300 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-user-shield"></i> 亂戰狀態 vs 獨立狀態
+                            </h4>
+                            <div class="space-y-2 text-zinc-300">
+                                <div class="p-2 rounded bg-amber-950/30 border border-amber-900/40">
+                                    <span class="font-bold text-amber-400">亂戰狀態：</span>
+                                    座標強制視為「亂戰中心點」。只能近戰攻擊同亂戰內的目標。若欲離開，需先在上一回合宣告「脫離準備」或符合人數倍率脫離。
+                                </div>
+                                <div class="p-2 rounded bg-zinc-900 border border-zinc-800">
+                                    <span class="font-bold text-cyan-400">獨立狀態：</span>
+                                    位於亂戰半徑範圍內，但尚未被捲入交戰（擁有各自獨立座標）。若受敵對亂戰狀態角色干擾/攻擊，會立即轉為亂戰狀態並移至中心點。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 亂戰的結合與消滅 -->
+                    <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2 text-xs">
+                        <h4 class="font-bold text-amber-400 text-sm">亂戰區域的進階動態變化：</h4>
+                        <ul class="list-disc list-inside space-y-1 text-zinc-300 leading-relaxed">
+                            <li><strong class="text-zinc-100">亂戰區域結合：</strong> 若某一亂戰區域的中心點被捲入另一個亂戰區域內，兩區域會結合成一個新亂戰，新中心點取兩者中點（若非整數則偏向人數多的一方 0.5m 取整）。</li>
+                            <li><strong class="text-zinc-100">亂戰區域消滅：</strong> 當亂戰區域內只剩單一陣營的角色（敵方全滅或全數氣絕/脫離）時，該亂戰區域立即消失。</li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- 4. 移動妨害 (Movement Interception) -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-hand-stop mr-2 text-amber-500"></i>4. 移動妨害 (截停敵方移動)
+                    </h3>
+                    <div class="space-y-3 text-xs text-zinc-300 leading-relaxed">
+                        <p>當角色進行「通常移動」或「全力移動」通過敵對角色的<strong class="text-amber-300">制限移動範圍 (3m)</strong> 時，敵方可宣告執行移動妨害將其截停。</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80">
+                                <span class="font-bold text-amber-400 block mb-1">部位數 / 人數限制條件</span>
+                                妨害側的總部位數必須高於欲通過/脫離者的<strong class="text-cyan-300">半數 (1:2 比例)</strong>。若通過側人數（含部位）超過妨害側的 2 倍，則無法成功妨害。
+                            </div>
+                            <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80">
+                                <span class="font-bold text-amber-400 block mb-1">截停後的處理</span>
+                                被妨害的角色移動強制在中途終止，並與實施妨害的敵方角色於該座標<strong class="text-pink-400">自動形成新的亂戰區域</strong>。
+                            </div>
+                        </div>
+    
+                        <blockquote class="bg-amber-950/20 border-l-2 border-amber-500 p-2.5 rounded-r text-zinc-400">
+                            <strong class="text-amber-300">例外：</strong> 「制限移動」與具有魔法/特技「形狀：突破」的移動不會受到任何移動妨害。
+                        </blockquote>
+                    </div>
+                </div>
+    
+                <!-- 5. 射程、遮蔽、貫通與突破 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-bullseye mr-2 text-amber-500"></i>5. 射程、遮蔽與特殊範圍效果
+                    </h3>
+    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-amber-300 text-sm">遮蔽 (Cover) 與誤射 (Misfire)</h4>
+                            <ul class="space-y-1 text-zinc-300">
+                                <li><strong class="text-amber-400">亂戰區域遮蔽：</strong> 欲跨越敵對亂戰區域攻擊後方目標時會產生遮蔽（除非擁有戰鬥特技《鷹眼》）。</li>
+                                <li><strong class="text-amber-400">誤射規則：</strong> 往亂戰區域內射擊/施法時，若無《精密射擊》，目標須在亂戰內隨機抽籤選取（獨立狀態角色若在同一座標亦會算入誤射名單）。</li>
+                            </ul>
+                        </div>
+    
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-amber-300 text-sm">形狀：貫通與突破</h4>
+                            <ul class="space-y-1 text-zinc-300">
+                                <li><strong class="text-cyan-300">形狀：貫通：</strong> 以施術者座標為起點，朝指定方向直線上延伸至最大射程。路徑上所有角色均受影響。</li>
+                                <li><strong class="text-cyan-300">形狀：突破：</strong> 施術者自身隨效果衝鋒至終點。突破移動免疫移動妨害。若中途撞擊障礙物/牆壁會判定激突傷害。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 6. 補助動作時間點與物品交付 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-clock mr-2 text-amber-500"></i>6. 補助動作時間點與物品遞交
+                    </h3>
+                    <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 text-xs text-zinc-300 space-y-2">
+                        <p><strong class="text-amber-400">移動中途的補助動作：</strong> 在上級戰鬥中，角色可以在移動的「中途」執行補助動作（例如：邊跑 10m，在通過第 5m 的隊友身旁時，補助動作遞交藥水或施加強化效果），但「主動作」必須在移動徹底結束後才能執行。</p>
+                        <p><strong class="text-amber-400">道具遞交：</strong> 遞交道具者需用「主動作」宣告交付；接收者可以在自己的手番中（移動前、移動中或移動後）於同座標以「補助動作」接過道具。</p>
+                    </div>
+                </div>
+    
+            </div>
+        `
+    },
+    {
+        id: "power_table_rules",
+        content: `
+            <div class="space-y-6">
+                <!-- 標題與簡介 -->
+                <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                            <i class="fa-solid fa-table-cells text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 威力表 (Power Table 0~100)</h2>
+                            <p class="text-xs text-zinc-400">ソードワールド2.5 官方完整威力表對照與即時傷害對應查詢。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 即時威力查詢算牌器 -->
+                <div class="bg-zinc-900 border border-amber-500/40 rounded-xl p-5 space-y-3 shadow-lg">
+                    <h3 class="text-sm font-bold text-amber-400 flex items-center">
+                        <i class="fa-solid fa-calculator mr-2 text-amber-500"></i>即時威力傷害查詢 (Quick Power Calculator)
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div>
+                            <label class="block text-zinc-400 mb-1 font-medium">選擇威力 (Power)</label>
+                            <input type="number" id="calc-power-input" min="0" max="100" value="20" oninput="calcPowerResult()" class="w-full bg-zinc-950 border border-zinc-700 rounded px-3 py-1.5 text-amber-300 font-bold focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-zinc-400 mb-1 font-medium">2d6 擲骰合計 (2d Roll)</label>
+                            <select id="calc-dice-input" onchange="calcPowerResult()" class="w-full bg-zinc-950 border border-zinc-700 rounded px-3 py-1.5 text-cyan-300 font-bold focus:outline-none focus:border-amber-500">
+                                <option value="2">2 (自動失敗/自動大失敗)</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7" selected>7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="bg-zinc-950 border border-zinc-800 rounded p-2.5 flex flex-col justify-center items-center">
+                            <span class="text-zinc-500 text-[11px]">威力對應基礎傷害</span>
+                            <span id="calc-power-output" class="text-xl font-extrabold text-amber-400">4</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 完整威力表 0~100 兩欄對照卡片 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-4">
+                    <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                        <h3 class="text-sm font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-list-ol mr-2 text-amber-500"></i>全威力對照表 (0 ~ 100)
+                        </h3>
+                        <span class="text-[11px] text-zinc-500">※ 標記 <strong>*</strong> 代表結果為 0 點傷害</span>
+                    </div>
+    
+                    <!-- 對照表區塊 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs font-mono">
+                        <!-- 左欄：威力 0 ~ 50 -->
+                        <div class="overflow-x-auto rounded border border-zinc-800 bg-zinc-950">
+                            <table class="w-full text-center">
+                                <thead class="bg-zinc-900 text-amber-400 font-bold border-b border-zinc-800">
+                                    <tr>
+                                        <th class="py-1 px-1.5 bg-amber-500/10 border-r border-zinc-800">威力</th>
+                                        <th class="py-1 px-1">2</th><th class="py-1 px-1">3</th><th class="py-1 px-1">4</th>
+                                        <th class="py-1 px-1">5</th><th class="py-1 px-1">6</th><th class="py-1 px-1">7</th>
+                                        <th class="py-1 px-1">8</th><th class="py-1 px-1">9</th><th class="py-1 px-1">10</th>
+                                        <th class="py-1 px-1">11</th><th class="py-1 px-1">12</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="power-table-body-1" class="divide-y divide-zinc-800/50 text-zinc-300">
+                                    <!-- 由 JS 動態生成 0~50 數據 -->
+                                </tbody>
+                            </table>
+                        </div>
+    
+                        <!-- 右欄：威力 51 ~ 100 -->
+                        <div class="overflow-x-auto rounded border border-zinc-800 bg-zinc-950">
+                            <table class="w-full text-center">
+                                <thead class="bg-zinc-900 text-amber-400 font-bold border-b border-zinc-800">
+                                    <tr>
+                                        <th class="py-1 px-1.5 bg-amber-500/10 border-r border-zinc-800">威力</th>
+                                        <th class="py-1 px-1">2</th><th class="py-1 px-1">3</th><th class="py-1 px-1">4</th>
+                                        <th class="py-1 px-1">5</th><th class="py-1 px-1">6</th><th class="py-1 px-1">7</th>
+                                        <th class="py-1 px-1">8</th><th class="py-1 px-1">9</th><th class="py-1 px-1">10</th>
+                                        <th class="py-1 px-1">11</th><th class="py-1 px-1">12</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="power-table-body-2" class="divide-y divide-zinc-800/50 text-zinc-300">
+                                    <!-- 由 JS 動態生成 51~100 數據 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
+    },
+    {
+        id: "battle_dancer_rules",
+        content: `
+            <div class="space-y-6">
+                <!-- 標題與簡介 -->
+                <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                            <i class="fa-solid fa-shoe-prints text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 舞鬥士技能 (Battle Dancer / バトルダンサー)</h2>
+                            <p class="text-xs text-zinc-400">表格 A 戰士系技能。以輕盈如舞蹈般的動作翻弄敵人，兼具近接攻擊與高迴避能力的閃避型戰士。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 1. 基本特徵與行為判定 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-bullseye mr-2 text-amber-500"></i>1. 技能判定與傷害計算
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-amber-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-dice-d6"></i> 進行判定
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                可進行<strong class="text-amber-300">「命中力判定」</strong>與<strong class="text-amber-300">「迴避力判定」</strong>。所有目前開放為 PC 的種族皆可習得與使用。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-cyan-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-gavel"></i> 額外傷害 (Damage)
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                物理傷害決定時，武器的追加傷害可計入<strong class="text-cyan-300">「舞鬥士技能等級 + 筋力加成」</strong>。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-emerald-400 font-bold flex items-center gap-1.5">
+                                <i class="fa-solid fa-music"></i> 咒歌【Dance】無效化
+                            </div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                使用舞鬥士技能進行命中或迴避判定時，<strong class="text-emerald-300">完全不受咒歌【Dance】的懲罰修正影響</strong>。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 2. 可使用武器與防具限制 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-shield-cat mr-2 text-amber-500"></i>2. 武器與防具裝備限制
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-emerald-400 text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-sword"></i> 可使用武器
+                            </h4>
+                            <p class="text-zinc-300 leading-relaxed">
+                                只要滿足必要筋力與階級，可使用絕大多數的<strong class="text-emerald-300">近接武器</strong>與<strong class="text-emerald-300">投擲武器</strong>。亦可使用標記為<strong class="text-amber-300">「拳鬥士專用 (グラップラー專用)」</strong>的武器。
+                            </p>
+                            <p class="text-pink-400 text-[11px]">※ 所有的射擊武器 (弓、弩、魔動槍等) 皆無法使用。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-pink-400 text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield"></i> 防具與盾牌限制
+                            </h4>
+                            <p class="text-zinc-300 leading-relaxed">
+                                防具受極大限制：僅能穿著標記為<strong class="text-amber-300">「拳鬥士專用」</strong>或<strong class="text-amber-300">「拳鬥士可裝備」</strong>的防具。
+                            </p>
+                            <p class="text-pink-400 font-bold text-[11px]">※ 完全無法裝備任何盾牌。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 3. 宣言特技欄追加與自動習得特技 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-hat-wizard mr-2 text-amber-500"></i>3. 特技習得與「宣言特技欄追加」
+                    </h3>
+    
+                    <!-- 宣言特技欄追加說明 -->
+                    <div class="bg-zinc-950 p-4 rounded-lg border border-amber-500/30 space-y-3 text-xs">
+                        <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+                            <i class="fa-solid fa-plus-circle"></i> 宣言特技欄追加 (舞鬥士 1 級特權)
+                        </div>
+                        <p class="text-zinc-300 leading-relaxed">
+                            當舞鬥士技能達到 <strong class="text-amber-400">1 級</strong> 時，可獲得 <strong class="text-cyan-300">1 個額外的宣言特技欄位</strong>以此欄位習得的宣言特技，僅限於使用舞鬥士技能進行命中判定或迴避判定時宣告使用。
+                        </p>
+                        
+                        <div class="overflow-x-auto mt-2">
+                            <table class="w-full text-left border border-zinc-800 rounded overflow-hidden">
+                                <thead class="bg-zinc-900 text-amber-400 font-semibold border-b border-zinc-800">
+                                    <tr>
+                                        <th class="p-2">可選擇的追加宣言特技</th>
+                                        <th class="p-2">備註與限制</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-zinc-800/60 bg-zinc-950 text-zinc-300">
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《庇護攻擊 I (迂回攻撃Ⅰ)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《斬返 I (斬り返しⅠ)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《牽制攻擊 I (牽制攻撃Ⅰ)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《全力攻擊 I (全力攻撃Ⅰ)》</td><td class="p-2">無法替換為《全力攻擊 III</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《挑釁攻擊 I (挑発攻撃Ⅰ)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《必殺攻擊 I (必殺攻撃Ⅰ)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《魔力擊 (魔力撃)》</td><td class="p-2">－</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《陰影步 I (シャドウステップⅠ)》</td><td class="p-2 text-amber-400">放浪者 (Vagrant) 專用</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《捨身攻擊 I (捨て身攻撃Ⅰ)》</td><td class="p-2 text-amber-400">放浪者 (Vagrant) 專用</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《露拂 (露払い)》</td><td class="p-2 text-amber-400">放浪者 (Vagrant) 專用</td></tr>
+                                    <tr><td class="p-2 text-cyan-300 font-bold">《亂擊 I (乱撃Ⅰ)》</td><td class="p-2 text-amber-400">放浪者 (Vagrant) 專用</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+    
+                    <!-- 自動習得特技 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-amber-400 font-bold text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> 舞鬥士 7 級自動習得
+                            </div>
+                            <p class="text-cyan-300 font-bold">《舞動流轉 (舞い流し)》</p>
+                            <p class="text-zinc-400 leading-relaxed">當舞鬥士等級達到 7 級時，自動免費獲得此戰鬥特技。</p>
+                        </div>
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-1.5">
+                            <div class="text-amber-400 font-bold text-sm flex items-center gap-1.5">
+                                <i class="fa-solid fa-crown"></i> 舞鬥士 13 級自動習得
+                            </div>
+                            <p class="text-cyan-300 font-bold">《戰鬥大師 (バトルマスター)》</p>
+                            <p class="text-zinc-400 leading-relaxed">當舞鬥士等級達到 13 級時，自動免費獲得《戰鬥大師》。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 4. 舞鬥士的建立與流派方向指南 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-compass mr-2 text-amber-500"></i>4. 舞鬥士的三大建育方向指南
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-2">
+                            <div class="text-amber-400 font-bold text-sm">① 攻擊力重視型</div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                習得《武器習熟 A / **》，配備雙手 (2H) 強力武器。利用追加的宣言特技欄位搭配《斬返 I》或《牽制攻擊 I》來維持穩定的命中與極高傷害。特別推薦高筋力種族。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-2">
+                            <div class="text-cyan-400 font-bold text-sm">② 攻擊次數重視型</div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                習得《左右開弓 (両手利き)》進行雙持攻擊。雖然雙持會降低命中，但可利用《牽制攻擊 I》或《掩護攻擊 I》來彌補命中缺陷。極為適合靈巧高、筋力適中的種族。
+                            </p>
+                        </div>
+                        <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-2">
+                            <div class="text-emerald-400 font-bold text-sm">③ 迴避力重視型</div>
+                            <p class="text-zinc-300 leading-relaxed">
+                                習得《防具習熟 A / 非金屬鎧》，極限強化迴避力與防護點。配合《挑釁攻擊 I》吸引敵方火力，或放浪者專用的《影步 I》兼具迴避與輸出，成為無法被擊中的極限前線坦角。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+        `
+    },
+    {
+        id: "feat_rules",
+        content: `
+            <div class="space-y-6">
+                <!-- 標題區 -->
+                <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                            <i class="fa-solid fa-burst text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 戰鬥特技運用注意事項 (Combat Feat Rules)</h2>
+                            <p class="text-xs text-zinc-400">官方關於《庇護》、《魔法擴大/全》、《多重動作》以及複數同時攻擊特技組合的詳細說明與疑義解答。</p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 1. 《掩護 (かばう)》的運用細則 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-shield-heart mr-2 text-amber-500"></i>1. 《庇護 (かばう)》的運用細則
+                    </h3>
+    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-amber-300 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-circle-exclamation"></i> 非「攻擊對象變更」
+                            </h4>
+                            <p class="text-zinc-300 leading-relaxed">
+                                《掩護》生效並不視為改變攻擊目標。因此若敵人發動《追加攻擊》或《左右開弓》進行第二次攻擊，第二次攻擊依然會針對<strong class="text-amber-300">原本被瞄準的角色</strong>，而非庇護者。魔物的【○連續攻擊】同理。
+                            </p>
+                        </div>
+    
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-cyan-300 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-wand-sparkles"></i> 魔物特殊能力與判定
+                            </h4>
+                            <p class="text-zinc-300 leading-relaxed">
+                                對抗判定為<strong class="text-cyan-300">「回避力／消滅」</strong>的魔物能力可以觸發《掩護》。但若該能力為範圍攻擊且庇護者與被庇護者同時處於範圍內，則無法發動庇護。
+                            </p>
+                            <p class="text-pink-400 text-[11px]">※ 無法進行迴避判定的魔法或特殊能力完全無法掩護。即使舞鬥士以《舞動流轉》將判定改為迴避判定亦同。</p>
+                        </div>
+    
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 space-y-2">
+                            <h4 class="font-bold text-emerald-300 flex items-center gap-1.5 text-sm">
+                                <i class="fa-solid fa-ban"></i> 宣告次數限制
+                            </h4>
+                            <p class="text-zinc-300 leading-relaxed">
+                                即使擁有多次宣告能力，1 回合內也<strong class="text-emerald-400">無法重複宣告《庇護》</strong>來替多名角色承受傷害。必須習得《護衛 (ガーディアン)》才能以 1 次宣告庇護多人。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 2. 《魔法擴大/全 (魔法拡大すべて)》 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center mr-2 text-amber-500"></i>2. 《魔法擴大/全 (魔法拡大すべて)》
+                    </h3>
+    
+                    <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800/80 text-xs text-zinc-300 space-y-3">
+                        <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                            <i class="fa-solid fa-gem"></i> 等同於獲得所有《魔法擴大／**》
+                        </div>
+                        <p class="leading-relaxed">
+                            習得《魔法擴大／全》視同該角色同時擁有所有的《魔法擴大／**》特技。效果持續「10 秒（1 回合）」。
+                        </p>
+                        <div class="p-3 bg-zinc-900 rounded border border-zinc-800 space-y-1">
+                            <span class="font-bold text-cyan-400">手番內多次施法時的組合自由度：</span>
+                            <p class="text-zinc-400">
+                                在同一手番中若進行多次施法（如搭配《符文大師》或《雙重詠唱》），每次施法均可自由決定組合何種擴大效果。例如：第 1 次施法宣告【距離+威力確實化+確實化+範圍】，第 2 次施法宣告【數量倍增】。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 3. 《多重動作 (マルチアクション)》的運用與順序 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-arrows-split-up-and-left mr-2 text-amber-500"></i>3. 《多重動作 (マルチアクション)》的極限運用與宣告條件
+                    </h3>
+    
+                    <div class="space-y-3 text-xs">
+                        <div class="bg-zinc-950 p-4 rounded-lg border border-amber-500/30 text-zinc-300 space-y-2">
+                            <span class="font-bold text-amber-400 text-sm block">宣告對象限制 (僅限主動作)</span>
+                            <p class="leading-relaxed">
+                                《多重動作》只能在作為<strong class="text-amber-300">「主動作」</strong>執行的近接攻擊或魔法行使時宣告。由《追加攻擊》、《追擊》、《跳躍蹴擊》、《踏步蹴擊》、《雙重詠唱》所獲得的追加攻擊/施法，皆<strong class="text-pink-400">無法宣告《多重動作》</strong>。
+                            </p>
+                        </div>
+    
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                                <span class="font-bold text-cyan-400 block text-sm">與《先攻動作》配合</span>
+                                <p class="text-zinc-300">
+                                    《先攻動作 (ファストアクション)》賦予額外的主動作。若擁有《變幻自在》或《戰鬥大師》，可連續執行 2 次「近接攻擊+施魔法」的雙重組合。
+                                </p>
+                            </div>
+    
+                            <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                                <span class="font-bold text-emerald-400 block text-sm">與《左右開弓》配合</span>
+                                <p class="text-zinc-300">
+                                    必須在<strong class="text-emerald-300">第 1 次近接攻擊時宣告</strong>。《多重動作》的魔法行使夾在第 1 次與第 2 次近接攻擊之間（先攻魔法時則為：魔法 ➔ 攻擊1 ➔ 攻擊2）。若擁有《雙擊》，可在看清魔法結果後再指定第 2 次攻擊目標。
+                                </p>
+                            </div>
+    
+                            <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800/80 space-y-1.5">
+                                <span class="font-bold text-pink-400 block text-sm">與《雙重詠唱》配合的順序</span>
+                                <p class="text-zinc-300">
+                                    必須<strong class="text-pink-300">優先宣告《雙重詠唱》並先執行魔法</strong>！若先近戰攻擊並宣告《多重動作》，後續施法將不再屬於主動作，導致無法觸發《雙重詠唱》。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 4. 複數同時攻擊特技組合對照表 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4">
+                    <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+                        <i class="fa-solid fa-table-list mr-2 text-amber-500"></i>4. 複數同時攻擊特技 (如《薙掃》) 組合處理對照表
+                    </h3>
+    
+                    <p class="text-xs text-zinc-400">當角色同時宣告《薙掃 (薙ぎ払い)》等能攻擊複數目標的特技，並疊加其他宣言特技時的處理規則：</p>
+    
+                    <div class="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950">
+                        <table class="w-full text-left text-xs text-zinc-300">
+                            <thead class="bg-zinc-900 text-amber-400 font-bold border-b border-zinc-800">
+                                <tr>
+                                    <th class="p-3 border-r border-zinc-800 w-1/3">搭配的宣言特技</th>
+                                    <th class="p-3">組合後的處理規則與限制</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-800/60 font-sans">
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-pink-400 border-r border-zinc-800">
+                                        《囓咬》《牙折》《盾牌衝擊》《陰影步(效果2)》《掠奪》
+                                    </td>
+                                    <td class="p-3 text-pink-300 font-bold">完全不可組合 (不可併用)</td>
+                                </tr>
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-emerald-400 border-r border-zinc-800">
+                                        《牽制攻擊》《挑釁攻擊》
+                                    </td>
+                                    <td class="p-3 text-emerald-300">適用於被《薙掃》攻擊的<strong class="font-bold">所有目標</strong></td>
+                                </tr>
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-cyan-400 border-r border-zinc-800">
+                                        《全力攻擊》《必殺攻擊》《魔力擊》《鎧貫》《捨身攻擊》《露拂》
+                                    </td>
+                                    <td class="p-3 text-zinc-300">
+                                        效果僅能套用於<strong class="text-cyan-300">命中的目標中隨機選擇的 1 體</strong>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-amber-400 border-r border-zinc-800">
+                                        《斬返 I》
+                                    </td>
+                                    <td class="p-3 text-zinc-300">
+                                        僅能對被迴避掉的<strong class="text-amber-300">所有目標再次發動攻擊</strong>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-amber-400 border-r border-zinc-800">
+                                        《斬返 II》
+                                    </td>
+                                    <td class="p-3 text-zinc-300">
+                                        可對被迴避的所有目標再次攻擊；且初擊命中的目標中，可選擇 1 體增加傷害
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-zinc-900/40">
+                                    <td class="p-3 font-bold text-purple-400 border-r border-zinc-800">
+                                        《多重動作》
+                                    </td>
+                                    <td class="p-3 text-purple-300">
+                                        不論《薙掃》攻擊了多少目標，附隨的<strong class="font-bold">魔法行使依然只有 1 次</strong>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `
+    }
+]
