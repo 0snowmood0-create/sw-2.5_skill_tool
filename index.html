@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <meta name="robots" content="noindex">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SW2.5 技能速查工具</title>
+    <title>SW2.5 技能與道具速查工具</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -31,22 +32,25 @@
         }
     </script>
 </head>
-<body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100">
+<body class="min-h-screen flex flex-col bg-zinc-950 text-zinc-100 font-sans">
     <!-- 頁頭 Header -->
     <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50 shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row justify-between items-center gap-3">
             <div class="flex items-center space-x-3">
                 <i class="fa-solid font-bold text-amber-500 text-2xl fa-book-bookmark"></i>
-                <h1 class="text-xl md:text-2xl font-bold font-title text-amber-500 tracking-wider">SW2.5 技能速查表</h1> 
+                <h1 class="text-xl md:text-2xl font-bold font-title text-amber-500 tracking-wider">SW2.5 速查對照表</h1> 
             </div>
             
-            <!-- 一級主頁籤導覽列 (精簡為 2 個主頁籤) -->
+            <!-- 一級主頁籤導覽列 (技能檢索 / 道具檢索 / 技能規則) -->
             <nav class="flex gap-2 text-sm md:text-base">
-                <button onclick="switchMainTab('bards')" id="tab-bards" class="py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30">
-                    <i class="fa-solid fa-list-check mr-1"></i> 技能檢索
+                <button id="tab-bards" onclick="switchMainTab('bards')" class="py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>技能檢索
                 </button>
-                <button onclick="switchMainTab('rules')" id="tab-rules" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
-                    <i class="fa-solid fa-book mr-1"></i> 技能規則
+                <button id="tab-items" onclick="switchMainTab('items')" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
+                    <i class="fa-solid fa-bag-shopping mr-1"></i>道具檢索
+                </button>
+                <button id="tab-rules" onclick="switchMainTab('rules')" class="py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent">
+                    <i class="fa-solid fa-scroll mr-1"></i>技能規則
                 </button>
             </nav>
         </div>
@@ -60,29 +64,65 @@
             <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 grid grid-cols-1 md:grid-cols-4 gap-4 shadow-md">
                 <div class="md:col-span-2 relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-zinc-500"></i>
-                    <input type="text" id="bard-search" oninput="filterBardSongs()" placeholder="搜尋名稱、概要或效果描述..." 
+                    <input type="text" id="bard-search" oninput="filterBardSongs()" placeholder="搜尋名稱、日文名、概要、效果或道具說明..." 
                         class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:border-amber-500 text-sm">
                 </div>
                 <div>
                     <select id="bard-category-filter" onchange="filterBardSongs()" class="w-full bg-zinc-800 border border-zinc-700 text-zinc-200 rounded-lg px-3 py-2 focus:outline-none focus:border-amber-500 text-sm">
                         <option value="">所有分類</option>  
-                        <option value="吟遊詩人">吟遊詩人</option>
-                        <option value="魔動機術">魔動機術</option>
-                        <option value="操靈魔法">操靈魔法</option>
-                        <option value="真語魔法">真語魔法</option>
-                        <option value="深智魔法">深智魔法</option>
-                        <option value="神聖魔法">神聖魔法</option>
-                        <option value="妖精魔法">妖精魔法</option>
-                        <option value="賦術">賦術</option>
-                        <option value="操氣">操氣</option>
-                        <option value="森羅魔法">森羅魔法</option>
-                        <option value="軍師">軍師</option>
-                        <option value="天地使">天地使</option>
-                        <option value="奈洛魔法">奈洛魔法</option>
-                        <option value="騎藝">騎藝</option>
-                        <option value="典籍魔導士">祕奧魔法</option>
-                        <option value="練體士">練技</option>
-                        <option value="戰鬥特技">戰鬥特技</option>
+
+                        <!-- 魔法與技能分類 -->
+                        <optgroup label="魔法 / 技能">
+                            <option value="吟遊詩人">吟遊詩人 (咒歌/終律)</option>
+                            <option value="魔動機術">魔動機術</option>
+                            <option value="操靈魔法">操靈魔法</option>
+                            <option value="真語魔法">真語魔法</option>
+                            <option value="深智魔法">深智魔法</option>
+                            <option value="神聖魔法">神聖魔法</option>
+                            <option value="妖精魔法">妖精魔法</option>
+                            <option value="賦術">賦術</option>
+                            <option value="操氣">操氣 (暗獵者)</option>
+                            <option value="森羅魔法">森羅魔法</option>
+                            <option value="軍師">軍師 (鼓咆/陣率)</option>
+                            <option value="天地使">天地使</option>
+                            <option value="奈洛魔法">奈洛魔法</option>
+                            <option value="騎藝">騎藝</option>
+                            <option value="典籍魔導士">祕奧魔法</option>
+                            <option value="練體士">練技</option>
+                            <option value="戰鬥特技">戰鬥特技</option>
+                        </optgroup>
+
+                        <!-- 依據 SW2.5 道具工作表新增的武器/防具/道具分類 -->
+                        <optgroup label="武器">
+                            <option value="劍">劍</option>
+                            <option value="槍">槍</option>
+                            <option value="斧">斧</option>
+                            <option value="打擊">打擊</option>
+                            <option value="拋射">拋射</option>
+                            <option value="格鬥">格鬥</option>
+                            <option value="投擲">投擲</option>
+                            <option value="魔動機槍">魔動機槍</option>
+                        </optgroup>
+
+                        <optgroup label="防具">
+                            <option value="非金屬鎧">非金屬鎧</option>
+                            <option value="金屬鎧">金屬鎧</option>
+                            <option value="盾">盾</option>
+                        </optgroup>
+
+                        <optgroup label="專用裝備與資材">
+                            <option value="賦術資材">賦術資材</option>
+                            <option value="魔動機術資材">魔動機術資材</option>
+                            <option value="樂器">樂器</option>
+                            <option value="神聖象徵">神聖象徵</option>
+                            <option value="妖精依代">妖精依代</option>
+                        </optgroup>
+
+                        <optgroup label="冒險通用道具">
+                            <option value="冒險者道具">冒險者道具</option>
+                            <option value="裝飾品">裝飾品</option>
+                            <option value="藥品與藥草">藥品與藥草</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div>
@@ -112,6 +152,7 @@
                 <span>經驗點表：<strong>經驗表 A / B</strong></span>
             </div>
 
+            <!-- 技能與道具卡片顯示容器 -->
             <div id="bard-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
 

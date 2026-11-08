@@ -1,7 +1,7 @@
 // ==========================================
 // 暗獵者 (Dark Hunter) 操氣技能資料模組
 // ==========================================
-export const darkHunterSkillsData = [
+export const darkhunterData = [
   // --- Lv 1 ---
   {
     category: "操氣", type: "操氣", req_level: 1, name: ">> 氣集中 (気集中)",

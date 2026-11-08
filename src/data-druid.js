@@ -1,4 +1,4 @@
-export const druidSkillsData = [
+export const druidData = [
   {
     level: 1,
     name: "微風之翼（ウイングフライアー）",

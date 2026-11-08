@@ -1,4 +1,4 @@
-export const fairySpellsData = [
+export const fairyData = [
   // ==================== 工作表：基本妖精魔法 ====================
   {
     category: "妖精魔法",
