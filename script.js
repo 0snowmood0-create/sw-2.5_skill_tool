@@ -1,6 +1,6 @@
 import { allSkillsData, allItemsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
-
+import { racesContent } from './src/racesData.js'; // 匯入獨立種族資料
 // ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
@@ -9,12 +9,12 @@ window.switchMainTab = function(tabName) {
     const subtabsNav = document.getElementById('rule-subtabs-nav');
     const rulesContainer = document.getElementById('rules-container');
 
-    // 1. 【重置高亮】徹底清除頂層導覽列所有按鈕的高亮樣式
+    // 1. 重置所有導覽列按鈕高亮
     document.querySelectorAll('.main-tab-btn').forEach(btn => {
         btn.className = "main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap";
     });
 
-    // 2. 【單一高亮】僅對目前點擊的按鈕加上金色高亮
+    // 2. 僅高亮當前點擊的按鈕
     const activeBtn = document.getElementById(`tab-${tabName}`);
     if (activeBtn) {
         activeBtn.className = "main-tab-btn py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 whitespace-nowrap";
@@ -23,7 +23,7 @@ window.switchMainTab = function(tabName) {
     // 3. 隱藏所有主要 Section 區塊
     [secBards, secItems, secRules].forEach(sec => sec && sec.classList.add('hidden'));
 
-    // 4. 根據傳入的 tabName 決定要顯示的內容
+    // 4. 切換顯示內容
     if (tabName === 'bards') {
         if (secBards) secBards.classList.remove('hidden');
         if (typeof window.filterBardSongs === 'function') window.filterBardSongs();
@@ -31,28 +31,32 @@ window.switchMainTab = function(tabName) {
         if (secItems) secItems.classList.remove('hidden');
         if (typeof window.filterItems === 'function') window.filterItems();
     } else {
-        // 開啟規則頁面主要容器
         if (secRules) secRules.classList.remove('hidden');
 
-        // 判斷是否為「技能規則」總頁面
         if (tabName === 'rules') {
-            // 顯示職業技能子選單
+            // 切換至技能規則：顯示子選單
             if (subtabsNav) subtabsNav.classList.remove('hidden');
-            // 預設切換至第一個技能規則 (吟遊詩人)
             if (typeof window.switchRuleSubTab === 'function') {
                 window.switchRuleSubTab('bard_rules');
             }
         } else {
-            // 切換至獨立頁面 (上級戰鬥規則 / 威力表 / 戰鬥特技規則 / 舞鬥士 等) -> 隱藏職業技能子選單
+            // 切換至獨立頁面 (種族 / 上級戰鬥 / 威力表 等)：隱藏子選單
             if (subtabsNav) subtabsNav.classList.add('hidden');
 
-            // 尋找並渲染對應規則內容
-            const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === tabName) : null;
-            if (rulesContainer && sectionData) {
-                rulesContainer.innerHTML = sectionData.content;
+            if (tabName === 'races') {
+                // 直接渲染獨立 racesData.js 的內容
+                if (rulesContainer) {
+                    rulesContainer.innerHTML = racesContent;
+                }
+            } else {
+                // 渲染其餘來自 rules.js 的規則
+                const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === tabName) : null;
+                if (rulesContainer && sectionData) {
+                    rulesContainer.innerHTML = sectionData.content;
+                }
             }
 
-            // 若點擊的是威力表，自動渲染表格與算牌器
+            // 威力表初始化
             if (tabName === 'power_table_rules') {
                 setTimeout(() => {
                     if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
