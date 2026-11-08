@@ -1,4 +1,5 @@
 export const bibliomancerSpellsData = [
+  
   {
     category: "典籍魔導士",
     type: "行使框",

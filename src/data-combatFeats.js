@@ -1,4 +1,4 @@
-export const declaredFeatsData = [
+export const combatFeatsData = [
     {
       name: "內圍戰法I",
       nameJp: "インファイトI",

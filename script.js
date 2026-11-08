@@ -1,37 +1,47 @@
 import { allSkillsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
 
-// ==================== 1. 主頁籤切換 (技能檢索 vs 技能規則) ====================
+// ==================== 1. 主頁籤切換 (技能檢索 vs 道具檢索 vs 技能規則) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
     const secRules = document.getElementById('sec-rules');
     const tabBardsBtn = document.getElementById('tab-bards');
+    const tabItemsBtn = document.getElementById('tab-items');
     const tabRulesBtn = document.getElementById('tab-rules');
+    const categoryField = document.getElementById('bard-category-filter');
 
     if (!secBards || !secRules) return;
+
+    // 重置主頁籤按鈕樣式
+    [tabBardsBtn, tabItemsBtn, tabRulesBtn].forEach(btn => {
+        if (btn) {
+            btn.className = "py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent";
+        }
+    });
 
     if (tabName === 'bards') {
         secBards.classList.remove('hidden');
         secRules.classList.add('hidden');
-
         if (tabBardsBtn) {
             tabBardsBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
         }
-        if (tabRulesBtn) {
-            tabRulesBtn.className = "py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent";
+    } else if (tabName === 'items') {
+        secBards.classList.remove('hidden');
+        secRules.classList.add('hidden');
+        if (tabItemsBtn) {
+            tabItemsBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
         }
     } else if (tabName === 'rules') {
         secBards.classList.add('hidden');
         secRules.classList.remove('hidden');
-
         if (tabRulesBtn) {
             tabRulesBtn.className = "py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30";
         }
-        if (tabBardsBtn) {
-            tabBardsBtn.className = "py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent";
-        }
-
         switchRuleSubTab('bard_rules');
+    }
+
+    if (typeof filterBardSongs === 'function') {
+        filterBardSongs();
     }
 };
 
@@ -68,15 +78,14 @@ window.switchTab = function(tabId) {
 // ==================== 3. 效能優化變數與防抖機制 ====================
 let currentFilteredList = [];
 let currentPage = 1;
-const pageSize = 20; // 每次只載入 20 筆
+const pageSize = 20; // 限制單次載入上限為 20 筆
 let debounceTimer = null;
 
-// 防抖搜尋觸發
 window.filterBardSongs = function() {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         executeFilter();
-    }, 250); // 停止輸入 250ms 後才執行過濾與渲染
+    }, 250);
 };
 
 function executeFilter() {
@@ -90,9 +99,12 @@ function executeFilter() {
     const categoryFilter = categoryField ? categoryField.value : '';
     const levelFilterVal = levelField ? levelField.value : '';
 
-    const dataset = (typeof allSkillsData !== 'undefined') ? allSkillsData : [];
+    // 防護機制：確保 dataset 為有效陣列，避免 allSkillsData 未載入時直接報錯
+    const dataset = (typeof allSkillsData !== 'undefined' && Array.isArray(allSkillsData)) ? allSkillsData : [];
 
     currentFilteredList = dataset.filter(b => {
+        if (!b) return false;
+        
         const matchesQuery = !query || 
             (b.name && b.name.toLowerCase().includes(query)) || 
             (b.nameJp && b.nameJp.toLowerCase().includes(query)) ||
@@ -115,7 +127,6 @@ function executeFilter() {
         return matchesQuery && matchesCategory && matchesLevel;
     });
 
-    // 重置分頁並開始渲染
     currentPage = 1;
     renderBardSongs(true);
 }
@@ -168,6 +179,108 @@ export function renderCombatFeatCard(feat) {
                     ` : ''}
                     <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
                         ${feat.effect || ''}
+                    </p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// ==================== 5. 道具與裝備專用卡片 HTML 生成 ====================
+export function renderItemCard(item) {
+    const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍"].includes(item.category);
+    const isArmor = ["非金屬鎧", "金屬鎧", "盾"].includes(item.category);
+    const isGeograph = item.name && item.name.includes("地貌儀");
+
+    let attrTableHTML = '';
+
+    if (isWeapon) {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">用法</span>
+                <span class="text-center text-cyan-300 font-bold">${item.usage || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">必力</span>
+                <span class="text-center text-amber-300 font-bold">${item.req_str || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">命中</span>
+                <span class="text-right text-emerald-300 font-bold">${item.acc || '+0'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">威力</span>
+                <span class="text-center text-pink-400 font-bold">${item.power || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">C值</span>
+                <span class="text-center text-purple-300 font-bold">${item.crit || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+        `;
+    } else if (isArmor) {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">用法</span>
+                <span class="text-center text-cyan-300 font-bold">${item.usage || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">必力</span>
+                <span class="text-center text-amber-300 font-bold">${item.req_str || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">迴避</span>
+                <span class="text-right text-emerald-300 font-bold">${item.evasion || '0'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">防護點</span>
+                <span class="text-center text-emerald-400 font-bold">${item.defense || '0'}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="col-span-3 text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+        `;
+    } else if (isGeograph) {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">範圍</span>
+                <span class="col-span-3 text-cyan-300 font-medium">${item.range || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">天/地/人脈</span>
+                <span class="col-span-5 text-emerald-300 font-medium">天:${item.sky_limit} / 地:${item.earth_limit} / 人:${item.human_limit}</span>
+            </div>
+        `;
+    } else {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">類別</span>
+                <span class="col-span-2 text-center text-cyan-300 font-medium">${item.category || '道具'}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || '非賣品'}</span>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col justify-between">
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800 font-medium">
+                        ${item.category || '道具'}
+                    </span>
+                    <h3 class="text-base font-bold text-amber-400 ml-1">
+                        <i class="fa-solid fa-box-open mr-1.5 text-amber-500"></i>${item.name}
+                        ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
+                    </h3>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-3">
+                <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
+                    ${attrTableHTML}
+                </div>
+
+                <div class="space-y-2">
+                    ${item.summary ? `
+                        <div class="text-xs font-bold text-amber-500 flex items-center">
+                            <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${item.summary}
+                        </div>
+                    ` : ''}
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
+                        ${item.effect || ''}
                     </p>
                 </div>
             </div>
@@ -329,7 +442,7 @@ function createSkillCardHTML(b) {
     `;
 }
 
-// ==================== 5. 批次 DOM 渲染與分頁懶載入 ====================
+// ==================== 6. 批次 DOM 渲染與分頁懶載入 ====================
 function renderBardSongs(isNewSearch = false) {
     const container = document.getElementById('bard-list');
     const countEl = document.getElementById('song-count');
@@ -345,7 +458,7 @@ function renderBardSongs(isNewSearch = false) {
         container.innerHTML = `
             <div class="col-span-full text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
                 <i class="fa-solid fa-ghost text-4xl text-zinc-600 mb-3"></i>
-                <p class="text-zinc-400 text-sm">沒有找到符合條件的技能或魔法。</p>
+                <p class="text-zinc-400 text-sm">沒有找到符合條件的技能、魔法或道具。</p>
             </div>
         `;
         return;
@@ -357,13 +470,29 @@ function renderBardSongs(isNewSearch = false) {
 
     if (pageItems.length === 0) return;
 
-    // 使用 DocumentFragment 進行一次性 DOM 掛載
+    const itemCategories = [
+        // 武器類
+        "劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "彈藥",
+        // 防具與盾牌
+        "非金屬鎧", "金屬鎧", "盾",
+        // 冒險者道具與技能專用道具
+        "冒險者道具", "特殊樂器", "魔導書", "地貌儀", "技能道具", "冒險工具", "消耗品",
+        // 各類裝飾品與部位
+        "裝飾品", "頭部裝飾", "臉部裝飾", "耳部裝飾", "頸部裝飾", "背部裝飾", "手部裝飾", "腰部裝飾", "足部裝飾", "其他裝飾",
+        // 藥品、資材與其他
+        "藥品與藥草", "賦術資材", "魔動機術資材", "樂器", "神聖象徵", "妖精依代"
+    ];
+
     const fragment = document.createElement('template');
     let htmlChunk = '';
 
     pageItems.forEach(b => {
+        const isItem = itemCategories.includes(b.category);
         const isCombatFeat = b.category === "戰鬥特技" || ['被動', '宣言', '主動作', '自動'].includes(b.type);
-        if (isCombatFeat) {
+
+        if (isItem) {
+            htmlChunk += renderItemCard(b);
+        } else if (isCombatFeat) {
             htmlChunk += renderCombatFeatCard(b);
         } else {
             htmlChunk += createSkillCardHTML(b);
@@ -374,7 +503,7 @@ function renderBardSongs(isNewSearch = false) {
     container.appendChild(fragment.content);
 }
 
-// 捲動到底部自動載入下一頁
+// 捲動到底部自動載入下一頁 (每頁 20 筆)
 window.addEventListener('scroll', () => {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
         if (currentPage * pageSize < currentFilteredList.length) {
@@ -384,7 +513,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// ==================== 6. 動態渲染規則內容 ====================
+// ==================== 7. 動態渲染規則內容 ====================
 function renderRules() {
     const container = document.getElementById('rules-container');
     if (!container || !Array.isArray(ruleSections)) return;
@@ -399,7 +528,7 @@ function renderRules() {
     }).join('');
 }
 
-// ==================== 7. 頁面初始化 ====================
+// ==================== 8. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
     renderRules();
     switchMainTab('bards');

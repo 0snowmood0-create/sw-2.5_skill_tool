@@ -1,7 +1,7 @@
 // ==========================================
 // 深智魔法 (Deep Wisdom Magic) 資料模組
 // ==========================================
-export const wizardSpellsData = [
+export const wizardData = [
   // --- Lv 1 ---
   {
     category: "深智魔法", type: "深智魔法", req_level: 1, name: "巫師印記 (ウィザード・サイン)",

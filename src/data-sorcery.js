@@ -1,7 +1,7 @@
   // ==========================================
   // 真語魔法 (Sorcery) 技能與魔法資料模組 (Lv 1~15)
   // ==========================================
-  export const sorcerySpellsData = [
+  export const sorceryData = [
   // --- Lv 1 ---
   {
     category: "真語魔法", type: "真語魔法", req_level: 1, name: "能量箭 (エナジー・ボルト)",
