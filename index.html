@@ -43,6 +43,9 @@
             
             <!-- 一級主頁籤導覽列 (同一層平鋪) -->
             <nav class="flex gap-2 text-sm md:text-base overflow-x-auto custom-scrollbar pb-1 max-w-full">
+                <button id="tab-races" onclick="switchMainTab('races')" class="main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap">
+                    <i class="fa-solid fa-users mr-1"></i>種族
+                </button>
                 <button id="tab-bards" onclick="switchMainTab('bards')" class="main-tab-btn py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 whitespace-nowrap">
                     <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>技能檢索
                 </button>
