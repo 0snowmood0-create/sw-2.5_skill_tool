@@ -1,6 +1,10 @@
 import { allSkillsData, allItemsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
-import { racesContent } from './src/racesData.js'; // 匯入獨立種族資料
+import { racesContent } from './src/racesData.js'; 
+import { otherRulesContent } from './src/otherRulesData.js'; 
+import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
+import { reputationRankContent } from './src/reputationRankData.js'; // 若有新增名譽點模組
+
 // ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
@@ -34,22 +38,38 @@ window.switchMainTab = function(tabName) {
         if (secRules) secRules.classList.remove('hidden');
 
         if (tabName === 'rules') {
-            // 切換至技能規則：顯示子選單
+            // 切換至技能規則：顯示子選單並預設載入職業規則的第一項
             if (subtabsNav) subtabsNav.classList.remove('hidden');
             if (typeof window.switchRuleSubTab === 'function') {
-                window.switchRuleSubTab('bard_rules');
+                // 優先嘗試找到 ruleSections 的第一筆 ID，若無則降級回 'bard_rules' 或 'bard'
+                const firstRuleId = (Array.isArray(ruleSections) && ruleSections.length > 0) ? ruleSections[0].id : 'bard_rules';
+                window.switchRuleSubTab(firstRuleId);
+            }
+        } else if (tabName === 'other_rules') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            if (rulesContainer && typeof otherRulesContent !== 'undefined') {
+                rulesContainer.innerHTML = otherRulesContent;
+            }
+        } else if (tabName === 'equipmentEnhancement_rules') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            if (rulesContainer && typeof equipmentEnhancementContent !== 'undefined') {
+                rulesContainer.innerHTML = equipmentEnhancementContent;
+            } 
+        } else if (tabName === 'reputation_rules') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            if (rulesContainer && typeof reputationRankContent !== 'undefined') {
+                rulesContainer.innerHTML = reputationRankContent;
             }
         } else {
             // 切換至獨立頁面 (種族 / 上級戰鬥 / 威力表 等)：隱藏子選單
             if (subtabsNav) subtabsNav.classList.add('hidden');
 
             if (tabName === 'races') {
-                // 直接渲染獨立 racesData.js 的內容
-                if (rulesContainer) {
+                if (rulesContainer && typeof racesContent !== 'undefined') {
                     rulesContainer.innerHTML = racesContent;
                 }
             } else {
-                // 渲染其餘來自 rules.js 的規則
+                // 渲染其餘來自 rules.js 的規則 (如 advanced_combat)
                 const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === tabName) : null;
                 if (rulesContainer && sectionData) {
                     rulesContainer.innerHTML = sectionData.content;
@@ -69,39 +89,52 @@ window.switchMainTab = function(tabName) {
 
 // ==================== 2. 規則子頁籤切換 (職業規則區塊) ====================
 window.switchRuleSubTab = function(ruleKey) {
+    if (!ruleKey) return;
+
+    // 1. 清理傳入的 ruleKey 取得純淨名稱 (例如將 "sec-bard_rules" 或 "bard_rules" 統一轉成 "bard")
+    const cleanTargetKey = ruleKey.replace(/^sec-/, '').replace(/_rules$/, '').toLowerCase();
+
+    // 2. 重置所有子頁籤按鈕樣式
     const subTabBtns = document.querySelectorAll('.rule-subtab-btn');
     subTabBtns.forEach(btn => {
         btn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all border border-transparent";
     });
 
-    const activeBtn = document.getElementById(`subtab-${ruleKey}`);
-    if (activeBtn) {
-        activeBtn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium";
+    // 3. 尋找並高亮按鈕 (相容各種 ID 命名)
+    const targetSubBtn = document.getElementById(`subtab-${ruleKey}`) || 
+                         document.getElementById(`subtab-${cleanTargetKey}`) ||
+                         document.getElementById(`subtab-sec-${cleanTargetKey}_rules`) ||
+                         document.getElementById(ruleKey);
+
+    if (targetSubBtn) {
+        targetSubBtn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium";
     }
 
     const rulesContainer = document.getElementById('rules-container');
-    const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === ruleKey) : null;
-    
-    if (rulesContainer && sectionData) {
-        rulesContainer.innerHTML = sectionData.content;
+    if (!rulesContainer) return;
+
+    // 4. 搜尋 ruleSections (自動比對去除 sec- 與 _rules 後的名稱)
+    if (Array.isArray(ruleSections) && ruleSections.length > 0) {
+        const sectionData = ruleSections.find(s => {
+            if (!s || !s.id) return false;
+            // 正確提取 s.id 的核心 key (如 sec-bard_rules 轉為 bard)
+            const cleanId = s.id.replace(/^sec-/, '').replace(/_rules$/, '').toLowerCase();
+            return s.id === ruleKey || cleanId === cleanTargetKey;
+        });
+
+        if (sectionData && sectionData.content) {
+            rulesContainer.innerHTML = sectionData.content;
+        } else {
+            console.warn(`[Rules Error] 在 ruleSections 中找不到匹配的 ID: "${ruleKey}"。可用的 ID 有:`, ruleSections.map(s => s.id));
+        }
     }
 
-    if (ruleKey === 'power_table_rules') {
+    // 5. 特殊初始化 (如威力表)
+    if (ruleKey.includes('power_table')) {
         setTimeout(() => {
             if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
             if (typeof window.calcPowerResult === 'function') window.calcPowerResult();
         }, 50);
-    }
-};
-
-window.switchTab = function(tabId) {
-    if (tabId === 'bards') {
-        switchMainTab('bards');
-    } else if (tabId === 'items') {
-        switchMainTab('items');
-    } else {
-        switchMainTab('rules');
-        switchRuleSubTab(tabId.replace('sec-', ''));
     }
 };
 
