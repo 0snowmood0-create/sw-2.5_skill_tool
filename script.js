@@ -1,6 +1,8 @@
 import { allSkillsData, allItemsData } from './src/data-index.js';
 import { ruleSections } from './src/rules.js';
 import { racesContent } from './src/racesData.js'; // 匯入獨立種族資料
+import { otherRulesContent } from './src/otherRulesData.js'; // 匯入獨立其他規則資料
+
 // ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
@@ -38,6 +40,12 @@ window.switchMainTab = function(tabName) {
             if (subtabsNav) subtabsNav.classList.remove('hidden');
             if (typeof window.switchRuleSubTab === 'function') {
                 window.switchRuleSubTab('bard_rules');
+            }
+        } else if (tabName === 'other_rules') {
+            // 切換至其他規則：隱藏子選單並渲染 otherRulesContent
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            if (rulesContainer) {
+                rulesContainer.innerHTML = otherRulesContent;
             }
         } else {
             // 切換至獨立頁面 (種族 / 上級戰鬥 / 威力表 等)：隱藏子選單
