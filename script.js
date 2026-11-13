@@ -76,8 +76,10 @@ window.switchMainTab = function(tabName) {
                     rulesContainer.innerHTML = racesContent;
                 }
             } else {
-                // 渲染其餘來自 rules.js 的規則 (如 advanced_combat)
-                const sectionData = Array.isArray(ruleSections) ? ruleSections.find(s => s.id === tabName) : null;
+                // 渲染其餘來自 rules.js 的規則 (相容有無 sec- 前綴的 ID)
+                const sectionData = Array.isArray(ruleSections)
+                    ? ruleSections.find(s => s.id === tabName || s.id === `sec-${tabName}`)
+                    : null;
                 if (rulesContainer && sectionData) {
                     rulesContainer.innerHTML = sectionData.content;
                 }
@@ -631,8 +633,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function getSearchableDatabase() {
     const db = [];
 
-    // 獨立主頁籤 ID 清單 (這些雖然在 rules.js 裡，但導覽列上是獨立主分頁)
-    const standaloneRuleIds = ['advanced_combat_rules', 'power_table_rules'];
+    // 獨立主頁籤 ID 清單
+    const standaloneRuleIds = ['advanced_combat_rules', 'power_table_rules', 'sec-advanced_combat_rules', 'sec-power_table_rules'];
 
     // 匯入 rules.js 中的所有規則章節
     if (Array.isArray(ruleSections)) {
@@ -769,7 +771,8 @@ window.navigateToSearchResult = function(type, targetId, keyword) {
         if (typeof window.switchMainTab === 'function') window.switchMainTab('rules');
         if (typeof window.switchRuleSubTab === 'function') window.switchRuleSubTab(targetId);
     } else if (type === 'main_tab') {
-        if (typeof window.switchMainTab === 'function') window.switchMainTab(targetId);
+        const cleanMainId = targetId.replace(/^sec-/, '');
+        if (typeof window.switchMainTab === 'function') window.switchMainTab(cleanMainId);
     }
 
     // 延遲等待 DOM 渲染完成後捲動到關鍵字段落並閃爍高光
