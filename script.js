@@ -5,6 +5,7 @@ import { otherRulesContent } from './src/otherRulesData.js';
 import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
 import { reputationRankContent } from './src/reputationRankData.js'; // 若有新增名譽點模組
 
+ 
 // ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
@@ -59,6 +60,12 @@ window.switchMainTab = function(tabName) {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof reputationRankContent !== 'undefined') {
                 rulesContainer.innerHTML = reputationRankContent;
+            }
+        } else if (tabName === 'tools') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            if (rulesContainer) {
+                rulesContainer.innerHTML = getFieldToolsHTML();
+                initFieldTools();
             }
         } else {
             // 切換至獨立頁面 (種族 / 上級戰鬥 / 威力表 等)：隱藏子選單
@@ -618,7 +625,195 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', () => {
     switchMainTab('bards');
 });
+// ==================== 全域規則即時檢索系統 ====================
 
+// 1. 建立統一的檢索索引庫 (精準對齊 index.html 頁籤 ID)
+function getSearchableDatabase() {
+    const db = [];
+
+    // 獨立主頁籤 ID 清單 (這些雖然在 rules.js 裡，但導覽列上是獨立主分頁)
+    const standaloneRuleIds = ['advanced_combat_rules', 'power_table_rules'];
+
+    // 匯入 rules.js 中的所有規則章節
+    if (Array.isArray(ruleSections)) {
+        ruleSections.forEach(sec => {
+            let extractedTitle = sec.title;
+            if (!extractedTitle && sec.content) {
+                const h2Match = sec.content.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);
+                extractedTitle = h2Match ? h2Match[1].replace(/<[^>]+>/g, '').trim() : sec.id;
+            }
+
+            const isStandalone = standaloneRuleIds.includes(sec.id);
+
+            db.push({
+                id: sec.id,
+                type: isStandalone ? 'main_tab' : 'rule_subtab',
+                badge: isStandalone ? '獨立規則' : '技能規則',
+                title: extractedTitle,
+                icon: sec.icon || 'fa-solid fa-book-open',
+                plainText: (sec.content || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+            });
+        });
+    }
+
+    // 匯入其他獨立主頁籤模組 (ID 完全對齊 index.html 按鈕)
+    const extraModules = [
+        { id: 'races', title: '種族圖鑑與種族特徵', icon: 'fa-solid fa-users', content: typeof racesContent !== 'undefined' ? racesContent : '' },
+        { id: 'other_rules', title: '其他規則與判定總覽', icon: 'fa-solid fa-book-bookmark', content: typeof otherRulesContent !== 'undefined' ? otherRulesContent : '' },
+        { id: 'equipmentEnhancement_rules', title: '裝備強化與魔化規則', icon: 'fa-solid fa-hammer', content: typeof equipmentEnhancementContent !== 'undefined' ? equipmentEnhancementContent : '' },
+        { id: 'reputationRank_rules', title: '名譽點與冒險者階級', icon: 'fa-solid fa-award', content: typeof reputationRankContent !== 'undefined' ? reputationRankContent : '' }
+    ];
+
+    extraModules.forEach(mod => {
+        if (mod.content) {
+            db.push({
+                id: mod.id,
+                type: 'main_tab',
+                badge: '系統模組',
+                title: mod.title,
+                icon: mod.icon,
+                plainText: mod.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+            });
+        }
+    });
+
+    return db;
+}
+
+// 2. 處理輸入搜尋事件
+window.handleGlobalRuleSearch = function(query) {
+    const resultsContainer = document.getElementById('global-search-results');
+    const clearBtn = document.getElementById('clear-rule-search-btn');
+    if (!resultsContainer) return;
+
+    const keyword = query.trim();
+    if (clearBtn) clearBtn.classList.toggle('hidden', keyword.length === 0);
+
+    if (keyword.length === 0) {
+        resultsContainer.classList.add('hidden');
+        resultsContainer.innerHTML = '';
+        return;
+    }
+
+    const db = getSearchableDatabase();
+    const lowerKeyword = keyword.toLowerCase();
+    const matches = [];
+
+    db.forEach(item => {
+        const titleMatch = item.title.toLowerCase().includes(lowerKeyword);
+        const textIndex = item.plainText.toLowerCase().indexOf(lowerKeyword);
+
+        if (titleMatch || textIndex !== -1) {
+            let snippet = '';
+            if (textIndex !== -1) {
+                const start = Math.max(0, textIndex - 30);
+                const end = Math.min(item.plainText.length, textIndex + keyword.length + 45);
+                snippet = (start > 0 ? '...' : '') + item.plainText.slice(start, end) + (end < item.plainText.length ? '...' : '');
+            } else {
+                snippet = item.plainText.slice(0, 75) + '...';
+            }
+
+            const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const highlightRegex = new RegExp(`(${escapedKeyword})`, 'gi');
+            const highlightedTitle = item.title.replace(highlightRegex, '<mark class="bg-amber-500/30 text-amber-300 font-bold px-0.5 rounded">$1</mark>');
+            const highlightedSnippet = snippet.replace(highlightRegex, '<mark class="bg-amber-500/30 text-amber-300 font-bold px-0.5 rounded">$1</mark>');
+
+            matches.push({
+                ...item,
+                highlightedTitle,
+                highlightedSnippet,
+                score: titleMatch ? 2 : 1
+            });
+        }
+    });
+
+    matches.sort((a, b) => b.score - a.score);
+    resultsContainer.classList.remove('hidden');
+
+    if (matches.length === 0) {
+        resultsContainer.innerHTML = `
+            <div class="p-4 text-center text-xs text-zinc-400">
+                <i class="fa-regular fa-face-frown mr-1.5"></i>找不到包含「<span class="text-amber-400 font-bold">${keyword}</span>」的規則條目
+            </div>
+        `;
+        return;
+    }
+
+    resultsContainer.innerHTML = matches.map(m => `
+        <button 
+            onclick="navigateToSearchResult('${m.type}', '${m.id}', '${keyword.replace(/'/g, "\\'")}')"
+            class="w-full text-left p-3.5 hover:bg-zinc-800/90 transition-colors flex flex-col gap-1 focus:outline-none"
+        >
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-zinc-200 flex items-center gap-2">
+                    <i class="${m.icon} text-amber-400 text-xs"></i>
+                    <span>${m.highlightedTitle}</span>
+                </span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-zinc-950 text-zinc-400 border border-zinc-800">
+                    ${m.badge}
+                </span>
+            </div>
+            <p class="text-xs text-zinc-400 line-clamp-2 leading-relaxed pl-5">
+                ${m.highlightedSnippet}
+            </p>
+        </button>
+    `).join('');
+};
+
+// 3. 點擊搜尋結果後自動跳轉分頁並捲動定位
+window.navigateToSearchResult = function(type, targetId, keyword) {
+    const resultsContainer = document.getElementById('global-search-results');
+    if (resultsContainer) resultsContainer.classList.add('hidden');
+
+    if (type === 'rule_subtab') {
+        if (typeof window.switchMainTab === 'function') window.switchMainTab('rules');
+        if (typeof window.switchRuleSubTab === 'function') window.switchRuleSubTab(targetId);
+    } else if (type === 'main_tab') {
+        if (typeof window.switchMainTab === 'function') window.switchMainTab(targetId);
+    }
+
+    // 延遲等待 DOM 渲染完成後捲動到關鍵字段落並閃爍高光
+    setTimeout(() => {
+        const container = document.getElementById('rules-container') || document.querySelector('main');
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        const lowerKw = keyword.toLowerCase();
+
+        while ((node = walker.nextNode())) {
+            if (node.nodeValue && node.nodeValue.toLowerCase().includes(lowerKw)) {
+                const targetElement = node.parentElement;
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetElement.classList.add('ring-2', 'ring-amber-400', 'bg-amber-500/20', 'rounded', 'transition-all');
+                    setTimeout(() => {
+                        targetElement.classList.remove('ring-2', 'ring-amber-400', 'bg-amber-500/20');
+                    }, 2500);
+                    break;
+                }
+            }
+        }
+    }, 80);
+};
+
+// 4. 清除搜尋狀態
+window.clearGlobalRuleSearch = function() {
+    const input = document.getElementById('global-rule-search');
+    const resultsContainer = document.getElementById('global-search-results');
+    const clearBtn = document.getElementById('clear-rule-search-btn');
+
+    if (input) input.value = '';
+    if (resultsContainer) resultsContainer.classList.add('hidden');
+    if (clearBtn) clearBtn.classList.add('hidden');
+};
+
+// 點擊外部自動收起下拉選單
+document.addEventListener('click', (e) => {
+    const searchInput = document.getElementById('global-rule-search');
+    const resultsContainer = document.getElementById('global-search-results');
+    if (searchInput && resultsContainer && !searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+        resultsContainer.classList.add('hidden');
+    }
+});
 // ==================== SW2.5 威力表完整資料矩陣 (0~100) ====================
 export const powerTableData = {
     0:  [0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4],
@@ -770,4 +965,286 @@ window.renderPowerTableRows = function() {
 
     tbody1.innerHTML = html1;
     tbody2.innerHTML = html2;
+};
+// ==================== 9. TRPG 跑團現場實用小工具 ====================
+
+// SW2.5 官方經驗點表 (累計消耗經驗點，索引 0 代表 Lv 0)
+const expTableA = [0, 1000, 2000, 3500, 5000, 7000, 9500, 12500, 16500, 21500, 28000, 36000, 46000, 58500, 73500, 93500];
+const expTableB = [0, 500, 1500, 2500, 4000, 5500, 7500, 10000, 13000, 17000, 22000, 28500, 36500, 46500, 59000, 74000];
+
+// 生成小工具主畫面 HTML
+function getFieldToolsHTML() {
+    return `
+        <div class="space-y-6">
+            <!-- 頁面標題 -->
+            <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex items-center gap-3">
+                <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                    <i class="fa-solid fa-toolbox text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 跑團現場實用小工具</h2>
+                    <p class="text-xs text-zinc-400">支援 C 值無限旋轉（爆擊）傷害模擬，以及 A/B 經驗表技能配點與冒險者等級即時試算。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 工具 1：威力表旋轉（爆擊）傷害計算與模擬器 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 shadow-lg flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-dice text-amber-500 mr-2"></i>1. 威力表旋轉（Critical）傷害模擬器</span>
+                            <span class="text-[11px] font-normal text-zinc-500">自動判定 1,1 失誤與 C 值連轉</span>
+                        </h3>
+
+                        <!-- 參數設定區 -->
+                        <div class="grid grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block text-zinc-400 mb-1 font-medium">威力 (0~100)</label>
+                                <input type="number" id="crit-power" min="0" max="100" value="20" oninput="calcManualCrit()" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-amber-300 font-bold focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-zinc-400 mb-1 font-medium">C 值 (Crit)</label>
+                                <select id="crit-value" onchange="calcManualCrit()" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-pink-400 font-bold focus:outline-none focus:border-amber-500">
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13 (不旋轉)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-zinc-400 mb-1 font-medium">固定追加傷害</label>
+                                <input type="number" id="crit-bonus" value="6" oninput="calcManualCrit()" class="w-full bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-emerald-300 font-bold focus:outline-none focus:border-amber-500">
+                            </div>
+                        </div>
+
+                        <!-- 擲骰模式切換與按鈕 -->
+                        <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                            <button onclick="rollCritDamage()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-bold py-2.5 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-dice-d6"></i> 模擬擲骰 (Roll 2d6)
+                            </button>
+                            <div class="flex items-center gap-2 bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-1.5 text-xs">
+                                <span class="text-zinc-400 whitespace-nowrap">手動輸入骰值序列：</span>
+                                <input type="text" id="crit-manual-rolls" placeholder="例: 10, 11, 6" oninput="calcManualCrit()" class="w-28 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-cyan-300 font-mono focus:outline-none focus:border-amber-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 計算結果顯示面板 -->
+                    <div id="crit-result-box" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 space-y-2.5 mt-4">
+                        <div class="flex justify-between items-center border-b border-zinc-800/80 pb-2">
+                            <span class="text-xs text-zinc-400">最終總傷害（含追加傷害）</span>
+                            <span id="crit-total-dmg" class="text-2xl font-extrabold text-amber-400 font-mono">10</span>
+                        </div>
+                        <div id="crit-roll-log" class="text-xs text-zinc-300 space-y-1 font-mono">
+                            <div class="text-zinc-500">點擊「模擬擲骰」或輸入逗號分隔的 2d6 點數（如 10, 7）查看明細。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工具 2：經驗點與冒險者等級速算器 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 shadow-lg flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
+                            <span><i class="fa-solid fa-chart-line text-amber-500 mr-2"></i>2. 經驗點與冒險者等級速算器</span>
+                            <button onclick="addSkillExpRow()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-amber-400 border border-zinc-700 px-2.5 py-1 rounded transition-colors">
+                                <i class="fa-solid fa-plus mr-1"></i>新增技能
+                            </button>
+                        </h3>
+
+                        <!-- 總經驗點輸入與統計列 -->
+                        <div class="grid grid-cols-3 gap-2 text-xs bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                            <div>
+                                <label class="block text-zinc-500 mb-1">持有總經驗點</label>
+                                <input type="number" id="exp-total-pool" value="10000" step="500" oninput="recalcSkillExp()" class="w-full bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-zinc-200 font-bold font-mono focus:outline-none focus:border-amber-500">
+                            </div>
+                            <div class="text-center flex flex-col justify-center">
+                                <span class="text-zinc-500 mb-0.5">剩餘可用經驗</span>
+                                <span id="exp-remaining" class="text-sm font-bold text-emerald-400 font-mono">0</span>
+                            </div>
+                            <div class="text-center flex flex-col justify-center border-l border-zinc-800">
+                                <span class="text-zinc-500 mb-0.5">冒險者等級</span>
+                                <span id="exp-adv-level" class="text-base font-extrabold text-amber-400 font-mono">Lv 1</span>
+                            </div>
+                        </div>
+
+                        <!-- 動態技能列表 -->
+                        <div id="exp-skill-rows" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
+                            <!-- 由 JS 動態生成預設技能列 -->
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-zinc-500 border-t border-zinc-800/80 pt-2 flex justify-between items-center">
+                        <span>※ A表：戰士/魔法師系 ｜ B表：斥候/吟遊/軍師/練體等</span>
+                        <button onclick="resetSkillExpRows()" class="text-zinc-400 hover:text-amber-400 underline">重設預設</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 初始化小工具預設狀態
+window.initFieldTools = function() {
+    window.resetSkillExpRows();
+    window.rollCritDamage();
+};
+
+// --- 威力表旋轉計算核心 ---
+function evaluatePowerCritSequence(power, critVal, bonus, rollSequence) {
+    const p = Math.max(0, Math.min(100, parseInt(power) || 0));
+    const c = parseInt(critVal) || 10;
+    const fixed = parseInt(bonus) || 0;
+    const row = powerTableData[p] || powerTableData[0];
+
+    const totalEl = document.getElementById('crit-total-dmg');
+    const logEl = document.getElementById('crit-roll-log');
+    if (!totalEl || !logEl) return;
+
+    if (!rollSequence || rollSequence.length === 0) return;
+
+    // 第一擲若為 2 (1,1)，依 SW2.5 規則為自動失敗，總傷害強制為 0 (不加固定值)
+    if (rollSequence[0] === 2) {
+        totalEl.innerHTML = `<span class="text-red-500">0 (自動失敗 1,1)</span>`;
+        logEl.innerHTML = `<div class="text-red-400"><i class="fa-solid fa-skull-crossbones mr-1"></i>第 1 擲擲出 2（1,1 自動失敗），傷害歸零！</div>`;
+        return;
+    }
+
+    let powerSum = 0;
+    let logs = [];
+
+    for (let i = 0; i < rollSequence.length; i++) {
+        const r = Math.max(2, Math.min(12, rollSequence[i]));
+        const dmg = row[r - 2];
+        powerSum += dmg;
+        const isCrit = r >= c;
+
+        logs.push(`
+            <div class="flex justify-between items-center ${isCrit ? 'text-pink-400 font-bold' : 'text-zinc-300'}">
+                <span>第 ${i + 1} 轉：2d6 = <span class="underline">${r}</span> ${isCrit ? '🔥 CRITICAL! (旋轉加骰)' : ''}</span>
+                <span>威力表傷害：+${dmg}</span>
+            </div>
+        `);
+
+        if (!isCrit) break;
+    }
+
+    const finalDamage = powerSum + fixed;
+    const critCount = Math.max(0, logs.length - 1);
+
+    totalEl.innerHTML = `
+        <span>${finalDamage}</span>
+        ${critCount > 0 ? `<span class="text-xs bg-pink-950 text-pink-300 border border-pink-700 px-2 py-0.5 rounded ml-2 align-middle">${critCount} 旋轉!</span>` : ''}
+    `;
+
+    logs.push(`
+        <div class="border-t border-zinc-800 pt-1.5 mt-1.5 text-zinc-400 flex justify-between">
+            <span>威力累計 (${powerSum}) + 固定追加傷害 (${fixed >= 0 ? '+' + fixed : fixed})</span>
+            <span class="text-amber-400 font-bold">= ${finalDamage} 點</span>
+        </div>
+    `);
+
+    logEl.innerHTML = logs.join('');
+}
+
+// 模擬擲骰按鈕
+window.rollCritDamage = function() {
+    const power = document.getElementById('crit-power')?.value || 20;
+    const critVal = parseInt(document.getElementById('crit-value')?.value) || 10;
+    const bonus = document.getElementById('crit-bonus')?.value || 0;
+    const manualInput = document.getElementById('crit-manual-rolls');
+
+    const rolls = [];
+    let safety = 0;
+    while (safety < 20) {
+        const d1 = Math.floor(Math.random() * 6) + 1;
+        const d2 = Math.floor(Math.random() * 6) + 1;
+        const sum = d1 + d2;
+        rolls.push(sum);
+        // 第1擲為2 (1,1) 或未達 C 值即停止旋轉
+        if ((safety === 0 && sum === 2) || sum < critVal) break;
+        safety++;
+    }
+
+    if (manualInput) manualInput.value = rolls.join(', ');
+    evaluatePowerCritSequence(power, critVal, bonus, rolls);
+};
+
+// 手動輸入骰面序列計算
+window.calcManualCrit = function() {
+    const power = document.getElementById('crit-power')?.value || 20;
+    const critVal = document.getElementById('crit-value')?.value || 10;
+    const bonus = document.getElementById('crit-bonus')?.value || 0;
+    const rawStr = document.getElementById('crit-manual-rolls')?.value || '';
+
+    const rolls = rawStr.split(/[,，\s]+/)
+        .map(s => parseInt(s.trim()))
+        .filter(n => !isNaN(n) && n >= 2 && n <= 12);
+
+    if (rolls.length > 0) {
+        evaluatePowerCritSequence(power, critVal, bonus, rolls);
+    }
+};
+
+// --- 經驗點與冒險者等級速算器核心 ---
+window.addSkillExpRow = function(name = '', table = 'A', level = 1) {
+    const container = document.getElementById('exp-skill-rows');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'exp-skill-row grid grid-cols-12 gap-2 items-center bg-zinc-950 p-2 rounded-lg border border-zinc-800/80 text-xs';
+    row.innerHTML = `
+        <input type="text" placeholder="技能名稱 (如: 戰士)" value="${name}" class="col-span-5 bg-zinc-900 border border-zinc-700 rounded px-2 py-1 text-zinc-200 focus:outline-none focus:border-amber-500">
+        <select onchange="recalcSkillExp()" class="exp-table-select col-span-3 bg-zinc-900 border border-zinc-700 rounded px-1.5 py-1 text-amber-300 font-medium focus:outline-none">
+            <option value="A" ${table === 'A' ? 'selected' : ''}>經驗表 A</option>
+            <option value="B" ${table === 'B' ? 'selected' : ''}>經驗表 B</option>
+        </select>
+        <div class="col-span-3 flex items-center gap-1">
+            <span class="text-zinc-500">Lv</span>
+            <input type="number" min="0" max="15" value="${level}" onchange="recalcSkillExp()" oninput="recalcSkillExp()" class="exp-level-input w-full bg-zinc-900 border border-zinc-700 rounded px-1.5 py-1 text-cyan-300 font-bold text-center focus:outline-none">
+        </div>
+        <button onclick="this.parentElement.remove(); recalcSkillExp();" title="移除" class="col-span-1 text-zinc-500 hover:text-red-400 text-center">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
+    container.appendChild(row);
+    window.recalcSkillExp();
+};
+
+window.resetSkillExpRows = function() {
+    const container = document.getElementById('exp-skill-rows');
+    if (!container) return;
+    container.innerHTML = '';
+    window.addSkillExpRow('主職 (如戰士/真語)', 'A', 4);
+    window.addSkillExpRow('副職 (如斥候/賢者)', 'B', 3);
+    window.addSkillExpRow('輔助 (如練體/賦術)', 'B', 1);
+};
+
+window.recalcSkillExp = function() {
+    const totalPool = parseInt(document.getElementById('exp-total-pool')?.value) || 0;
+    const rows = document.querySelectorAll('.exp-skill-row');
+    let usedExp = 0;
+    let maxAdvLevel = 0;
+
+    rows.forEach(row => {
+        const table = row.querySelector('.exp-table-select')?.value || 'A';
+        let lv = parseInt(row.querySelector('.exp-level-input')?.value) || 0;
+        lv = Math.max(0, Math.min(15, lv));
+
+        if (lv > maxAdvLevel) maxAdvLevel = lv;
+        usedExp += (table === 'A' ? expTableA[lv] : expTableB[lv]);
+    });
+
+    const remaining = totalPool - usedExp;
+    const remEl = document.getElementById('exp-remaining');
+    const advEl = document.getElementById('exp-adv-level');
+
+    if (remEl) {
+        remEl.textContent = `${remaining.toLocaleString()} 點`;
+        remEl.className = `text-sm font-bold font-mono ${remaining < 0 ? 'text-red-400' : 'text-emerald-400'}`;
+    }
+    if (advEl) {
+        advEl.textContent = `Lv ${maxAdvLevel}`;
+    }
 };
