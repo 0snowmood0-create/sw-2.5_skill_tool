@@ -15,7 +15,7 @@ import { geomancerData } from './data-geomancer.js';
 import { abyssgazerData } from './data-abyssgazer.js';
 import { riderData } from './data-rider.js';
 import { enhancerData } from './data-enhancer.js';
-import { combatFeatsData } from './data-combatFeats.js';import { combatFeatsData, passiveFeatsData, majorActionFeatsData, autoFeatsData } from './data-combatFeats.js';
+import { combatFeatsData, passiveFeatsData, majorActionFeatsData, autoFeatsData } from './data-combatFeats.js';
 
 // ==================== 道具與裝備資料匯入 (請務必確認 ./Item/ 路徑正確) ====================
 import { accessoryItemsData } from './Item/data-accessories.js';
