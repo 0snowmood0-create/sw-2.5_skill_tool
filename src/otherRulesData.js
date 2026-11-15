@@ -401,4 +401,207 @@ export const otherRulesContent = `
         </div>
     </div>
 </div>
+<!-- ==================== 行為判定完整規則模組 ==================== -->
+<class="space-y-6 bg-zinc-900/90 border border-zinc-800 rounded-xl p-6 shadow-lg">
+    <!-- 章節主標題 -->
+    <div class="border-b border-zinc-800 pb-4 flex items-center gap-3">
+        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+            <i class="fa-solid fa-dice-d20 text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-amber-400 tracking-wider">行為判定完整規則總覽</h2>
+            <p class="text-xs text-zinc-400">包含基本公式、自動成功／失敗處理、目標值目安、加減值修正、對抗比較、四大判定包、再挑戰與縮短時間規則。</p>
+        </div>
+    </div>
+
+    <!-- 1. 基本公式與自動成功/失敗 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+            <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-amber-500"></i> 1. 基本計算公式與平目
+            </h3>
+            <div class="space-y-1.5 text-xs bg-zinc-900 p-3 rounded-lg border border-zinc-800/80 font-mono">
+                <div class="text-cyan-300">・一般基準值 ＝ 技能等級 ＋ 能力值加值</div>
+                <div class="text-cyan-300">・冒險者基準值 ＝ 冒險者等級 ＋ 能力值加值</div>
+                <div class="text-amber-300 font-bold">・達成值 ＝ 基準值 ＋ 2d6</div>
+                <div class="text-emerald-400">・達成值 ≧ 目標值 → 成功 ｜ 達成值 ＜ 目標值 → 失敗</div>
+            </div>
+            <p class="text-xs text-zinc-300 leading-relaxed">
+                <strong class="text-amber-300">【平目】</strong>：不具備對應技能時仍可嘗試部分行為判定；此時技能等級視為「0」，且<span class="text-red-400 font-bold">不可加上對應的能力值加值</span>（基準值 ＝ 0，僅以 2d 出目決定達成值）。
+            </p>
+        </div>
+
+        <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+            <h3 class="text-base font-bold text-amber-400 flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-amber-500"></i> 2. 自動成功（6雙）與自動失敗（1雙）
+            </h3>
+            <ul class="text-xs text-zinc-300 space-y-2 leading-relaxed">
+                <li>
+                    <span class="text-emerald-400 font-bold">● 自動成功（2d 擲出兩個 6）</span>：無視基準值、目標值與任何修正，<span class="text-emerald-300 font-bold">必定成功</span>（平目亦可觸發）。若規則需計算達成值數值，則將 2d 視為「12」計算後<span class="text-amber-300 font-bold">再額外 ＋5</span>。
+                </li>
+                <li>
+                    <span class="text-red-400 font-bold">● 自動失敗（2d 擲出兩個 1）</span>：無視任何修正，<span class="text-red-300 font-bold">必定失敗</span>，且該角色當場立刻獲得 <span class="text-amber-400 font-bold">50 點經驗點</span>（平目亦可獲得）。若需計算達成值數值，強制視為 <span class="text-red-300 font-bold">「0」</span>。
+                </li>
+                <li class="text-zinc-400">
+                    ※ 進行判定所需的 MP 或道具（如施法），無論成功、失敗、自動成功或自動失敗，原則上皆照常消耗。
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 2. 目標值目安表 與 加減值修正 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+            <h3 class="text-base font-bold text-amber-400">3. 目標值難度目安表（GM 決定）</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left border-collapse">
+                    <thead>
+                        <tr class="bg-zinc-900 text-zinc-400 border-b border-zinc-800">
+                            <th class="py-2 px-3">狀況難度描述</th>
+                            <th class="py-2 px-3 text-center w-20">目標值</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-zinc-800/60 text-zinc-300">
+                        <tr><td class="py-1.5 px-3">沒有技能的素人也幾乎都會成功</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">5</td></tr>
+                        <tr><td class="py-1.5 px-3">沒有技能的素人也有一半機率成功</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">7</td></tr>
+                        <tr><td class="py-1.5 px-3">有技能的話大致會成功；對素人而言很困難</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">9</td></tr>
+                        <tr><td class="py-1.5 px-3">光有技能的話成功率各半</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">11</td></tr>
+                        <tr><td class="py-1.5 px-3">光有技能的話能成功算很幸運</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">13</td></tr>
+                        <tr><td class="py-1.5 px-3">若未對該技能有一定程度的精通就無法成功</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">15</td></tr>
+                        <tr><td class="py-1.5 px-3">除了相當高的技能等級外，還需要能力資質</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">17</td></tr>
+                        <tr><td class="py-1.5 px-3">若未精通並熟練該技能就無法成功</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">19</td></tr>
+                        <tr><td class="py-1.5 px-3">除了技能與能力外，還需要運氣</td><td class="py-1.5 px-3 text-center font-bold text-amber-300">21</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+            <h3 class="text-base font-bold text-amber-400">4. 加值與減值修正（僅適用行動判定）</h3>
+            <p class="text-xs text-zinc-400">※ 環境與身體負面減值僅適用於「行動判定」，不適用於生死、生命抵抗、精神抵抗力判定；達成值低於 0 視為 0。</p>
+            <div class="space-y-2 text-xs text-zinc-300">
+                <div class="bg-zinc-900 p-2.5 rounded border border-zinc-800">
+                    <span class="text-amber-300 font-bold block mb-1">【修正目安】</span>
+                    些微有利/不利：<span class="text-cyan-300 font-bold">±1</span> ｜ 明顯有利/不利：<span class="text-cyan-300 font-bold">±2</span> ｜ 足以顛覆實力：<span class="text-cyan-300 font-bold">±3</span> ｜ 壓倒性有利/不利：<span class="text-cyan-300 font-bold">±4</span>
+                </div>
+                <div class="bg-zinc-900 p-2.5 rounded border border-zinc-800">
+                    <span class="text-pink-400 font-bold block mb-1">【視線不良減值】</span>（具備暗視者無減值）<br>
+                    僅有月星光戶外：<span class="text-red-400">-2</span> ｜ 無光源屋內/地下：<span class="text-red-400">-4</span> ｜ 濃霧/沙塵暴：<span class="text-red-400">-2</span> ｜ 單眼受損：<span class="text-red-400">-1</span> ｜ 雙眼受損：<span class="text-red-400">-4</span>
+                </div>
+                <div class="bg-zinc-900 p-2.5 rounded border border-zinc-800">
+                    <span class="text-pink-400 font-bold block mb-1">【身體受限減值】</span><br>
+                    跌倒或剛站起當下：<span class="text-red-400">-2</span>（至該角色回合結束） ｜ 冰上/泥濘立足點差：<span class="text-red-400">-2</span> ｜ 單手/單腳不能用：<span class="text-red-400">-2</span> ｜ 雙手/雙腳不能用：<span class="text-red-400">-4</span> ｜ 被網/藤蔓/泥沼纏住：<span class="text-red-400">-2</span> ｜ 腰部以下浸水：<span class="text-red-400">-2</span> ｜ 全身浸水：<span class="text-red-400">-4</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 達成值比較（對抗判定） -->
+    <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+        <h3 class="text-base font-bold text-amber-400">5. 達成值的比較（對抗判定與受動側優先原則）</h3>
+        <div class="bg-amber-950/20 border border-amber-900/40 rounded-lg p-3 text-xs text-zinc-200 space-y-1">
+            <div class="font-bold text-amber-400">★ 受動側優先三大原則（主動發起者為「能動側」，承受／閃避者為「受動側」）：</div>
+            <div>1. 能動側<span class="text-red-400 font-bold">自動失敗</span>時，受動側無須擲骰<span class="text-emerald-400 font-bold">直接獲勝</span>。</div>
+            <div>2. 能動側與受動側<span class="text-cyan-300 font-bold">達成值同點</span>時，<span class="text-emerald-400 font-bold">受動側獲勝</span>。</div>
+            <div>3. 能動側與受動側<span class="text-amber-300 font-bold">雙方皆自動成功</span>時，<span class="text-emerald-400 font-bold">受動側獲勝</span>。</div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                    <tr class="bg-zinc-900 text-zinc-400 border-b border-zinc-800">
+                        <th class="py-2 px-3">對抗狀況</th>
+                        <th class="py-2 px-3 text-cyan-300">能動側判定</th>
+                        <th class="py-2 px-3 text-emerald-300">受動側判定</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800/60 text-zinc-300">
+                    <tr><td class="py-1.5 px-3">攻擊的命中與迴避</td><td class="py-1.5 px-3">命中力判定</td><td class="py-1.5 px-3">迴避力判定</td></tr>
+                    <tr><td class="py-1.5 px-3">魔法／咒歌／賦術的抵抗</td><td class="py-1.5 px-3">魔法行使／演奏／賦術判定</td><td class="py-1.5 px-3">精神抵抗力判定</td></tr>
+                    <tr><td class="py-1.5 px-3">騎獸弱點的隱蔽</td><td class="py-1.5 px-3">魔物知識判定（魔物可能用魔力）</td><td class="py-1.5 px-3">弱點隱蔽判定</td></tr>
+                    <tr><td class="py-1.5 px-3">發現隱藏物品・構造物／足跡</td><td class="py-1.5 px-3">探索判定／足跡追蹤判定</td><td class="py-1.5 px-3">隱蔽判定</td></tr>
+                    <tr><td class="py-1.5 px-3">察覺全般隱蔽事物</td><td class="py-1.5 px-3">異常感知判定（GM指示）</td><td class="py-1.5 px-3">隱蔽判定（達成值視為高4點）</td></tr>
+                    <tr><td class="py-1.5 px-3">發現／觸發前察覺／解除陷阱</td><td class="py-1.5 px-3">探索／陷阱迴避（GM指示）／解除判定</td><td class="py-1.5 px-3">陷阱設置判定（陷阱迴避時受動視為高4點）</td></tr>
+                    <tr><td class="py-1.5 px-3">看破／察覺變裝</td><td class="py-1.5 px-3">真偽判定／異常感知（GM指示）</td><td class="py-1.5 px-3">變裝判定（異常感知時受動視為高4點）</td></tr>
+                    <tr><td class="py-1.5 px-3">發現／察覺隱密狀態者</td><td class="py-1.5 px-3">探索（達成值+4）／危險感知（GM指示）</td><td class="py-1.5 px-3">隱密判定</td></tr>
+                    <tr><td class="py-1.5 px-3">隱密接近／扒竊／跟蹤與察覺</td><td class="py-1.5 px-3">隱密判定／扒竊判定／跟蹤判定</td><td class="py-1.5 px-3">危險感知判定（GM指示）</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. 行為判定與判定包一覽 -->
+    <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-4">
+        <h3 class="text-base font-bold text-amber-400">6. 行動判定與四大／專屬判定包（パッケージ）一覽</h3>
+        <p class="text-xs text-zinc-400">
+            ※ 扣除「生死判定」「生命抵抗力判定」「精神抵抗力判定」後，其餘全部行為判定統稱為<strong class="text-amber-300">「行動判定」</strong>。<br>
+            ※ 標註 <span class="text-emerald-400 font-bold">*</span> 之游俠判定僅限於「自然環境」（有充足植物、天然岩石或土壤之環境）進行。
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 space-y-1.5">
+                <div class="font-bold text-cyan-300 border-b border-zinc-800 pb-1">技巧判定包（斥候 or 游俠 ＋ 器用度加值）</div>
+                <div class="text-zinc-300">・<span class="text-amber-300">僅斥候</span>：扒竊判定（10秒）、變裝判定（10分，幫他人變裝 -4）</div>
+                <div class="text-zinc-300">・<span class="text-emerald-300">共通</span>：隱蔽（1分）、解除*（1分）、陷阱設置*（10分）<span class="text-zinc-400">（斥候機械類無工具 -4）</span></div>
+                <div class="text-zinc-300">・<span class="text-lime-300">僅游俠</span>：急救判定（10分，含騎手；目標值為負HP絕對值，成功HP變1）</div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 space-y-1.5">
+                <div class="font-bold text-cyan-300 border-b border-zinc-800 pb-1">運動判定包（斥候 or 游俠 ＋ 敏捷度加值）</div>
+                <div class="text-zinc-300">・<span class="text-amber-300">僅斥候</span>：先制判定（一瞬，<span class="text-red-400">6雙不視為自動成功且無+5，僅算12</span>）</div>
+                <div class="text-zinc-300">・<span class="text-emerald-300">共通</span>：受身（一瞬，含騎手）、隱密（1分，無準備 -2）、輕業（1分）、登攀（1分）、跟蹤（10分）<span class="text-zinc-400">（以上裝備金屬鎧皆 -4）</span></div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 space-y-1.5">
+                <div class="font-bold text-cyan-300 border-b border-zinc-800 pb-1">觀察判定包（斥候 or 游俠 ＋ 智力加值）</div>
+                <div class="text-zinc-300">・<span class="text-amber-300">僅斥候</span>：寶物鑑定（10分，含賢者；斥候僅知價格；-4 可縮短為一瞬）</div>
+                <div class="text-zinc-300">・<span class="text-emerald-300">共通</span>：足跡追蹤（1分）、異常感知*（一瞬）、順風耳（10秒）、危險感知（一瞬）、探索*（10分）、天候預測（1分）、陷阱迴避*（一瞬）、地圖製作*（10分，含賢者/騎手）</div>
+                <div class="text-zinc-300">・<span class="text-lime-300">僅游俠</span>：疾病知識（10分，含賢者，-4 可一瞬）、藥品學（1分，含賢者/煉金）</div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 space-y-1.5">
+                <div class="font-bold text-cyan-300 border-b border-zinc-800 pb-1">知識判定包 & 煉金／騎手專屬判定包</div>
+                <div class="text-zinc-300">・<span class="text-amber-300">賢者知識判定包（賢者＋智力）</span>：見識（一瞬，含吟遊/煉金）、魔物知識（一瞬，含騎手）、文獻（10分，含煉金）、文明鑑定（10分）</div>
+                <div class="text-zinc-300">・<span class="text-purple-300">煉金知識判定包（煉金＋智力）</span>：見識、文獻、藥品學</div>
+                <div class="text-zinc-300">・<span class="text-orange-300">騎手運動（騎手＋敏捷）</span>：受身、騎乘（1分）</div>
+                <div class="text-zinc-300">・<span class="text-orange-300">騎手知識（騎手＋智力）</span>：弱點隱蔽（一瞬）、地圖製作、魔物知識<span class="text-zinc-400">（不可看破弱點）</span></div>
+                <div class="text-zinc-300">・<span class="text-orange-300">騎手觀察（需【探索指令】）</span>：足跡追蹤、異常感知、危險感知、探索、陷阱迴避</div>
+            </div>
+        </div>
+
+        <!-- 冒險者判定速查 -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-xs text-zinc-300 space-y-1">
+            <div class="font-bold text-amber-300">【冒險者判定（基準值 ＝ 冒險者等級 ＋ 對應能力值加值）】</div>
+            <div>・<span class="text-cyan-300">真偽判定（智力 / 10秒）</span>：識破演技、謊言、幻覺或偽裝（由 GM 提示進行）。</div>
+            <div>・<span class="text-cyan-300">游泳判定（敏捷 / 1分或10秒）</span>：游過水域並減輕水中行動減值。</div>
+            <div>・<span class="text-cyan-300">跳躍判定（敏捷 / 10秒）</span>：預設目標值 10。跳遠3m/跳高1m內 ±0（每增1m/10cm -2）、無助跑/看不見落點/強風 -2、金屬鎧 -4、幾乎無行李/5m助跑 +2。</div>
+            <div>・<span class="text-cyan-300">登攀判定（筋力 / 1分）</span>：預設目標值 10。5m內 ±0（每增5m -2）、無抓握點陡坡/懸空繩索/金屬鎧 -4、強風 -2、無行李/有繩索輔助 +2。失敗從嘗試高度一半處墜落。</div>
+            <div>・<span class="text-cyan-300">腕力判定（筋力 / 10秒）</span>：搬巨石、推開生鏽鐵門、折彎鐵棒等純力量檢定。</div>
+        </div>
+    </div>
+
+    <!-- 5. 再挑戰與縮短時間規則 -->
+    <div class="bg-zinc-950/70 border border-zinc-800 rounded-xl p-4 space-y-3">
+        <h3 class="text-base font-bold text-amber-400">7. 行為判定的再挑戰與縮短時間規則</h3>
+        <div class="bg-zinc-900 border border-amber-500/30 rounded-lg p-2.5 text-center text-xs font-mono text-amber-300 font-bold">
+            【時間階段表】 10秒（1輪） ↔ 1分（6輪） ↔ 10分（60輪） ↔ 1小時 ↔ 6小時 ↔ 24小時 ↔ 1週
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-zinc-300 leading-relaxed">
+            <div class="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-cyan-300">【失敗後的再挑戰】</div>
+                <div>・<span class="text-red-400 font-bold">不可再挑戰</span>：「所需時間：一瞬」的判定（除非特技/道具允許），以及失敗後狀況已改變失去機會者（如隱密失敗被發現）。</div>
+                <div>・<span class="text-amber-300 font-bold">有代價/風險者</span>：可承擔相同風險以<span class="text-zinc-100 font-bold">原所需時間</span>再挑戰。</div>
+                <div>・<span class="text-emerald-300 font-bold">無風險者</span>：同一名 PC 再挑戰時，所需時間依階段表<span class="text-zinc-100 font-bold">往上拉長 1 階</span>（上限 1 週；換人嘗試則按原時間）。</div>
+                <div>・<span class="text-pink-400 font-bold">解除陷阱特例</span>：失敗後可選擇「立刻以原時間再挑戰（若再失敗陷阱直接觸發）」，或拉長階段安全再挑戰。開鎖連續失敗可能導致<span class="text-red-400">鑰匙孔損壞</span>。</div>
+            </div>
+
+            <div class="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-cyan-300">【縮短所需時間（趕時間硬做）】</div>
+                <div>・原本所需時間在<span class="text-amber-300 font-bold">「1分（6輪）」以上</span>的判定，可依階段表往下縮短時間（最低至 10 秒）。</div>
+                <div>・<span class="text-red-400 font-bold">代價</span>：每縮短 1 階段，達成值承受 <span class="text-red-400 font-bold">「－2」</span> 減值修正。</div>
+                <div>・<span class="text-zinc-400">限制1</span>：需長詠唱時間的魔法行使（如 1 小時的復活術）不可縮短。</div>
+                <div>・<span class="text-zinc-400">限制2</span>：縮短時間進行陷阱「解除判定」一旦失敗會<span class="text-red-400">立刻觸發陷阱</span>。</div>
+                <div>・<span class="text-zinc-400">限制3</span>：對曾縮短時間的判定進行再挑戰時，強制恢復為原本表定的正常所需時間（無減值，不可再縮短）。</div>
+            </div>
+        </div>
+    </div>
 `;
