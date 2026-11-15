@@ -15,7 +15,7 @@ import { geomancerData } from './data-geomancer.js';
 import { abyssgazerData } from './data-abyssgazer.js';
 import { riderData } from './data-rider.js';
 import { enhancerData } from './data-enhancer.js';
-import { combatFeatsData } from './data-combatFeats.js';
+import { combatFeatsData } from './data-combatFeats.js';import { combatFeatsData, passiveFeatsData, majorActionFeatsData, autoFeatsData } from './data-combatFeats.js';
 
 // ==================== 道具與裝備資料匯入 (請務必確認 ./Item/ 路徑正確) ====================
 import { accessoryItemsData } from './Item/data-accessories.js';
@@ -61,6 +61,9 @@ export const allSkillsData = [
     ...(typeof riderData !== 'undefined' ? riderData : []),
     ...(typeof enhancerData !== 'undefined' ? enhancerData : []),
     ...(typeof combatFeatsData !== 'undefined' ? combatFeatsData : []),
+    ...(typeof passiveFeatsData !== 'undefined' ? passiveFeatsData : []),
+    ...(typeof majorActionFeatsData !== 'undefined' ? majorActionFeatsData : []),
+    ...(typeof autoFeatsData !== 'undefined' ? autoFeatsData : []),
     // 道具陣列
     ...(typeof accessoryItemsData !== 'undefined' ? accessoryItemsData : []),
     ...(typeof ammoItemsData !== 'undefined' ? ammoItemsData : []),
@@ -110,5 +113,5 @@ export const allItemsData = [
     ...(swordItemsData || []).map(i => ({ ...i, category: '武器-劍' })),
     ...(throwingItemsData || []).map(i => ({ ...i, category: '武器-投擲' })),
     ...(warhammerItemsData || []).map(i => ({ ...i, category: '武器-戰錘' })),
-    ...(geographItemsData || []).map(i => ({ ...i, category: '相導具/相動軌跡' }))
+    ...(geographItemsData || []).map(i => ({ ...i, category: '地貌儀' }))
 ];

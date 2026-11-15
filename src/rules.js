@@ -1,4 +1,239 @@
 export const ruleSections = [
+  {
+    id: 'sec-skill_overview_rules',
+    title: '技能總表與職業定位一覽',
+    icon: 'fa-solid fa-table-list',
+    content: `
+        <div class="space-y-6">
+            <!-- 標題區塊 -->
+            <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                        <i class="fa-solid fa-table-list text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 全職業技能總表</h2>
+                        <p class="text-xs text-zinc-400">收錄基本規則書 I～III 與主要擴充書之全技能分類、經驗表（A/B）及核心職能簡介。</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 text-xs">
+                    <span class="px-2.5 py-1 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60">經驗表 A：主力戰鬥 / 魔法職</span>
+                    <span class="px-2.5 py-1 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/60">經驗表 B：偵察 / 輔助 / 特殊職</span>
+                </div>
+            </div>
+
+            <!-- 1. 戰士系技能 -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                    <i class="fa-solid fa-sword text-red-400"></i>
+                    <h3 class="font-bold text-zinc-100 text-base">一、戰士系技能（物理攻擊與前衛防禦）</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-2.5 px-4 w-32">技能名稱</th>
+                                <th class="py-2.5 px-2 w-16 text-center">經驗表</th>
+                                <th class="py-2.5 px-3 w-36">主要檢定 / 基準</th>
+                                <th class="py-2.5 px-4">職能定位與特色簡介</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/70 text-zinc-300">
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-400">戰士 (Fighter)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
+                                <td class="py-2.5 px-4">全能型重裝前衛，可裝備所有武器與金屬鎧甲，擁有最高等級的防護與穩定輸出，Lv7 習得《堅韌》。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-400">拳鬥士 (Grappler)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
+                                <td class="py-2.5 px-4">高機動輕裝近戰，僅能穿非金屬鎧，專精格鬥武器與連擊追打，Lv1 自動習得《追加攻擊》與《投擲》。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-400">輕戰士 (Fencer)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
+                                <td class="py-2.5 px-4">輕裝高速技巧派，武器與防具必筋上限減半，但所有武器 C 值（爆擊值）-1，擅長高迴避與高爆擊爆發。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-400">射手 (Shooter)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 追加傷害</td>
+                                <td class="py-2.5 px-4">遠程射擊專家（無迴避力），負責使用弓、弩、投擲武器與魔動機槍進行遠距離精準打擊。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                            <td class="py-2.5 px-4 font-bold text-amber-400">戰鬥舞者 (Battle Dancer)</td>
+                            <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                            <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
+                            <td class="py-2.5 px-4">可使用所有近戰、投擲與拳鬥士武器（必筋無減半），但防具限拳鬥士可裝備且不可用盾；Lv1 額外獲得 1 格指定宣言特技欄，Lv7 自動習得《舞い流し》、Lv13 自動習得《バトルマスター》。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 2. 魔法師系技能 -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i>
+                    <h3 class="font-bold text-zinc-100 text-base">二、魔法師系技能（施展魔法與提供最大 MP）</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-2.5 px-4 w-32">技能名稱</th>
+                                <th class="py-2.5 px-2 w-16 text-center">經驗表</th>
+                                <th class="py-2.5 px-3 w-36">魔法體系</th>
+                                <th class="py-2.5 px-4">職能定位與特色簡介</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/70 text-zinc-300">
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-indigo-400">真語魔法師 (Sorcerer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">真語魔法</td>
+                                <td class="py-2.5 px-4">正統元素與能量砲台，擁有最強大的範圍純能量轟炸、防護罩與飛行等汎用魔法。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-emerald-400">操靈魔法師 (Conjurer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">操靈魔法</td>
+                                <td class="py-2.5 px-4">擅長團隊 Buff/Debuff、基礎回復與召喚魔像（Golem）協助前線卡位與作戰。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-yellow-400">神官 (Priest)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">神聖魔法</td>
+                                <td class="py-2.5 px-4">隊伍核心補師，具備全體治癒、異常狀態解除與驅魔能力，並可依信仰神明習得專屬特殊神聖魔法。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-teal-400">妖精使 (Fairy Tamer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">妖精魔法</td>
+                                <td class="py-2.5 px-4">與六大屬性妖精契約，同時具備屬性攻擊、單體大回復、防禦強化與召喚妖精戰士的多面手。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-cyan-400">魔動機師 (Magitech)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">魔動機術</td>
+                                <td class="py-2.5 px-4">結合魔導槍射擊與輔助裝置的科技法職，擅長瞬間裝填、範圍榴彈、光學偵察與高速急救。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-lime-400">德魯伊 (Druid)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">森羅魔法</td>
+                                <td class="py-2.5 px-4">自然與物理系輔助法師，多數魔法不需抵抗即可直接賦予「物理傷害減免」或直接命中的物理攻擊。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-rose-400">典籍魔導士 (Bibliomancer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">祕奧魔法</td>
+                                <td class="py-2.5 px-4">透過魔導書釋放高威力儀式魔法的專家，具備獨特的咒文擴張與超常現象控制力。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-500">奈落使 (Abyssgazer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">奈落魔法</td>
+                                <td class="py-2.5 px-4">操控奈落之力的禁忌施法者，透過累積「穢度」與消耗生命代價換取強大的扭曲與支配魔法。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-violet-400">深智魔法 (Wizard)</td>
+                                <td class="py-2.5 px-2 text-center text-zinc-500 font-bold">複合</td>
+                                <td class="py-2.5 px-3 text-zinc-400">真語＋操靈</td>
+                                <td class="py-2.5 px-4">無需額外花費經驗點，當同時擁有《真語魔法師》與《操靈魔法師》時自動解鎖（取兩者較低等級）。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. 其他技能（偵察、知識與流派輔助） -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-emerald-400"></i>
+                    <h3 class="font-bold text-zinc-100 text-base">三、其他技能（偵察探索、魔物知識與特殊輔助體系）</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-2.5 px-4 w-32">技能名稱</th>
+                                <th class="py-2.5 px-2 w-16 text-center">經驗表</th>
+                                <th class="py-2.5 px-3 w-36">核心功能 / 系統</th>
+                                <th class="py-2.5 px-4">職能定位與特色簡介</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/70 text-zinc-300">
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-emerald-300">斥候 (Scout)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">先制力 / 陷阱 / 隱蔽</td>
+                                <td class="py-2.5 px-4">地下城探索必備，負責開鎖、拆陷阱、潛行偵察以及決定戰鬥開場「先制判定」。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-emerald-300">遊俠 (Ranger)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">野外求生 / 藥草加值</td>
+                                <td class="py-2.5 px-4">自然環境專家，大幅提升救命草與魔香草的回復量（可加智力加值），並擅長追蹤與野外生存。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-emerald-300">賢者 (Sage)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">魔物知識 / 語言 / 鑑定</td>
+                                <td class="py-2.5 px-4">隊伍智囊，負責戰鬥開場「魔物知識判定」以看穿敵人弱點與數據，並可習得各種語言與寶物鑑定。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">練體士 (Enhancer)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">練技（消耗 MP 強化）</td>
+                                <td class="py-2.5 px-4">透過消耗少量 MP 在「輔助動作」自我強化（如提高命中、防護、能力值或自我再生），前衛熱門副職。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">吟遊詩人 (Bard)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">咒歌 / 終律（演奏系統）</td>
+                                <td class="py-2.5 px-4">透過演奏累積「樂素」釋放廣域增益或控場咒歌，並在樂素充足時發動強力「終律」造成傷害或大回復。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">騎手 (Rider)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">騎藝（騎乘魔物作戰）</td>
+                                <td class="py-2.5 px-4">駕馭戰馬、魔動機或幻獸一同參戰，分擔傷害、提供高機動力並擁有額外的騎獸部位行動次數。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">鍊金術師 (Alchemist)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">賦術（消耗魔賦卡）</td>
+                                <td class="py-2.5 px-4">不耗 MP，改以「輔助動作」消耗魔賦卡（紅/綠/黑/白/金）瞬間為隊友增傷、加防或削弱敵人。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">軍師 (Warleader)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">鼓咆 / 陣率</td>
+                                <td class="py-2.5 px-4">不耗 MP 與金錢，透過戰場指揮累積「陣氣」，為全隊提供常駐光環（鼓咆）與關鍵時刻的戰術逆轉（陣率）。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-300">天地使 (Geomancer)</td>
+                                <td class="py-2.5 px-2 text-center text-cyan-300 font-bold">B</td>
+                                <td class="py-2.5 px-3 text-zinc-400">相域（天/地/人脈）</td>
+                                <td class="py-2.5 px-4">攜帶地貌儀展開結界，在回合結束時隨機對領域內的敵我觸發天、地、人三種命運干涉效果。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-red-400">暗獵者 (Dark Hunter)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">操氣（消耗 HP/MP）</td>
+                                <td class="py-2.5 px-4">專精討伐特定強敵的賞金獵人，消耗 HP 或 MP 發動「操氣」強化爆發傷害，並支援武器/射擊雙修。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `
+},
     {
       id: 'sec-magitech_rules',
       title: '魔動機術 (Magitech) 概要與規則 (表A)',
@@ -755,6 +990,7 @@ export const ruleSections = [
       icon: 'fa-solid fa-book-bookmark',
       content: `
         <div class="space-y-6 text-zinc-300">
+          <!-- 標題與核心數值 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl shadow-md">
             <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
               <h2 class="text-xl font-bold text-amber-400 flex items-center">
@@ -766,7 +1002,7 @@ export const ruleSections = [
               </div>
             </div>
             <p class="text-xs text-zinc-300 leading-relaxed mb-3">
-              典籍魔導士（祕文使）是將魔法文明時代的祕術「祕奧魔法」於現代復甦並加以行使的技能。習得後即可進行「魔法文明語」的對話與閱讀。
+              典籍魔導士（祕文使）是發掘魔法文明時代的失傳祕術「祕奧魔法」，解析其〈魔導書〉並於現代重現行使的技能。習得後即可進行「魔法文明語」的會話與讀寫。
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800">
@@ -779,77 +1015,154 @@ export const ruleSections = [
               </div>
             </div>
           </div>
-  
+
+          <!-- 1. 基本規則與魔導書操作 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
             <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
-              <i class="fa-solid fa-scroll mr-2 text-amber-500"></i>1. 祕奧魔法基本規則與限制
+              <i class="fa-solid fa-scroll mr-2 text-amber-500"></i>1. 祕奧魔法基本規則與〈魔導書〉操作
             </h3>
             <ul class="list-disc list-inside text-xs text-zinc-300 space-y-2 leading-relaxed bg-zinc-950 p-4 rounded-lg border border-zinc-800">
-              <li><strong class="text-amber-300">行使條件：</strong>必須用手指描摹〈魔導書〉中預先準備好的魔法，並在最後以魔法文明語發出魔法名稱（【異貌】夢魘不需發聲）。</li>
+              <li><strong class="text-amber-300">行使條件：</strong>必須用手指依照正確文法與步驟描摹準備在〈魔導書〉上的複合魔法文字，並在最後以魔法文明語發聲念出魔法名稱（〔異貌〕時的夢魘無需發聲）。</li>
               <li><strong class="text-amber-300">移動限制：</strong>行使祕奧魔法的回合，移動種類僅限於「限制移動」。</li>
-              <li><strong class="text-amber-300">鎧甲限制：</strong>必要筋力 10 以上的〈非金屬鎧〉承受 -2 懲罰；〈金屬鎧〉承受 -4 懲罰（夢魘異貌時不受限）。</li>
-              <li><strong class="text-amber-300">〈魔導書〉：</strong>必須持有〈魔導書〉（視為「使用：1H」的道具）。一次行使僅能使用一冊。兼具武器或盾牌功能的魔導書可依規則「裝備」並獲得對應效果。</li>
-              <li><strong class="text-amber-300">種族與出生表：</strong>獸化人在【獸化】狀態下無法發出魔法文明語，故無法行使。使用「仔細創角」時，出生表的真語或操靈魔法可替換為典籍魔導士技能。</li>
+              <li><strong class="text-amber-300">鎧甲限制：</strong>與真語、操靈魔法相同，裝備必要筋力 10 以上的〈非金屬鎧〉承受 <span class="text-red-400 font-bold">-2</span> 懲罰；〈金屬鎧〉承受 <span class="text-red-400 font-bold">-4</span> 懲罰（〔異貌〕時的夢魘不受限）。</li>
+              <li><strong class="text-amber-300">〈魔導書〉持握與多冊運用：</strong>〈魔導書〉視為「用法：1H」的道具。角色可雙手各持 1 冊，但單次行使僅能使用其中 1 冊（魔導書的特殊行使效果也僅限於該次使用的那一冊）。</li>
+              <li><strong class="text-amber-300">武器／盾牌型〈魔導書〉：</strong>部分兼具武器或盾牌功能的魔導書可依規則「裝備」並常駐獲得效果（例如一手揮舞武器魔導書、另一手獲得盾牌魔導書的防護點，或在《多重行動》時揮舞武器魔導書並以另一冊特殊效果魔導書施法；但兩面盾牌效果依基本規則不疊加）。</li>
+              <li><strong class="text-amber-300">種族與出生表：</strong>狼人（リカント）在〔獸變貌〕狀態下無法發出魔法文明語，故無法行使。使用「細心創建」創角時，出生表的「真語魔法師」或「操靈魔法師」可替換為典籍魔導士技能。</li>
             </ul>
           </div>
-  
+
+          <!-- 2. 取得、會得、價格與解析時間 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
             <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
-              <i class="fa-solid fa-coins mr-2 text-amber-500"></i>2. 祕奧魔法的取得、價格與解析時間
+              <i class="fa-solid fa-coins mr-2 text-amber-500"></i>2. 祕奧魔法的入手、會得、價格與解析時間
             </h3>
-            <p class="text-xs text-zinc-300">
-              典籍魔導士不會因技能提升自動獲得魔法，必須從祕文書公會購買，或在冒險中發現古代〈魔導書〉解析取得。
-            </p>
+            <div class="text-xs text-zinc-300 space-y-2 leading-relaxed">
+              <p>
+                典籍魔導士<strong class="text-amber-300">不會隨技能等級上升自動獲得魔法</strong>，必須透過向祕文書公會購買，或在冒險中發現古代〈魔導書〉取得；且必須在自身技能等級對應的「行使框最高階級」範圍內，才能購買或透過出售獲得「會得（學會）」。
+              </p>
+              <ul class="list-disc list-inside text-zinc-400 space-y-1 pl-1">
+                <li><strong class="text-zinc-200">公會購買：</strong>向祕文書公會購買已解析魔法時，入手同時即「會得」（市場購入品不可轉賣）。</li>
+                <li><strong class="text-zinc-200">冒險發現與出售會得：</strong>冒險後可將發現的魔法賣給公會（已解析品為市價半價；未發現品為市價 2 倍）。若該魔法階級符合自身等級上限，出售後可<strong class="text-emerald-400">免費獲得解析傳授並「會得」</strong>（未發現品需等待公會解析完成；若不想失去手邊直接應急行使的機會，也可選擇暫不出售）。</li>
+              </ul>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
                 <div class="font-bold text-amber-400 mb-2">市場購入與冒險販售價格</div>
-                <table class="w-full text-left border-collapse border border-zinc-800">
+                <table class="w-full text-center border-collapse border border-zinc-800">
                   <thead class="bg-zinc-950 text-amber-400 border-b border-zinc-800">
                     <tr>
-                      <th class="p-2 border border-zinc-800">等級</th>
+                      <th class="p-2 border border-zinc-800">階級 (Rank)</th>
                       <th class="p-2 border border-zinc-800">購入價格</th>
                       <th class="p-2 border border-zinc-800">販售 (已解析)</th>
                       <th class="p-2 border border-zinc-800">販售 (未發現)</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-zinc-800 text-zinc-300">
-                    <tr><td class="p-2 border border-zinc-800">1</td><td class="p-2 border border-zinc-800">500G</td><td class="p-2 border border-zinc-800">250G</td><td class="p-2 border border-zinc-800">1,000G</td></tr>
-                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800">2</td><td class="p-2 border border-zinc-800">1,500G</td><td class="p-2 border border-zinc-800">750G</td><td class="p-2 border border-zinc-800">3,000G</td></tr>
-                    <tr><td class="p-2 border border-zinc-800">3</td><td class="p-2 border border-zinc-800">3,000G</td><td class="p-2 border border-zinc-800">1,500G</td><td class="p-2 border border-zinc-800">6,000G</td></tr>
-                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800">4</td><td class="p-2 border border-zinc-800">6,000G</td><td class="p-2 border border-zinc-800">3,000G</td><td class="p-2 border border-zinc-800">12,000G</td></tr>
-                    <tr><td class="p-2 border border-zinc-800">5</td><td class="p-2 border border-zinc-800">12,000G</td><td class="p-2 border border-zinc-800">6,000G</td><td class="p-2 border border-zinc-800">24,000G</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">1</td><td class="p-2 border border-zinc-800">500G</td><td class="p-2 border border-zinc-800">250G</td><td class="p-2 border border-zinc-800 text-amber-300">1,000G</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">2</td><td class="p-2 border border-zinc-800">1,500G</td><td class="p-2 border border-zinc-800">750G</td><td class="p-2 border border-zinc-800 text-amber-300">3,000G</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">3</td><td class="p-2 border border-zinc-800">3,000G</td><td class="p-2 border border-zinc-800">1,500G</td><td class="p-2 border border-zinc-800 text-amber-300">6,000G</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">4</td><td class="p-2 border border-zinc-800">6,000G</td><td class="p-2 border border-zinc-800">3,000G</td><td class="p-2 border border-zinc-800 text-amber-300">12,000G</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">5</td><td class="p-2 border border-zinc-800">12,000G</td><td class="p-2 border border-zinc-800">6,000G</td><td class="p-2 border border-zinc-800 text-amber-300">24,000G</td></tr>
                   </tbody>
                 </table>
               </div>
               <div>
                 <div class="font-bold text-amber-400 mb-2">未發現魔法解析所需時間</div>
-                <table class="w-full text-left border-collapse border border-zinc-800">
+                <table class="w-full text-center border-collapse border border-zinc-800">
                   <thead class="bg-zinc-950 text-amber-400 border-b border-zinc-800">
                     <tr>
-                      <th class="p-2 border border-zinc-800">魔法等級</th>
-                      <th class="p-2 border border-zinc-800">所需解析時間</th>
+                      <th class="p-2 border border-zinc-800">魔法階級 (Rank)</th>
+                      <th class="p-2 border border-zinc-800">公會解析所需時間</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-zinc-800 text-zinc-300">
-                    <tr><td class="p-2 border border-zinc-800">Lv 1</td><td class="p-2 border border-zinc-800">3 天</td></tr>
-                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800">Lv 2</td><td class="p-2 border border-zinc-800">1 週</td></tr>
-                    <tr><td class="p-2 border border-zinc-800">Lv 3</td><td class="p-2 border border-zinc-800">2 週</td></tr>
-                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800">Lv 4</td><td class="p-2 border border-zinc-800">3 週</td></tr>
-                    <tr><td class="p-2 border border-zinc-800">Lv 5</td><td class="p-2 border border-zinc-800">1 個月</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 1</td><td class="p-2 border border-zinc-800">3 日</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">Rank 2</td><td class="p-2 border border-zinc-800">1 週</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 3</td><td class="p-2 border border-zinc-800">2 週</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">Rank 4</td><td class="p-2 border border-zinc-800">3 週</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 5</td><td class="p-2 border border-zinc-800">1 個月</td></tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
-  
+
+          <!-- 3. Lv1~15 行使框對照表與改寫時間 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
             <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
-              <i class="fa-solid fa-triangle-exclamation mr-2 text-amber-500"></i>3. 行使框的運用與應急特殊失敗風險
+              <i class="fa-solid fa-table-cells mr-2 text-amber-500"></i>3. 典籍魔導士技能行使框表與改寫時間
+            </h3>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 text-xs">
+              <div class="lg:col-span-2">
+                <div class="font-bold text-amber-400 mb-2">Lv 1～15 準備行使框與應急行使框對照</div>
+                <table class="w-full text-center border-collapse border border-zinc-800">
+                  <thead class="bg-zinc-950 text-amber-400 border-b border-zinc-800">
+                    <tr>
+                      <th class="p-1.5 border border-zinc-800 w-16">技能Lv</th>
+                      <th class="p-1.5 border border-zinc-800">準備行使框的階級與數量</th>
+                      <th class="p-1.5 border border-zinc-800 w-28">應急最高階級</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800 text-zinc-300">
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">1</td><td class="p-1.5 border border-zinc-800">階級 1 × 1</td><td class="p-1.5 border border-zinc-800" rowspan="3">1</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">2</td><td class="p-1.5 border border-zinc-800">階級 1 × 2</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">3</td><td class="p-1.5 border border-zinc-800">階級 1 × 3</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">4</td><td class="p-1.5 border border-zinc-800">階級 1 × 3、階級 2 × 1</td><td class="p-1.5 border border-zinc-800" rowspan="3">2</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">5</td><td class="p-1.5 border border-zinc-800">階級 1 × 3、階級 2 × 2</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">6</td><td class="p-1.5 border border-zinc-800">階級 1～2 × 3</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">7</td><td class="p-1.5 border border-zinc-800">階級 1～2 × 3、階級 3 × 1</td><td class="p-1.5 border border-zinc-800" rowspan="3">3</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">8</td><td class="p-1.5 border border-zinc-800">階級 1～2 × 3、階級 3 × 2</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">9</td><td class="p-1.5 border border-zinc-800">階級 1～3 × 3</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">10</td><td class="p-1.5 border border-zinc-800">階級 1～3 × 3、階級 4 × 1</td><td class="p-1.5 border border-zinc-800" rowspan="3">4</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">11</td><td class="p-1.5 border border-zinc-800">階級 1～3 × 3、階級 4 × 2</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">12</td><td class="p-1.5 border border-zinc-800">階級 1～4 × 3</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">13</td><td class="p-1.5 border border-zinc-800">階級 1～4 × 3、階級 5 × 1</td><td class="p-1.5 border border-zinc-800" rowspan="3">5</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-1.5 border border-zinc-800 font-bold">14</td><td class="p-1.5 border border-zinc-800">階級 1～4 × 3、階級 5 × 2</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800 font-bold">15</td><td class="p-1.5 border border-zinc-800">階級 1～5 × 3</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <div class="font-bold text-amber-400 mb-2">準備行使框改寫所需時間</div>
+                <table class="w-full text-center border-collapse border border-zinc-800 mb-3">
+                  <thead class="bg-zinc-950 text-amber-400 border-b border-zinc-800">
+                    <tr>
+                      <th class="p-2 border border-zinc-800">新準備魔法階級</th>
+                      <th class="p-2 border border-zinc-800">改寫時間</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800 text-zinc-300">
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 1</td><td class="p-2 border border-zinc-800">1 小時</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">Rank 2</td><td class="p-2 border border-zinc-800">2 小時</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 3</td><td class="p-2 border border-zinc-800">3 小時</td></tr>
+                    <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-bold">Rank 4</td><td class="p-2 border border-zinc-800">6 小時</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-bold">Rank 5</td><td class="p-2 border border-zinc-800">12 小時</td></tr>
+                  </tbody>
+                </table>
+                <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800 text-zinc-400 leading-relaxed">
+                  <strong class="text-zinc-200 block mb-1">向下相容規則：</strong>
+                  允許將較低階級的祕奧魔法放入較高階級的準備框中（例如 Lv4 時可將 4 個準備框全部填入 Rank 1 魔法）。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. 行使框的運用與應急特殊失敗風險 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-triangle-exclamation mr-2 text-amber-500"></i>4. 準備／應急行使框運用與「特殊失敗」風險
             </h3>
             <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-3 text-xs leading-relaxed">
-              <p><strong class="text-amber-400">● 準備行使框（所有魔導書共用）：</strong>必須預先將術式寫入魔導書。冒險中更換準備框魔法需花費改寫時間：<span class="text-amber-300 font-bold">1 階：1小時 ｜ 2 階：2小時 ｜ 3 階：3小時 ｜ 4 階：6小時 ｜ 5 階：12小時</span>。</p>
-              <p><strong class="text-amber-400">● 應急行使框：</strong>無需預先準備即可緊急行使已習得或他人魔導書上的魔法（不可用於補助動作與戰鬥準備）。</p>
-              <p><strong class="text-red-400">◆ 應急行使的特殊失敗：</strong>跑團開始時擲 2d 決定本場「特殊失敗值」（2 與 12 重擲，得 3～11，不可被《劍之加護》或《命運變轉》修改）。應急行使原骰等於該值時即「特殊失敗」（自動失敗、MP 照扣、無 50 經驗值），並立即重擲 2d 刷新本場次的特殊失敗值。</p>
+              <p><strong class="text-amber-400">● 準備行使框（多本魔導書共用）：</strong>從已「會得」的魔法中預先寫入自己的〈魔導書〉。即使攜帶多本魔導書，準備行使框內容也必須完全相同（無法靠換書增加準備格）。施法流程與一般魔法完全相同（有 6 ゾロ自動成功與 1 ゾロ自動失敗）。</p>
+              <p><strong class="text-amber-400">● 應急行使框（無次數限制）：</strong>不限使用次數，可不經準備直接行使①<strong class="text-zinc-200">已會得但未放入準備框的魔法</strong>，或②<strong class="text-zinc-200">冒險中發現的文獻／他人魔導書上的魔法</strong>（使用非自己的魔導書時，即使該魔法在自己準備框內，也強制走應急行使框）。不可超越技能等級對應的階級上限，且<strong class="text-red-300">不可用於「補助動作」與「戰鬥準備」</strong>。</p>
+              <div class="border-t border-zinc-800 pt-3 space-y-1.5">
+                <p class="font-bold text-red-400">◆ 應急行使的風險：特殊失敗</p>
+                <ul class="list-disc list-inside text-zinc-300 space-y-1 pl-1">
+                  <li><strong class="text-zinc-100">決定特殊失敗值：</strong>劇本（Session）開始時玩家擲 2d（擲出 2 或 12 重擲，得出 3～11；不可受任何骰面操作效果影響），記錄為本場「特殊失敗值」（不跨場繼承；隊伍有多名典籍魔導士時各自獨立管理）。</li>
+                  <li><strong class="text-zinc-100">觸發與後果：</strong>透過應急行使框施法時，若魔法行使判定的<strong class="text-red-300">原始骰面點數等於特殊失敗值</strong>，無視魔力直接視為「自動失敗」（無效果、MP 照扣、不會獲得 1 ゾロ的 50 點經驗值）。僅能透過直接修改骰面本身的效果（如〔劍之加護／命運變轉〕）迴避，一般加減值修正無效。</li>
+                  <li><strong class="text-zinc-100">特殊失敗值的刷新：</strong>每次發生特殊失敗後，立即重擲 2d 更新特殊失敗值（擲出 2、12 或與前一次相同的點數皆須重擲，確保得出 3～11 之間的新數值）。</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>

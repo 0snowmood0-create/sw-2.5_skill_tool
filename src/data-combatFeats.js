@@ -947,6 +947,36 @@ export const combatFeatsData = [
       effect: "可裝備特殊樂器"
     },
     {
+      name: "魔導書習熟A",
+      nameJp: "魔導書習熟A",
+      category: "戰鬥特技",
+      type: "被動",
+      prerequisite: "無",
+      usage: "無",
+      summary: "可使用 A 級魔導書",
+      effect: "習得者於行使祕奧魔法時，可使用 A 級的〈魔導書〉。"
+    },
+    {
+      name: "魔導書習熟S",
+      nameJp: "魔導書習熟S",
+      category: "戰鬥特技",
+      type: "被動",
+      prerequisite: "典籍魔導士等級5、魔導書習熟A",
+      usage: "無",
+      summary: "可使用 S 級魔導書",
+      effect: "習得者於行使祕奧魔法時，可使用 S 級的〈魔導書〉。"
+    },
+    {
+      name: "魔導書的達人",
+      nameJp: "魔導書の達人",
+      category: "戰鬥特技",
+      type: "被動",
+      prerequisite: "典籍魔導士等級11、魔導書習熟S",
+      usage: "無",
+      summary: "可使用 SS 級魔導書",
+      effect: "習得者於行使祕奧魔法時，可使用 SS 級的〈魔導書〉。"
+  },
+  {
       name: "跳踢",
       nameJp: "跳び蹴り",
       category: "戰鬥特技",

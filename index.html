@@ -202,7 +202,7 @@
                         </optgroup>
                         <optgroup label="特殊物件與軌跡">
                             <option value="魔像/強化物件">魔像/強化物件</option>
-                            <option value="相導具/相動軌跡">相導具/相動軌跡</option>
+                            <option value="地貌儀">地貌儀</option>
                         </optgroup>
                     </select>
                 </div>
@@ -219,6 +219,9 @@
         <section id="sec-rules" class="space-y-6 hidden">
             <!-- 技能職業子頁籤 (加上 id="rule-subtabs-nav"，點擊獨立規則時會隱藏) -->
             <div id="rule-subtabs-nav" class="flex overflow-x-auto gap-2 border-b border-zinc-800 pb-3 custom-scrollbar">
+                <button id="subtab-skill_overview_rules" onclick="switchRuleSubTab('skill_overview_rules')" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium">
+                    <i class="fa-solid fa-table-list mr-1.5"></i>技能總表
+                </button>
                 <button onclick="switchRuleSubTab('bard_rules')" id="subtab-bard_rules" class="rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30 whitespace-nowrap font-medium">
                     <i class="fa-solid fa-feather mr-1"></i> 吟遊詩人
                 </button>
