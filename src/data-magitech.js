@@ -3,7 +3,7 @@
 // ==========================================
 export const magitechData = [
   {
-  category: "魔動機術", type: "魔動機術", req_level: 1, name: ">>信號彈 (シグナル▪バレット)",
+  category: "魔動機術", type: "魔動機術", req_level: 1, name: "▶▶信號彈 (シグナル▪バレット)",
   row1_val1: "MP 1", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "－",
@@ -12,7 +12,7 @@ export const magitechData = [
   effect: `製作命中時會爆發強光的信號彈的魔法。信號彈發出的光芒會在 10 秒（1 輪）內照亮半徑 10 m 的空間，如果沒有命中射擊目標，則會擊中附近的地面並發光。也可以在無特定目標時進行射擊，此時會在擊中某種障礙物或遮蔽物、亦或是飛到射擊距離極限後發光。`
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 1, name: ">>固態彈 (ソリッド▪バレット)",
+  category: "魔動機術", type: "魔動機術", req_level: 1, name: "▶▶固態彈 (ソリッド▪バレット)",
   row1_val1: "MP 1", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "任意", 
@@ -21,7 +21,7 @@ export const magitechData = [
   effect: `子彈命中時給予「威力20+魔力」的魔法傷害`
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 1, name: ">>目標定位 (ターゲットサイト)",
+  category: "魔動機術", type: "魔動機術", req_level: 1, name: "▶▶目標定位 (ターゲットサイト)",
   row1_val1: "MP 2", row1_val3: "魔動機石：小",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "一瞬/各式各樣",
   resistance: "任意", 
@@ -56,7 +56,7 @@ export const magitechData = [
   
   // --- 等級 2 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 2, name: ">>搜尋輔助器",
+  category: "魔動機術", type: "魔動機術", req_level: 2, name: "▶▶搜尋輔助器",
   row1_val1: "MP 4", row1_val3: "魔動機石：小",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "任意", element: "－",
@@ -64,7 +64,7 @@ export const magitechData = [
   effect: "魔動機石變形成可輔助視覺與聽覺的感應器。術者進行「探索判定」、「解除判定」時，獲得＋2 的加值修正。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 2, name: ">>重擊彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 2, name: "▶▶重擊彈頭",
   row1_val1: "MP 2", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -72,7 +72,7 @@ export const magitechData = [
   effect: "製作高貫穿力的〈子彈〉。\n使〈子彈〉命中時造成「威力20＋魔力」點魔法傷害。接著，此子彈使用威力表時，暴擊值－ 1。\n此效果不會使暴擊值成為7 以下。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 2, name: ">>治療彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 2, name: "▶▶治療彈頭",
   row1_val1: "MP 1", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -106,7 +106,7 @@ export const magitechData = [
   
   // --- 等級 3 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 3, name: ">>屬性彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 3, name: "▶▶屬性彈頭",
   row1_val1: "MP 1", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "屬性",
@@ -114,7 +114,7 @@ export const magitechData = [
   effect: "使〈子彈〉命中時造成「威力20＋魔力」點魔法傷害。接著，術者可選擇讓子彈獲得「炎」「水· 冰」「土」「風」「雷」其中一種屬性。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 3, name: ">>催淚彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 3, name: "▶▶催淚彈頭",
   row1_val1: "MP 3", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "毒",
@@ -156,7 +156,7 @@ export const magitechData = [
   
   // --- 等級 4 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 4, name: ">>Δ構造解析",
+  category: "魔動機術", type: "魔動機術", req_level: 4, name: "▶▶Δ構造解析",
   row1_val1: "MP 2", row1_val3: "魔動機石：小",
   row2_val1: "1項物體或1名", row2_val3: "全", row2_val5: "一瞬",
   resistance: "必中", element: "－",
@@ -164,7 +164,7 @@ export const magitechData = [
   effect: "使魔動機石變形成解析器。得知魔動機文明時代物品的能力、效果、使用方法等。也能得知分類為「魔動機」的魔物資料（無法得知弱點）。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 4, name: ">>自動防禦I",
+  category: "魔動機術", type: "魔動機術", req_level: 4, name: "▶▶自動防禦I",
   row1_val1: "MP 5", row1_val3: "魔動機石：小",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "任意", element: "－",
@@ -172,7 +172,7 @@ export const magitechData = [
   effect: "使魔動機石變形成可自行移動的小型盾。術者的迴避力判定獲得＋ 1 的加值修正，且防護點＋1。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 4, name: ">>快速填彈",
+  category: "魔動機術", type: "魔動機術", req_level: 4, name: "▶▶快速填彈",
   row1_val1: "MP 4", row1_val3: "魔動機石：小",
   row2_val1: "1把槍", row2_val3: "術者/-", row2_val5: "一瞬",
   resistance: "任意", element: "－",
@@ -206,7 +206,7 @@ export const magitechData = [
   
   // --- 等級 5 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 5, name: ">>擴散彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 5, name: "▶▶擴散彈頭",
   row1_val1: "MP 2", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -242,7 +242,7 @@ export const magitechData = [
   
   // --- 等級 6 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 6, name: ">>點放射擊",
+  category: "魔動機術", type: "魔動機術", req_level: 6, name: "▶▶點放射擊",
   row1_val1: "MP 3", row1_val3: "魔動機石：小",
   row2_val1: "3發子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -295,7 +295,7 @@ export const magitechData = [
   
   // --- 等級 7 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 7, name: ">>電擊彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 7, name: "▶▶電擊彈頭",
   row1_val1: "MP 3", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -303,7 +303,7 @@ export const magitechData = [
   effect: "使〈子彈〉命中時造成「威力10＋魔力」點魔法傷害，並使被命中者在接下來的10秒內無法進行任何輔助動作與宣言特技。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 7, name: ">>定時裝置",
+  category: "魔動機術", type: "魔動機術", req_level: 7, name: "▶▶定時裝置",
   row1_val1: "MP 1", row1_val3: "魔動機石：小",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "1小時",
   resistance: "任意", element: "－",
@@ -320,7 +320,7 @@ export const magitechData = [
   effect: "使魔動機石變形成【高性能魔動機車】。可作為騎獸使用。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 7, name: ">>望遠裝置",
+  category: "魔動機術", type: "魔動機術", req_level: 7, name: "▶▶望遠裝置",
   row1_val1: "MP 1", row1_val3: "魔動機石：大中小",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "3分(18回合)",
   resistance: "任意", element: "－",
@@ -339,7 +339,7 @@ export const magitechData = [
   
   // --- 等級 8 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 8, name: ">>滑翔披風",
+  category: "魔動機術", type: "魔動機術", req_level: 8, name: "▶▶滑翔披風",
   row1_val1: "MP 6", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "3分(18回合)",
   resistance: "任意", element: "－",
@@ -347,7 +347,7 @@ export const magitechData = [
   effect: "使魔動機石變形成滑翔翼。從高處跳下時，可以順著風勢在空中飛舞。魔法行使時如果額外消耗MP「3」點，可以直接從地上乘風起飛。術者能將移動力視為20，在飛行當中行動。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 8, name: ">>鐵樁射手",
+  category: "魔動機術", type: "魔動機術", req_level: 8, name: "▶▶鐵樁射手",
   row1_val1: "MP 6", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "一瞬/10s(1回)",
   resistance: "任意", element: "－",
@@ -382,7 +382,7 @@ export const magitechData = [
   
   // --- 等級 9 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 9, name: ">>混合裝藥",
+  category: "魔動機術", type: "魔動機術", req_level: 9, name: "▶▶混合裝藥",
   row1_val1: "MP 8", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "任意", element: "－",
@@ -390,7 +390,7 @@ export const magitechData = [
   effect: "術者可以將名為【～·炸彈】的魔法以 1 次主動作同時行使 2 項。這 2 項魔法必須彼此相異，且目標地點必須相同。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 9, name: ">>雷射彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 9, name: "▶▶雷射彈頭",
   row1_val1: "MP 3", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "純能量",
@@ -427,7 +427,7 @@ export const magitechData = [
   
   // --- 等級 10 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 10, name: ">>痊癒彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 10, name: "▶▶痊癒彈頭",
   row1_val1: "MP 2", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -435,7 +435,7 @@ export const magitechData = [
   effect: "使〈子彈〉命中時恢復「威力30＋ 魔力」點HP（必然命中，無暴擊）。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 10, name: ">>追蹤雷射",
+  category: "魔動機術", type: "魔動機術", req_level: 10, name: "▶▶追蹤雷射",
   row1_val1: "MP 4", row1_val3: "魔動機石：小",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -483,7 +483,7 @@ export const magitechData = [
   effect: "使魔動機石變形成【飛行機車】作為騎獸使用。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 11, name: ">>狙擊射距",
+  category: "魔動機術", type: "魔動機術", req_level: 11, name: "▶▶狙擊射距",
   row1_val1: "MP 5", row1_val3: "魔動機石：大中小",
   row2_val1: "一體", row2_val3: "接觸", row2_val5: "10s(一回合)",
   resistance: "任意", element: "－",
@@ -510,7 +510,7 @@ export const magitechData = [
   
   // --- 等級 12 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 12, name: ">>自動防禦II",
+  category: "魔動機術", type: "魔動機術", req_level: 12, name: "▶▶自動防禦II",
   row1_val1: "MP 8", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "任意", element: "－",
@@ -518,7 +518,7 @@ export const magitechData = [
   effect: "使魔動機石變形成可自行移動的小型盾，獲得迴避力＋1、防護點＋2。"
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 12, name: ">>加農彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 12, name: "▶▶加農彈頭",
   row1_val1: "MP 6", row1_val3: "魔動機石：中",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -548,7 +548,7 @@ export const magitechData = [
   
   // --- 等級 13 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 13, name: ">>Δ倍增",
+  category: "魔動機術", type: "魔動機術", req_level: 13, name: "▶▶Δ倍增",
   row1_val1: "MP 12", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "3分(18回合)",
   resistance: "任意", element: "－",
@@ -560,7 +560,7 @@ export const magitechData = [
   此效果會在效果期間最初破壞或消費的道具自動發揮效果，並且之後就失效。`
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 13, name: ">>範圍治療彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 13, name: "▶▶範圍治療彈頭",
   row1_val1: "MP 6", row1_val3: "魔動機石：中",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",
@@ -590,7 +590,7 @@ export const magitechData = [
   
   // --- 等級 14 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 14, name: ">>Δ短距瞬移",
+  category: "魔動機術", type: "魔動機術", req_level: 14, name: "▶▶Δ短距瞬移",
   row1_val1: "MP 15", row1_val3: "魔動機石：中",
   row2_val1: "一體X", row2_val3: "接觸", row2_val5: "一瞬",
   resistance: "任意", element: "－",
@@ -600,7 +600,7 @@ export const magitechData = [
   此魔法 1 輪只能行使 1 次。`
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 14, name: ">>究極鐵樁射手",
+  category: "魔動機術", type: "魔動機術", req_level: 14, name: "▶▶究極鐵樁射手",
   row1_val1: "MP 16", row1_val3: "魔動機石：中",
   row2_val1: "術者", row2_val3: "術者/-", row2_val5: "一瞬/10s(1回)",
   resistance: "任意", element: "－",
@@ -634,7 +634,7 @@ export const magitechData = [
   
   // --- 等級 15 ---
   {
-  category: "魔動機術", type: "魔動機術", req_level: 15, name: ">>Δ光子屏障",
+  category: "魔動機術", type: "魔動機術", req_level: 15, name: "▶▶Δ光子屏障",
   row1_val1: "MP 16", row1_val3: "魔動機石：大",
   row2_val1: "一體", row2_val3: "2(30m)/起點指定", row2_val5: "3分(18回)",
   resistance: "任意", element: "－",
@@ -644,7 +644,7 @@ export const magitechData = [
   此魔法除了術者自身外可追加一個對象不可透過<魔法擴大/數>增加對象。`
   },
   {
-  category: "魔動機術", type: "魔動機術", req_level: 15, name: ">>殲滅彈頭",
+  category: "魔動機術", type: "魔動機術", req_level: 15, name: "▶▶殲滅彈頭",
   row1_val1: "MP 10", row1_val3: "魔動機石：中",
   row2_val1: "子彈", row2_val3: "術者/-", row2_val5: "10秒(1回合)",
   resistance: "概要", element: "－",

@@ -230,12 +230,14 @@ function executeItemFilter() {
 
         const matchesCategory = !selectedCategory || item.category === selectedCategory;
         const matchesQuery = !rawQuery ||
-            (item.name && item.name.toLowerCase().includes(rawQuery)) ||
-            (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
-            (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
-            (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
-            (item.description && item.description.toLowerCase().includes(rawQuery)) ||
-            (item.price && item.price.toString().toLowerCase().includes(rawQuery));
+        (item.name && item.name.toLowerCase().includes(rawQuery)) ||
+        (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
+        (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
+        (item.note && item.note.toLowerCase().includes(rawQuery)) ||
+        (item.req && item.req.toLowerCase().includes(rawQuery)) ||
+        (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
+        (item.description && item.description.toLowerCase().includes(rawQuery)) ||
+        (item.price && item.price.toString().toLowerCase().includes(rawQuery));
 
         return matchesCategory && matchesQuery;
     });
@@ -267,7 +269,7 @@ export function renderCombatFeatCard(feat) {
     const badgeClass = typeBadgeStyles[feat.type] || 'bg-zinc-800 text-zinc-300 border-zinc-700';
 
     return `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col justify-between">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
             <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <span class="text-xs px-2 py-0.5 rounded border bg-amber-950 text-amber-300 border-amber-800 font-medium">
@@ -315,6 +317,7 @@ export function renderItemCard(item) {
     const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
     const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isGeograph = item.name && item.name.includes("地貌儀");
+    const isMount = item.category && item.category.startsWith("騎獸");
 
     let attrTableHTML = '';
 
@@ -367,6 +370,17 @@ export function renderItemCard(item) {
                 <span class="col-span-5 text-emerald-300 font-medium">天:${item.sky_limit || 0} / 地:${item.earth_limit || 0} / 人:${item.human_limit || 0}</span>
             </div>
         `;
+    } else if (isMount) {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">條件</span>
+                <span class="col-span-5 text-right text-cyan-300 font-bold">${item.req || '－'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">價格</span>
+                <span class="col-span-5 text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+        `;
     } else {
         attrTableHTML = `
             <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
@@ -379,14 +393,14 @@ export function renderItemCard(item) {
     }
 
     return `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col justify-between">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
             <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
                 <div class="flex items-center gap-2">
-                    <span class="text-xs px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800 font-medium">
+                    <span class="text-xs px-2 py-0.5 rounded border ${isMount ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-emerald-950 text-emerald-300 border-emerald-800'} font-medium">
                         ${item.category || '道具'}
                     </span>
                     <h3 class="text-base font-bold text-amber-400 ml-1">
-                        <i class="fa-solid fa-box-open mr-1.5 text-amber-500"></i>${item.name}
+                        <i class="fa-solid ${isMount ? 'fa-horse' : 'fa-box-open'} mr-1.5 text-amber-500"></i>${item.name}
                         ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
                     </h3>
                 </div>
@@ -406,6 +420,11 @@ export function renderItemCard(item) {
                     <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
                         ${item.effect || item.description || ''}
                     </p>
+                    ${item.note ? `
+                        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/60 p-2.5 rounded border border-amber-900/30 font-mono">
+                            ${item.note}
+                        </p>
+                    ` : ''}
                 </div>
             </div>
         </div>
@@ -501,21 +520,21 @@ function createSkillCardHTML(b) {
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">消耗</span>
-                <span class="text-center text-cyan-300 font-bold">${b.row1_val1 || b.cost || '－'}</span>
-                <span class="text-zinc-500 font-medium text-center">對象</span>
-                <span class="col-span-3 text-right text-zinc-300">${b.row1_val3 || b.target || '－'}</span>
+                <span class="col-span-2 text-cyan-300 font-bold">${b.row1_val1 || b.cost || '－'}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">對象</span>
+                <span class="col-span-2 text-right text-zinc-300">${b.row1_val3 || b.target || '－'}</span>
             </div>
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
                 <span class="text-zinc-500 font-medium">射程</span>
-                <span class="text-center text-zinc-300">${b.row2_val1 || b.range || '－'}</span>
-                <span class="text-zinc-500 font-medium text-center">時間</span>
-                <span class="col-span-3 text-right text-zinc-300">${b.row2_val5 || b.duration || '－'}</span>
+                <span class="col-span-2 text-zinc-300 whitespace-nowrap">${b.row2_val1 || b.range || '－'}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">時間</span>
+                <span class="col-span-2 text-right text-zinc-300">${b.row2_val5 || b.duration || '－'}</span>
             </div>
             <div class="grid grid-cols-6 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">抵抗</span>
-                <span class="text-center text-amber-300 font-medium">${b.resistance || b.resist || '－'}</span>
-                <span class="text-zinc-500 font-medium text-center">屬性</span>
-                <span class="col-span-3 text-right text-purple-300 font-medium">${b.element || '－'}</span>
+                <span class="col-span-2 text-amber-300 font-medium">${b.resistance || b.resist || '－'}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
+                <span class="col-span-2 text-right text-purple-300 font-medium">${b.element || '－'}</span>
             </div>
         `;
     }
@@ -532,7 +551,7 @@ function createSkillCardHTML(b) {
     ` : '';
 
     return `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col justify-between">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
             <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
                 <div class="flex flex-wrap items-center gap-1.5">
                     ${categoryBadgeHTML}

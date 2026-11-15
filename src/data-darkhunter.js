@@ -4,7 +4,7 @@
 export const darkhunterData = [
   // --- Lv 1 ---
   {
-    category: "操氣", type: "操氣", req_level: 1, name: ">> 氣集中 (気集中)",
+    category: "操氣", type: "操氣", req_level: 1, name: "▶▶ 氣集中 (気集中)",
     cost: "HP 1d", target: "自身",
     range: "自身/-", resistance: "任意", duration: "30s(3回合)",
     summary: "投擲命中力+1 (魔神/不死族+2)",
@@ -18,7 +18,7 @@ export const darkhunterData = [
     effect: "利用「黑暗獵人」技能和精神力進行投擲攻擊。無法受到戰鬥特技《雙手使用》《投擲》影響。武器需為「用法：1H投擲」，以精神力代替力量計算需求力量限制。命中率與附加傷害由理力計算。無需動作，直接由精神力操控投擲，雙手被綁不干擾。僅能投擲自己接觸到或隨身攜帶之物品。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: "△ >> 氣防陣 (気防陣)",
+    category: "操氣", type: "操氣", req_level: 1, name: "△ ▶▶ 氣防陣 (気防陣)",
     cost: "HP 1d", target: "1體",
     range: "1(10m)/起點指定", resistance: "任意", duration: "30s(3回合)",
     summary: "受到的傷害-2 (魔神/不死族-3)",
@@ -32,14 +32,14 @@ export const darkhunterData = [
     effect: "投擲攻擊物理傷害+1（魔神/不死族額外+1，總計+2）。達5級時傷害量提升至+2（魔神/不死族總計+3）；達10級時提升至+3（魔神/不死族總計+4）。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: ">> 屬性付・轟 (属性付・轟)",
+    category: "操氣", type: "操氣", req_level: 1, name: "▶▶ 屬性付・轟 (属性付・轟)",
     cost: "HP 1d", target: "1體",
     range: "2(30m)/起點指定", resistance: "任意", duration: "30s(3回合)",
     summary: "武器攻擊附帶衝擊、土與火屬性",
     effect: "當目標進行武器攻擊時，該次攻擊所使用的武器將視為附帶衝擊屬性、土屬性與火屬性的魔法武器。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: ">> 屬性付・裂 (属性付・裂)",
+    category: "操氣", type: "操氣", req_level: 1, name: "▶▶ 屬性付・裂 (属性付・裂)",
     cost: "HP 1d", target: "1體",
     range: "2(30m)/起點指定", resistance: "任意", duration: "30s(3回合)",
     summary: "武器攻擊附帶斷空、水冰與風屬性",
@@ -53,14 +53,14 @@ export const darkhunterData = [
     effect: "從魔物獲得戰利品時，若售價「不超過100G」且屬「自動獲得」，其中一件數量變為「1d個」。達5級時條件提升至「不超過1,000G」；達10級時提升至「不超過10,000G」。不適用於BOSS級、劇本特殊設定、非自動獲得或特殊工具獲得之戰利品。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: ">> 念絲還 (念糸還)",
+    category: "操氣", type: "操氣", req_level: 1, name: "▶▶ 念絲還 (念糸還)",
     cost: "HP 2", target: "自身",
     range: "自身/-", resistance: "任意", duration: "10s(1回合)",
     summary: "將投擲武器即刻收回手中",
     effect: "在效果期間內，闇狩投擲的所有武器，無論命中與否均會即刻返回手中並維持原裝備狀態。若武器本身具有特殊消耗/遺留效果，則優先遵循原規則。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: ">>念縛術 I (念縛術I)",
+    category: "操氣", type: "操氣", req_level: 1, name: "▶▶念縛術 I (念縛術I)",
     cost: "HP 1d", target: "1體",
     range: "接觸/-", resistance: "必中", duration: "10s(1回合)",
     summary: "迴避力-1",
@@ -74,7 +74,7 @@ export const darkhunterData = [
     effect: "魔物知識判定擴展至「魔神、蠻族、不死族」。5級以上時，對象為「魔神」則弱點值比原本少4點（最低保留至知名度值）。10級以上時，魔物知識判定成功後弱點值效果倍增（不與《弱點看破》疊加）。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 1, name: "△ >> 魔探法 (魔探法)",
+    category: "操氣", type: "操氣", req_level: 1, name: "△ ▶▶ 魔探法 (魔探法)",
     cost: "HP 1d", target: "自身",
     range: "自身/-", resistance: "任意", duration: "10分(60回合)",
     summary: "技巧/運動/觀察/知識判定+1 (魔域內常時有效)",
@@ -97,42 +97,42 @@ export const darkhunterData = [
     effect: "可將分類為「格鬥」以外且「用法: 1H（不含1H騎兵）」的近接武器透過【氣操法】遠程使用（射程1/10m，若有【遠操法】則為2/30m）。武器等級與追加傷害以《武器習熟/投擲》為準。前提：須習得【氣操法】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: ">> 氣旋法 (気旋法)",
+    category: "操氣", type: "操氣", req_level: 5, name: "▶▶ 氣旋法 (気旋法)",
     cost: "HP 1d", target: "自身",
     range: "自身/-", resistance: "任意", duration: "10分(60回合)",
     summary: "投擲攻擊改以[形狀:貫通]執行",
     effect: "投擲攻擊（含氣操法）改為「形狀：貫通」處理。攻擊路徑左右各1m為有效範圍。武器於攻擊後自動返回手中。使用一次後解除，不可與【雙操法】同時作用。前提：須習得【念絲還】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: ">> 雙操法 (双操法)",
+    category: "操氣", type: "操氣", req_level: 5, name: "▶▶ 雙操法 (双操法)",
     cost: "HP 2", target: "自身",
     range: "自身/-", resistance: "任意", duration: "10s(1回合)",
     summary: "氣操法攻擊目標改為2體",
     effect: "使用【氣操法】時目標改為「2體」，需準備兩件相同武器。命中力進行一次整體判定，HP消耗不翻倍，傷害分別計算。使用後效果自動解除。前提：須習得【氣操法】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: "△ >> 操浮術 (操浮術)",
+    category: "操氣", type: "操氣", req_level: 5, name: "△ ▶▶ 操浮術 (操浮術)",
     cost: "HP 1d", target: "自身",
     range: "自身/-", resistance: "任意", duration: "1分(6回合)",
     summary: "漂浮離地10cm，無視不良地面",
     effect: "身體浮離地面/水面約10公分。可在水面行走並無視地形不良影響。倒地時效果暫失效，站起後恢復。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: "△ >> 念絲手 I (念糸手I)",
+    category: "操氣", type: "操氣", req_level: 5, name: "△ ▶▶ 念絲手 I (念糸手I)",
     cost: "HP 2d(9)", target: "自身",
     range: "自身/-", resistance: "任意", duration: "一瞬/1分(6回合)",
     summary: "延伸10米念絲作為手臂使用",
     effect: "伸出一條念絲作手臂操作（範圍10m內），可抓取、移動物品或操作1H武器。無法抓取角色或其持有物。力量與器用度依達成值決定（1點達成值=5kg）。闇狩受到1點以上傷害或消耗時效果解除。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: ">> 念縛術 II (念縛術II)",
+    category: "操氣", type: "操氣", req_level: 5, name: "▶▶ 念縛術 II (念縛術II)",
     cost: "HP 1d", target: "1體",
     range: "接觸/-", resistance: "必中", duration: "10s(1回合)",
     summary: "主動行為判定-1",
     effect: "目標進行需要比較達成值的主動判定時受到-1懲罰。與【念縛術I/III】同名不重複。前提：須習得【念縛術I】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 5, name: ">> 念避印 (念避印)",
+    category: "操氣", type: "操氣", req_level: 5, name: "▶▶ 念避印 (念避印)",
     cost: "HP 2", target: "1體",
     range: "10m/-", resistance: "任意", duration: "10s(1回合)",
     summary: "使目標從氣旋法貫穿範圍中移除",
@@ -176,14 +176,14 @@ export const darkhunterData = [
     effect: "效果同【念絲手I】，但伸出兩條念絲能如同雙手操作物體，可使用「用法: 2H」武器，但無法受《雙手使用》影響。前提：須習得【念絲手I】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 10, name: ">> 念縛術 III (念縛術III)",
+    category: "操氣", type: "操氣", req_level: 10, name: "▶▶ 念縛術 III (念縛術III)",
     cost: "HP 1d", target: "1體",
     range: "接觸/-", resistance: "必中", duration: "10s(1回合)",
     summary: "所有行動判定-1",
     effect: "目標對所有行動判定受到-1懲罰。與【念縛術I/II】同名不重複。前提：須習得【念縛術II】。"
   },
   {
-    category: "操氣", type: "操氣", req_level: 10, name: "△ >> 縛術強化 (縛術強化)",
+    category: "操氣", type: "操氣", req_level: 10, name: "△ ▶▶ 縛術強化 (縛術強化)",
     cost: "HP 1d", target: "自身",
     range: "自身/-", resistance: "任意", duration: "10s(1回合)",
     summary: "將念縛術(I~III)的效果改為-2",

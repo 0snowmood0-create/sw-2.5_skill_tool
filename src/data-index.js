@@ -41,6 +41,7 @@ import { swordItemsData } from './Item/data-swords.js';
 import { throwingItemsData } from './Item/data-throwing.js';
 import { warhammerItemsData } from './Item/data-warhammer.js';
 import { geographItemsData } from './Item/data-geographs.js';
+import { mountAnimalData, mountMythicalData, mountMagitechData, mountEquipmentData } from './Item/data-mounts.js';
 
 // ==================== 整合導出 allSkillsData ====================
 export const allSkillsData = [
@@ -113,5 +114,9 @@ export const allItemsData = [
     ...(swordItemsData || []).map(i => ({ ...i, category: '武器-劍' })),
     ...(throwingItemsData || []).map(i => ({ ...i, category: '武器-投擲' })),
     ...(warhammerItemsData || []).map(i => ({ ...i, category: '武器-戰錘' })),
-    ...(geographItemsData || []).map(i => ({ ...i, category: '地貌儀' }))
+    ...(geographItemsData || []).map(i => ({ ...i, category: '地貌儀' })),
+    ...(mountAnimalData || []).map(i => ({ ...i, category: '騎獸-動物' })),
+    ...(mountMythicalData || []).map(i => ({ ...i, category: '騎獸-幻獸' })),
+    ...(mountMagitechData || []).map(i => ({ ...i, category: '騎獸-魔動機' })),
+    ...(mountEquipmentData || []).map(i => ({ ...i, category: '騎獸裝備與道具' }))
 ];

@@ -99,7 +99,7 @@ export const abyssgazerData = [
     expansion: "消費擴張素材：<惡魔之血> 1個，擴張時間：1次。\n[目標]改為[1區域(半徑3m)/5]。"
   },
   {
-    category: "奈落魔法", type: "奈落魔法", req_level: 5, name: "迅速痛擊 (ファスト・ペイン)",
+    category: "奈落魔法", type: "奈落魔法", req_level: 5, name: "△▶▶迅速痛擊 (ファスト・ペイン)",
     row1_val1: "MP 2", row1_val3: "1體",
     row2_val1: "1(10m)/起點指定", row2_val3: "無", row2_val5: "一瞬",
     resistance: "必中", element: "詛咒",
@@ -162,7 +162,7 @@ export const abyssgazerData = [
     expansion: "【擴張效果1】消費擴張素材：<惡魔之血> 1個，擴張時間：1次。\n無視限制，目標能夠再次進入該魔域。\n\n【擴張效果2】消費擴張素材：<深淵碎片> 1個，擴張時間：1次。\n移除無法作用於術者本人的限制，效果可作用於自身。"
   },
   {
-    category: "奈落魔法", type: "奈落魔法", req_level: 8, name: "完美裝束 (アイデアル・コスチューム)",
+    category: "奈落魔法", type: "奈落魔法", req_level: 8, name: "▶▶完美裝束 (アイデアル・コスチューム)",
     row1_val1: "MP 6", row1_val3: "術者",
     row2_val1: "術者/-", row2_val3: "無", row2_val5: "一瞬",
     resistance: "任意", element: "－",
