@@ -3,9 +3,163 @@ import { ruleSections } from './src/rules.js';
 import { racesContent } from './src/racesData.js'; 
 import { otherRulesContent } from './src/otherRulesData.js'; 
 import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
-import { reputationRankContent } from './src/reputationRankData.js'; // 若有新增名譽點模組
+import { reputationRankContent } from './src/reputationRankData.js';
 
- 
+// ==================== 自定義頁面（收藏與快捷牌組）核心管理 ====================
+const CUSTOM_STORAGE_KEY = 'sw25_custom_deck_v1';
+
+// 讀取收藏清單
+function getCustomItems() {
+    try {
+        return JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY)) || [];
+    } catch {
+        return [];
+    }
+}
+
+// 寫入收藏清單並更新徽章計數
+function saveCustomItems(list) {
+    localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(list));
+    updateCustomBadgeCount();
+}
+
+function updateCustomBadgeCount() {
+    const badge = document.getElementById('custom-badge-count');
+    if (badge) badge.textContent = getCustomItems().length;
+}
+
+// 產生唯一識別碼
+function getItemUniqueId(type, name, category = '') {
+    return `${type}::${category}::${name}`;
+}
+
+function isItemPinned(id) {
+    return getCustomItems().some(item => item.id === id);
+}
+
+// 切換收藏狀態（技能、戰鬥特技、道具、騎獸通用）
+window.togglePinDataItem = function(encodedData) {
+    const payload = JSON.parse(decodeURIComponent(encodedData));
+    const list = getCustomItems();
+    const idx = list.findIndex(x => x.id === payload.id);
+
+    if (idx !== -1) {
+        list.splice(idx, 1);
+    } else {
+        list.push({ ...payload, userNote: '', pinnedAt: Date.now() });
+    }
+    saveCustomItems(list);
+
+    // 若當前就在自定義頁面則重繪，否則更新按鈕外觀
+    const activeCustom = document.getElementById('tab-custom')?.classList.contains('text-amber-400');
+    if (activeCustom) {
+        renderCustomPage();
+    } else {
+        document.querySelectorAll(`[data-pin-id="${CSS.escape(payload.id)}"]`).forEach(btn => {
+            const pinned = idx === -1;
+            btn.innerHTML = pinned ? '<i class="fa-solid fa-star text-amber-400"></i> 已收藏' : '<i class="fa-regular fa-star"></i> 收藏';
+            btn.className = pinned
+                ? 'text-xs px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 transition-all shrink-0'
+                : 'text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border border-zinc-700 transition-all shrink-0';
+        });
+    }
+};
+
+// 收藏整頁規則（供規則頁面使用）
+window.pinCurrentRuleSection = function(ruleId, ruleTitle, htmlContent) {
+    const id = getItemUniqueId('rule', ruleTitle, ruleId);
+    const list = getCustomItems();
+    const idx = list.findIndex(x => x.id === id);
+
+    if (idx !== -1) {
+        list.splice(idx, 1);
+    } else {
+        list.push({
+            id,
+            itemType: 'rule',
+            title: ruleTitle,
+            ruleId,
+            htmlContent,
+            userNote: '',
+            pinnedAt: Date.now()
+        });
+    }
+    saveCustomItems(list);
+
+    // 重新刷新按鈕狀態
+    const btn = document.getElementById('btn-pin-current-rule');
+    if (btn) {
+        const pinned = idx === -1;
+        btn.innerHTML = pinned
+            ? '<i class="fa-solid fa-star text-amber-400 mr-1"></i>已加入自定義頁面'
+            : '<i class="fa-regular fa-star mr-1"></i>將此規則加入自定義頁面';
+    }
+};
+
+// 更新自定義卡片的個人筆記
+window.updateCustomItemNote = function(id, noteText) {
+    const list = getCustomItems();
+    const target = list.find(x => x.id === id);
+    if (target) {
+        target.userNote = noteText;
+        saveCustomItems(list);
+    }
+};
+
+// 匯出／匯入 JSON 備份
+window.exportCustomDeck = function() {
+    const dataStr = JSON.stringify(getCustomItems(), null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SW25_自定義牌組_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+window.importCustomDeck = function(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const imported = JSON.parse(e.target.result);
+            if (Array.isArray(imported)) {
+                saveCustomItems(imported);
+                renderCustomPage();
+                alert('匯入成功！');
+            }
+        } catch {
+            alert('檔案格式錯誤，請選擇正確的 JSON 備份檔。');
+        }
+    };
+    reader.readAsText(file);
+};
+
+// 輔助函式：自動擷取 HTML 內的第一個 <h2> 作為規則標題，並掛載「收藏整頁規則」按鈕
+function attachRulePinButton(ruleId, fallbackTitle, htmlContent) {
+    const rulesContainer = document.getElementById('rules-container');
+    if (!rulesContainer || !htmlContent) return;
+
+    const h2Match = htmlContent.match(/<h2[^>]*>([\s\S]*?)<\/h2>/i);
+    const extractedTitle = h2Match ? h2Match[1].replace(/<[^>]+>/g, '').trim() : fallbackTitle;
+
+    const uid = getItemUniqueId('rule', extractedTitle, ruleId);
+    const pinned = isItemPinned(uid);
+    const encodedHtml = encodeURIComponent(htmlContent);
+
+    const bar = document.createElement('div');
+    bar.className = 'flex justify-end mb-3';
+    bar.innerHTML = `
+        <button id="btn-pin-current-rule" onclick="pinCurrentRuleSection('${ruleId}', '${extractedTitle.replace(/'/g, "\\'")}', decodeURIComponent('${encodedHtml}'))"
+            class="text-xs px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 transition-all shadow">
+            <i class="${pinned ? 'fa-solid' : 'fa-regular'} fa-star text-amber-400 mr-1"></i>${pinned ? '已加入自定義頁面' : '將此規則加入自定義頁面'}
+        </button>
+    `;
+    rulesContainer.prepend(bar);
+}
+
 // ==================== 1. 主頁籤切換 (同一層全站導覽) ====================
 window.switchMainTab = function(tabName) {
     const secBards = document.getElementById('sec-bards');
@@ -39,10 +193,8 @@ window.switchMainTab = function(tabName) {
         if (secRules) secRules.classList.remove('hidden');
 
         if (tabName === 'rules') {
-            // 切換至技能規則：顯示子選單並預設載入職業規則的第一項
             if (subtabsNav) subtabsNav.classList.remove('hidden');
             if (typeof window.switchRuleSubTab === 'function') {
-                // 優先嘗試找到 ruleSections 的第一筆 ID，若無則降級回 'bard_rules' 或 'bard'
                 const firstRuleId = (Array.isArray(ruleSections) && ruleSections.length > 0) ? ruleSections[0].id : 'bard_rules';
                 window.switchRuleSubTab(firstRuleId);
             }
@@ -50,16 +202,19 @@ window.switchMainTab = function(tabName) {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof otherRulesContent !== 'undefined') {
                 rulesContainer.innerHTML = otherRulesContent;
+                attachRulePinButton(tabName, '其他規則與判定總覽', otherRulesContent);
             }
         } else if (tabName === 'equipmentEnhancement_rules') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof equipmentEnhancementContent !== 'undefined') {
                 rulesContainer.innerHTML = equipmentEnhancementContent;
+                attachRulePinButton(tabName, '裝備強化與魔化規則', equipmentEnhancementContent);
             } 
         } else if (tabName === 'reputation_rules') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof reputationRankContent !== 'undefined') {
                 rulesContainer.innerHTML = reputationRankContent;
+                attachRulePinButton(tabName, '名譽點與冒險者階級', reputationRankContent);
             }
         } else if (tabName === 'tools') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
@@ -67,25 +222,27 @@ window.switchMainTab = function(tabName) {
                 rulesContainer.innerHTML = getFieldToolsHTML();
                 initFieldTools();
             }
+        } else if (tabName === 'custom') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            renderCustomPage();
         } else {
-            // 切換至獨立頁面 (種族 / 上級戰鬥 / 威力表 等)：隱藏子選單
             if (subtabsNav) subtabsNav.classList.add('hidden');
 
             if (tabName === 'races') {
                 if (rulesContainer && typeof racesContent !== 'undefined') {
                     rulesContainer.innerHTML = racesContent;
+                    attachRulePinButton(tabName, '種族圖鑑與種族特徵', racesContent);
                 }
             } else {
-                // 渲染其餘來自 rules.js 的規則 (相容有無 sec- 前綴的 ID)
                 const sectionData = Array.isArray(ruleSections)
                     ? ruleSections.find(s => s.id === tabName || s.id === `sec-${tabName}`)
                     : null;
                 if (rulesContainer && sectionData) {
                     rulesContainer.innerHTML = sectionData.content;
+                    attachRulePinButton(tabName, sectionData.title || tabName, sectionData.content);
                 }
             }
 
-            // 威力表初始化
             if (tabName === 'power_table_rules') {
                 setTimeout(() => {
                     if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
@@ -100,16 +257,13 @@ window.switchMainTab = function(tabName) {
 window.switchRuleSubTab = function(ruleKey) {
     if (!ruleKey) return;
 
-    // 1. 清理傳入的 ruleKey 取得純淨名稱 (例如將 "sec-bard_rules" 或 "bard_rules" 統一轉成 "bard")
     const cleanTargetKey = ruleKey.replace(/^sec-/, '').replace(/_rules$/, '').toLowerCase();
 
-    // 2. 重置所有子頁籤按鈕樣式
     const subTabBtns = document.querySelectorAll('.rule-subtab-btn');
     subTabBtns.forEach(btn => {
         btn.className = "rule-subtab-btn px-3 py-1.5 rounded-lg text-sm bg-zinc-800 text-zinc-400 hover:text-amber-400 whitespace-nowrap transition-all border border-transparent";
     });
 
-    // 3. 尋找並高亮按鈕 (相容各種 ID 命名)
     const targetSubBtn = document.getElementById(`subtab-${ruleKey}`) || 
                          document.getElementById(`subtab-${cleanTargetKey}`) ||
                          document.getElementById(`subtab-sec-${cleanTargetKey}_rules`) ||
@@ -122,23 +276,21 @@ window.switchRuleSubTab = function(ruleKey) {
     const rulesContainer = document.getElementById('rules-container');
     if (!rulesContainer) return;
 
-    // 4. 搜尋 ruleSections (自動比對去除 sec- 與 _rules 後的名稱)
     if (Array.isArray(ruleSections) && ruleSections.length > 0) {
         const sectionData = ruleSections.find(s => {
             if (!s || !s.id) return false;
-            // 正確提取 s.id 的核心 key (如 sec-bard_rules 轉為 bard)
             const cleanId = s.id.replace(/^sec-/, '').replace(/_rules$/, '').toLowerCase();
             return s.id === ruleKey || cleanId === cleanTargetKey;
         });
 
         if (sectionData && sectionData.content) {
             rulesContainer.innerHTML = sectionData.content;
+            attachRulePinButton(sectionData.id, sectionData.title || ruleKey, sectionData.content);
         } else {
             console.warn(`[Rules Error] 在 ruleSections 中找不到匹配的 ID: "${ruleKey}"。可用的 ID 有:`, ruleSections.map(s => s.id));
         }
     }
 
-    // 5. 特殊初始化 (如威力表)
     if (ruleKey.includes('power_table')) {
         setTimeout(() => {
             if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
@@ -230,14 +382,14 @@ function executeItemFilter() {
 
         const matchesCategory = !selectedCategory || item.category === selectedCategory;
         const matchesQuery = !rawQuery ||
-        (item.name && item.name.toLowerCase().includes(rawQuery)) ||
-        (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
-        (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
-        (item.note && item.note.toLowerCase().includes(rawQuery)) ||
-        (item.req && item.req.toLowerCase().includes(rawQuery)) ||
-        (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
-        (item.description && item.description.toLowerCase().includes(rawQuery)) ||
-        (item.price && item.price.toString().toLowerCase().includes(rawQuery));
+            (item.name && item.name.toLowerCase().includes(rawQuery)) ||
+            (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
+            (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
+            (item.note && item.note.toLowerCase().includes(rawQuery)) ||
+            (item.req && item.req.toLowerCase().includes(rawQuery)) ||
+            (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
+            (item.description && item.description.toLowerCase().includes(rawQuery)) ||
+            (item.price && item.price.toString().toLowerCase().includes(rawQuery));
 
         return matchesCategory && matchesQuery;
     });
@@ -268,10 +420,14 @@ export function renderCombatFeatCard(feat) {
 
     const badgeClass = typeBadgeStyles[feat.type] || 'bg-zinc-800 text-zinc-300 border-zinc-700';
 
+    const uid = getItemUniqueId('feat', feat.name, feat.category);
+    const pinned = isItemPinned(uid);
+    const payload = encodeURIComponent(JSON.stringify({ id: uid, itemType: 'feat', data: feat }));
+
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
-                <div class="flex items-center gap-2">
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <span class="text-xs px-2 py-0.5 rounded border bg-amber-950 text-amber-300 border-amber-800 font-medium">
                         ${feat.category || '戰鬥特技'}
                     </span>
@@ -283,6 +439,10 @@ export function renderCombatFeatCard(feat) {
                         ${feat.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${feat.nameJp})</span>` : ''}
                     </h3>
                 </div>
+                <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
+                    class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
+                    <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
+                </button>
             </div>
 
             <div class="p-4 space-y-3">
@@ -318,6 +478,10 @@ export function renderItemCard(item) {
     const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isGeograph = item.name && item.name.includes("地貌儀");
     const isMount = item.category && item.category.startsWith("騎獸");
+
+    const uid = getItemUniqueId('item', item.name, item.category);
+    const pinned = isItemPinned(uid);
+    const payload = encodeURIComponent(JSON.stringify({ id: uid, itemType: 'item', data: item }));
 
     let attrTableHTML = '';
 
@@ -394,8 +558,8 @@ export function renderItemCard(item) {
 
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
-                <div class="flex items-center gap-2">
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <span class="text-xs px-2 py-0.5 rounded border ${isMount ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-emerald-950 text-emerald-300 border-emerald-800'} font-medium">
                         ${item.category || '道具'}
                     </span>
@@ -404,6 +568,10 @@ export function renderItemCard(item) {
                         ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
                     </h3>
                 </div>
+                <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
+                    class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
+                    <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
+                </button>
             </div>
 
             <div class="p-4 space-y-3">
@@ -469,6 +637,10 @@ function createSkillCardHTML(b) {
     else if (isDruid) { badgeColor = "bg-lime-950 text-lime-300 border-lime-800"; icon = "fa-leaf"; }
     else if (isAbyssgazer) { badgeColor = "bg-zinc-950 text-amber-500 border-amber-900/80"; icon = "fa-eye-low-vision"; }
     else if (isRider) { badgeColor = "bg-emerald-950 text-emerald-400 border-emerald-700"; icon = "fa-horse"; }
+
+    const uid = getItemUniqueId('skill', b.name, b.category);
+    const pinned = isItemPinned(uid);
+    const payload = encodeURIComponent(JSON.stringify({ id: uid, itemType: 'skill', data: b }));
 
     const categoryBadgeHTML = b.category ? `<span class="text-xs px-2 py-0.5 rounded border ${badgeColor}">${b.category}</span>` : '';
     const typeBadgeHTML = b.type ? `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 font-medium">${b.type}</span>` : '';
@@ -552,7 +724,7 @@ function createSkillCardHTML(b) {
 
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center">
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
                 <div class="flex flex-wrap items-center gap-1.5">
                     ${categoryBadgeHTML}
                     ${typeBadgeHTML}
@@ -562,6 +734,10 @@ function createSkillCardHTML(b) {
                         <i class="fa-solid ${icon} mr-1 text-amber-500"></i>${b.name}
                     </h3>
                 </div>
+                <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
+                    class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
+                    <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
+                </button>
             </div>
 
             <div class="p-4 space-y-3">
@@ -644,18 +820,16 @@ window.addEventListener('scroll', () => {
 
 // ==================== 8. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
+    updateCustomBadgeCount();
     switchMainTab('bards');
 });
+
 // ==================== 全域規則即時檢索系統 ====================
 
-// 1. 建立統一的檢索索引庫 (精準對齊 index.html 頁籤 ID)
 function getSearchableDatabase() {
     const db = [];
-
-    // 獨立主頁籤 ID 清單
     const standaloneRuleIds = ['advanced_combat_rules', 'power_table_rules', 'sec-advanced_combat_rules', 'sec-power_table_rules'];
 
-    // 匯入 rules.js 中的所有規則章節
     if (Array.isArray(ruleSections)) {
         ruleSections.forEach(sec => {
             let extractedTitle = sec.title;
@@ -677,12 +851,11 @@ function getSearchableDatabase() {
         });
     }
 
-    // 匯入其他獨立主頁籤模組 (ID 完全對齊 index.html 按鈕)
     const extraModules = [
         { id: 'races', title: '種族圖鑑與種族特徵', icon: 'fa-solid fa-users', content: typeof racesContent !== 'undefined' ? racesContent : '' },
         { id: 'other_rules', title: '其他規則與判定總覽', icon: 'fa-solid fa-book-bookmark', content: typeof otherRulesContent !== 'undefined' ? otherRulesContent : '' },
         { id: 'equipmentEnhancement_rules', title: '裝備強化與魔化規則', icon: 'fa-solid fa-hammer', content: typeof equipmentEnhancementContent !== 'undefined' ? equipmentEnhancementContent : '' },
-        { id: 'reputationRank_rules', title: '名譽點與冒險者階級', icon: 'fa-solid fa-award', content: typeof reputationRankContent !== 'undefined' ? reputationRankContent : '' }
+        { id: 'reputation_rules', title: '名譽點與冒險者階級', icon: 'fa-solid fa-award', content: typeof reputationRankContent !== 'undefined' ? reputationRankContent : '' }
     ];
 
     extraModules.forEach(mod => {
@@ -701,7 +874,6 @@ function getSearchableDatabase() {
     return db;
 }
 
-// 2. 處理輸入搜尋事件
 window.handleGlobalRuleSearch = function(query) {
     const resultsContainer = document.getElementById('global-search-results');
     const clearBtn = document.getElementById('clear-rule-search-btn');
@@ -781,7 +953,6 @@ window.handleGlobalRuleSearch = function(query) {
     `).join('');
 };
 
-// 3. 點擊搜尋結果後自動跳轉分頁並捲動定位
 window.navigateToSearchResult = function(type, targetId, keyword) {
     const resultsContainer = document.getElementById('global-search-results');
     if (resultsContainer) resultsContainer.classList.add('hidden');
@@ -794,7 +965,6 @@ window.navigateToSearchResult = function(type, targetId, keyword) {
         if (typeof window.switchMainTab === 'function') window.switchMainTab(cleanMainId);
     }
 
-    // 延遲等待 DOM 渲染完成後捲動到關鍵字段落並閃爍高光
     setTimeout(() => {
         const container = document.getElementById('rules-container') || document.querySelector('main');
         const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null, false);
@@ -817,7 +987,6 @@ window.navigateToSearchResult = function(type, targetId, keyword) {
     }, 80);
 };
 
-// 4. 清除搜尋狀態
 window.clearGlobalRuleSearch = function() {
     const input = document.getElementById('global-rule-search');
     const resultsContainer = document.getElementById('global-search-results');
@@ -828,7 +997,6 @@ window.clearGlobalRuleSearch = function() {
     if (clearBtn) clearBtn.classList.add('hidden');
 };
 
-// 點擊外部自動收起下拉選單
 document.addEventListener('click', (e) => {
     const searchInput = document.getElementById('global-rule-search');
     const resultsContainer = document.getElementById('global-search-results');
@@ -836,6 +1004,7 @@ document.addEventListener('click', (e) => {
         resultsContainer.classList.add('hidden');
     }
 });
+
 // ==================== SW2.5 威力表完整資料矩陣 (0~100) ====================
 export const powerTableData = {
     0:  [0, 0, 0, 0, 1, 2, 2, 3, 3, 4, 4],
@@ -941,7 +1110,6 @@ export const powerTableData = {
     100:[0, 8, 12, 15, 18, 19, 20, 22, 24, 27, 30]
 };
 
-// 威力算牌器計算邏輯
 window.calcPowerResult = function() {
     const powerInput = document.getElementById('calc-power-input');
     const diceInput = document.getElementById('calc-dice-input');
@@ -960,7 +1128,6 @@ window.calcPowerResult = function() {
     }
 };
 
-// 渲染威力表 HTML 內容
 window.renderPowerTableRows = function() {
     const tbody1 = document.getElementById('power-table-body-1');
     const tbody2 = document.getElementById('power-table-body-2');
@@ -988,17 +1155,14 @@ window.renderPowerTableRows = function() {
     tbody1.innerHTML = html1;
     tbody2.innerHTML = html2;
 };
-// ==================== 9. TRPG 跑團現場實用小工具 ====================
 
-// SW2.5 官方經驗點表 (累計消耗經驗點，索引 0 代表 Lv 0)
+// ==================== 9. TRPG 跑團現場實用小工具 ====================
 const expTableA = [0, 1000, 2000, 3500, 5000, 7000, 9500, 12500, 16500, 21500, 28000, 36000, 46000, 58500, 73500, 93500];
 const expTableB = [0, 500, 1500, 2500, 4000, 5500, 7500, 10000, 13000, 17000, 22000, 28500, 36500, 46500, 59000, 74000];
 
-// 生成小工具主畫面 HTML
 function getFieldToolsHTML() {
     return `
         <div class="space-y-6">
-            <!-- 頁面標題 -->
             <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex items-center gap-3">
                 <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
                     <i class="fa-solid fa-toolbox text-2xl"></i>
@@ -1010,7 +1174,6 @@ function getFieldToolsHTML() {
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- 工具 1：威力表旋轉（爆擊）傷害計算與模擬器 -->
                 <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 shadow-lg flex flex-col justify-between">
                     <div class="space-y-4">
                         <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
@@ -1018,7 +1181,6 @@ function getFieldToolsHTML() {
                             <span class="text-[11px] font-normal text-zinc-500">自動判定 1,1 失誤與 C 值連轉</span>
                         </h3>
 
-                        <!-- 參數設定區 -->
                         <div class="grid grid-cols-3 gap-3 text-xs">
                             <div>
                                 <label class="block text-zinc-400 mb-1 font-medium">威力 (0~100)</label>
@@ -1041,7 +1203,6 @@ function getFieldToolsHTML() {
                             </div>
                         </div>
 
-                        <!-- 擲骰模式切換與按鈕 -->
                         <div class="flex flex-col sm:flex-row gap-2 pt-1">
                             <button onclick="rollCritDamage()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-zinc-950 font-bold py-2.5 px-4 rounded-lg text-sm transition-colors flex items-center justify-center gap-2 shadow">
                                 <i class="fa-solid fa-dice-d6"></i> 模擬擲骰 (Roll 2d6)
@@ -1053,7 +1214,6 @@ function getFieldToolsHTML() {
                         </div>
                     </div>
 
-                    <!-- 計算結果顯示面板 -->
                     <div id="crit-result-box" class="bg-zinc-950 border border-zinc-800 rounded-xl p-4 space-y-2.5 mt-4">
                         <div class="flex justify-between items-center border-b border-zinc-800/80 pb-2">
                             <span class="text-xs text-zinc-400">最終總傷害（含追加傷害）</span>
@@ -1065,7 +1225,6 @@ function getFieldToolsHTML() {
                     </div>
                 </div>
 
-                <!-- 工具 2：經驗點與冒險者等級速算器 -->
                 <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 shadow-lg flex flex-col justify-between">
                     <div class="space-y-3">
                         <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
@@ -1075,7 +1234,6 @@ function getFieldToolsHTML() {
                             </button>
                         </h3>
 
-                        <!-- 總經驗點輸入與統計列 -->
                         <div class="grid grid-cols-3 gap-2 text-xs bg-zinc-950 p-3 rounded-lg border border-zinc-800">
                             <div>
                                 <label class="block text-zinc-500 mb-1">持有總經驗點</label>
@@ -1091,10 +1249,7 @@ function getFieldToolsHTML() {
                             </div>
                         </div>
 
-                        <!-- 動態技能列表 -->
-                        <div id="exp-skill-rows" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
-                            <!-- 由 JS 動態生成預設技能列 -->
-                        </div>
+                        <div id="exp-skill-rows" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar"></div>
                     </div>
 
                     <div class="text-[11px] text-zinc-500 border-t border-zinc-800/80 pt-2 flex justify-between items-center">
@@ -1107,13 +1262,11 @@ function getFieldToolsHTML() {
     `;
 }
 
-// 初始化小工具預設狀態
 window.initFieldTools = function() {
     window.resetSkillExpRows();
     window.rollCritDamage();
 };
 
-// --- 威力表旋轉計算核心 ---
 function evaluatePowerCritSequence(power, critVal, bonus, rollSequence) {
     const p = Math.max(0, Math.min(100, parseInt(power) || 0));
     const c = parseInt(critVal) || 10;
@@ -1126,7 +1279,6 @@ function evaluatePowerCritSequence(power, critVal, bonus, rollSequence) {
 
     if (!rollSequence || rollSequence.length === 0) return;
 
-    // 第一擲若為 2 (1,1)，依 SW2.5 規則為自動失敗，總傷害強制為 0 (不加固定值)
     if (rollSequence[0] === 2) {
         totalEl.innerHTML = `<span class="text-red-500">0 (自動失敗 1,1)</span>`;
         logEl.innerHTML = `<div class="text-red-400"><i class="fa-solid fa-skull-crossbones mr-1"></i>第 1 擲擲出 2（1,1 自動失敗），傷害歸零！</div>`;
@@ -1170,7 +1322,6 @@ function evaluatePowerCritSequence(power, critVal, bonus, rollSequence) {
     logEl.innerHTML = logs.join('');
 }
 
-// 模擬擲骰按鈕
 window.rollCritDamage = function() {
     const power = document.getElementById('crit-power')?.value || 20;
     const critVal = parseInt(document.getElementById('crit-value')?.value) || 10;
@@ -1184,7 +1335,6 @@ window.rollCritDamage = function() {
         const d2 = Math.floor(Math.random() * 6) + 1;
         const sum = d1 + d2;
         rolls.push(sum);
-        // 第1擲為2 (1,1) 或未達 C 值即停止旋轉
         if ((safety === 0 && sum === 2) || sum < critVal) break;
         safety++;
     }
@@ -1193,10 +1343,9 @@ window.rollCritDamage = function() {
     evaluatePowerCritSequence(power, critVal, bonus, rolls);
 };
 
-// 手動輸入骰面序列計算
 window.calcManualCrit = function() {
     const power = document.getElementById('crit-power')?.value || 20;
-    const critVal = document.getElementById('crit-value')?.value || 10;
+    const critVal = parseInt(document.getElementById('crit-value')?.value) || 10;
     const bonus = document.getElementById('crit-bonus')?.value || 0;
     const rawStr = document.getElementById('crit-manual-rolls')?.value || '';
 
@@ -1209,7 +1358,6 @@ window.calcManualCrit = function() {
     }
 };
 
-// --- 經驗點與冒險者等級速算器核心 ---
 window.addSkillExpRow = function(name = '', table = 'A', level = 1) {
     const container = document.getElementById('exp-skill-rows');
     if (!container) return;
@@ -1269,4 +1417,115 @@ window.recalcSkillExp = function() {
     if (advEl) {
         advEl.textContent = `Lv ${maxAdvLevel}`;
     }
+};
+
+// ==================== 10. 自定義頁面渲染邏輯 ====================
+window.renderCustomPage = function() {
+    const rulesContainer = document.getElementById('rules-container');
+    if (!rulesContainer) return;
+
+    const list = getCustomItems();
+    updateCustomBadgeCount();
+
+    const headerHTML = `
+        <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                    <i class="fa-solid fa-star text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-amber-400 tracking-wider">自定義頁面（我的常用牌組與規則）</h2>
+                    <p class="text-xs text-zinc-400">已收藏 <span class="text-amber-300 font-bold">${list.length}</span> 項內容（自動儲存於瀏覽器，支援個人備註與 JSON 備份）。</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+                <button onclick="exportCustomDeck()" class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-emerald-300 border border-zinc-700 transition-colors">
+                    <i class="fa-solid fa-download mr-1"></i>匯出備份
+                </button>
+                <label class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-cyan-300 border border-zinc-700 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-upload mr-1"></i>匯入備份
+                    <input type="file" accept=".json" onchange="importCustomDeck(event)" class="hidden">
+                </label>
+            </div>
+        </div>
+    `;
+
+    if (list.length === 0) {
+        rulesContainer.innerHTML = headerHTML + `
+            <div class="text-center py-16 bg-zinc-900/50 rounded-xl border border-zinc-800 space-y-3">
+                <i class="fa-regular fa-star text-4xl text-zinc-600"></i>
+                <p class="text-zinc-400 text-sm">目前尚未加入任何技能、裝備或規則。</p>
+                <p class="text-zinc-500 text-xs">請在「技能檢索」「道具檢索」卡片右上角點擊 <span class="text-amber-400">☆ 收藏</span>，或在「規則分頁」點擊加入按鈕！</p>
+            </div>
+        `;
+        return;
+    }
+
+    const cardItems = list.filter(x => x.itemType !== 'rule');
+    const ruleItems = list.filter(x => x.itemType === 'rule');
+
+    let cardsGridHTML = '';
+    if (cardItems.length > 0) {
+        const cards = cardItems.map(entry => {
+            let baseCard = '';
+            if (entry.itemType === 'feat') baseCard = renderCombatFeatCard(entry.data);
+            else if (entry.itemType === 'item') baseCard = renderItemCard(entry.data);
+            else baseCard = createSkillCardHTML(entry.data);
+
+            return `
+                <div class="flex flex-col gap-1.5">
+                    ${baseCard}
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 flex items-center gap-2">
+                        <i class="fa-solid fa-pen text-amber-500/70 text-xs"></i>
+                        <input type="text" value="${(entry.userNote || '').replace(/"/g, '&quot;')}"
+                            onchange="updateCustomItemNote('${entry.id}', this.value)"
+                            placeholder="點擊輸入個人備註（如：主要輸出技、記得扣MP5...）"
+                            class="w-full bg-transparent text-xs text-zinc-300 placeholder-zinc-600 focus:outline-none">
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        cardsGridHTML = `
+            <div class="mb-8">
+                <h3 class="text-sm font-bold text-zinc-300 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-amber-400"></i>已收藏的技能、戰鬥特技與裝備／騎獸（${cardItems.length}）
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${cards}
+                </div>
+            </div>
+        `;
+    }
+
+    let rulesSectionHTML = '';
+    if (ruleItems.length > 0) {
+        const blocks = ruleItems.map(entry => `
+            <details open class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                <summary class="p-4 bg-zinc-950/80 border-b border-zinc-800 flex justify-between items-center cursor-pointer select-none">
+                    <span class="font-bold text-amber-400 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-book-open text-amber-500"></i>${entry.title}
+                    </span>
+                    <button onclick="event.preventDefault(); pinCurrentRuleSection('${entry.ruleId}', '${entry.title.replace(/'/g, "\\'")}', ''); renderCustomPage();"
+                        class="text-xs px-2.5 py-1 rounded bg-red-950/60 hover:bg-red-900/60 text-red-300 border border-red-800/60">
+                        <i class="fa-solid fa-trash-can mr-1"></i>移除規則
+                    </button>
+                </summary>
+                <div class="p-4 max-h-[600px] overflow-y-auto">
+                    ${entry.htmlContent}
+                </div>
+            </details>
+        `).join('');
+
+        rulesSectionHTML = `
+            <div class="space-y-4">
+                <h3 class="text-sm font-bold text-zinc-300 flex items-center gap-2">
+                    <i class="fa-solid fa-bookmark text-amber-400"></i>已收藏的規則章節（${ruleItems.length}）
+                </h3>
+                ${blocks}
+            </div>
+        `;
+    }
+
+    rulesContainer.innerHTML = headerHTML + cardsGridHTML + rulesSectionHTML;
 };
