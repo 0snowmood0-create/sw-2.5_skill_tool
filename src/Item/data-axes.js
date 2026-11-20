@@ -151,7 +151,53 @@
       summary: "高筋力要求重型巨斧",
       effect: "專為高筋力戰士打造的大型雙手斧。"
     },
-  
+    {
+      name: "冰斧",
+      nameJp: "アイスアックス",
+      category: "斧",
+      rank: "B",
+      usage: "1H",
+      req_str: 6,
+      acc: "±0",
+      power: 11,
+      crit: 11,
+      price: "100 G",
+      element: "刃",
+      summary: "雪山登山用冰鎬兼單手戰斧",
+      effect: "雪山登山使用的冰鎬，屬性為［刃］。"
+    },
+    {
+      name: "烈焰雪鏟 (振)",
+      nameJp: "フレアスノウシャベル",
+      category: "斧",
+      rank: "B",
+      usage: "2H",
+      req_str: 10,
+      acc: "±0",
+      power: 25,
+      crit: 11,
+      bonus_d: 1,
+      price: "2000 G",
+      element: "炎",
+      summary: "魔法武器 追加傷害+1 融雪火鏟 (揮振用法)",
+      effect: "魔法武器。用法「振」時威力 25，C值 11，追加傷害 +1（※詳細效果參照擴充書第 44 頁）。"
+    },
+    {
+      name: "烈焰雪鏟 (突)",
+      nameJp: "フレアスノウシャベル",
+      category: "斧",
+      rank: "B",
+      usage: "2H",
+      req_str: 10,
+      acc: "±0",
+      power: 20,
+      crit: 10,
+      bonus_d: 1,
+      price: "2000 G",
+      element: "炎",
+      summary: "魔法武器 追加傷害+1 融雪火鏟 (突刺用法)",
+      effect: "魔法武器。用法「突」時威力 20，C值 10，追加傷害 +1（※詳細效果參照擴充書第 44 頁）。"
+    },
     // ==================== A 階級 斧 ====================
     {
       name: "鋼斧",

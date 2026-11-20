@@ -181,7 +181,36 @@
       summary: "C值11 重型硬護腿",
       effect: "拳鬥士專用，強化踢擊攻擊。"
     },
-  
+    {
+      name: "掌打",
+      nameJp: "掌打",
+      category: "格鬥",
+      rank: "B",
+      usage: "1H拳",
+      req_str: 0,
+      acc: "+1",
+      power: 5,
+      crit: 12,
+      price: "0 G",
+      element: "打擊",
+      summary: "命中+1 活力鍛造師專用基礎掌擊",
+      effect: "※生命工匠（ヴァイタルスミス）專用。強化拳擊類攻擊。"
+    },
+    {
+      name: "堅實墊步",
+      nameJp: "ソリッドステップ",
+      category: "格鬥",
+      rank: "B",
+      usage: "1H#",
+      req_str: 10,
+      acc: "±0",
+      power: 15,
+      crit: 11,
+      price: "440 G",
+      element: "打擊",
+      summary: "C值11 拳鬥士專用強化踢擊步法靴",
+      effect: "拳鬥士專用，強化〈踢腿〉攻擊。"
+    },
     // ==================== A 階級 格鬥 ====================
     {
       name: "硬指環",
@@ -288,7 +317,36 @@
       summary: "強化投摔攻擊命中力手套",
       effect: "拳鬥士專用。強化投摔攻擊（摔技）的命中力。"
     },
-  
+    {
+      name: "輔助指虎",
+      nameJp: "サポートノッカー",
+      category: "格鬥",
+      rank: "A",
+      usage: "1H拳",
+      req_str: 5,
+      acc: "+1",
+      power: 10,
+      crit: 11,
+      price: "500 G",
+      element: "打擊",
+      summary: "命中+1 C值11 拳鬥士專用輔助指虎",
+      effect: "拳鬥士專用，強化〈拳擊〉攻擊（※詳細效果參照擴充書第 44 頁）。"
+    },
+    {
+      name: "重擊墊步",
+      nameJp: "ハードステップ",
+      category: "格鬥",
+      rank: "A",
+      usage: "1H#",
+      req_str: 10,
+      acc: "±0",
+      power: 20,
+      crit: 11,
+      price: "990 G",
+      element: "打擊",
+      summary: "C值11 拳鬥士專用重型踢擊步法靴",
+      effect: "拳鬥士專用，強化〈踢腿〉攻擊。"
+    },
     // ==================== S 階級 格鬥 ====================
     {
       name: "拐棍",
@@ -379,6 +437,36 @@
       element: "打擊",
       summary: "C值11 裝飾鍍金重戰靴",
       effect: "拳鬥士專用，強化踢擊攻擊。"
+    },
+    {
+      name: "金屬護手",
+      nameJp: "メタルグラヴ",
+      category: "格鬥",
+      rank: "S",
+      usage: "1H拳",
+      req_str: 5,
+      acc: "+1",
+      power: 15,
+      crit: 11,
+      price: "3000 G",
+      element: "打擊",
+      summary: "命中+1 C值11 拳鬥士專用金屬護手",
+      effect: "拳鬥士專用，強化〈拳擊〉攻擊（※詳細效果參照擴充書第 44 頁）。"
+    },
+    {
+      name: "疾速墊步",
+      nameJp: "アクセルステップ",
+      category: "格鬥",
+      rank: "S",
+      usage: "1H#",
+      req_str: 10,
+      acc: "±0",
+      power: 25,
+      crit: 11,
+      price: "5500 G",
+      element: "打擊",
+      summary: "C值11 拳鬥士專用高機動踢擊步法靴",
+      effect: "拳鬥士專用，強化〈踢腿〉攻擊。"
     },
   
     // ==================== SS 階級 格鬥 ====================
