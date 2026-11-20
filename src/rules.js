@@ -64,10 +64,16 @@ export const ruleSections = [
                                 <td class="py-2.5 px-4">遠程射擊專家（無迴避力），負責使用弓、弩、投擲武器與魔動機槍進行遠距離精準打擊。</td>
                             </tr>
                             <tr class="hover:bg-zinc-800/40">
-                            <td class="py-2.5 px-4 font-bold text-amber-400">戰鬥舞者 (Battle Dancer)</td>
-                            <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
-                            <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
-                            <td class="py-2.5 px-4">可使用所有近戰、投擲與拳鬥士武器（必筋無減半），但防具限拳鬥士可裝備且不可用盾；Lv1 額外獲得 1 格指定宣言特技欄，Lv7 自動習得《舞い流し》、Lv13 自動習得《バトルマスター》。</td>
+                                <td class="py-2.5 px-4 font-bold text-amber-400">舞鬥士 (Battle Dancer)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 追加傷害</td>
+                                <td class="py-2.5 px-4">可使用所有近戰、投擲與拳鬥士武器（必筋無減半），但防具限拳鬥士可裝備且不可用盾；Lv1 額外獲得 1 格指定宣言特技欄，Lv7 自動習得《舞い流し》、Lv13 自動習得《バトルマスター》。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-amber-400">生命工匠 (Vitalsmith)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">命中 / 迴避 / 魔物知識(限定)</td>
+                                <td class="py-2.5 px-4">以運動生理學鑽研格鬥技的「闘學士」，限用〈格鬥〉武器與拳鬥士防具（禁盾且無《追加攻擊》）；可對生物類魔物進行知識判定，並隨等級自動習得專屬招式「闘理」進行弱點與關節打擊。</td>
                             </tr>
                         </tbody>
                     </table>
@@ -138,6 +144,12 @@ export const ruleSections = [
                                 <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
                                 <td class="py-2.5 px-3 text-zinc-400">奈落魔法</td>
                                 <td class="py-2.5 px-4">操控奈落之力的禁忌施法者，透過累積「穢度」與消耗生命代價換取強大的扭曲與支配魔法。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-purple-400">咒法師 (Witch)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">咒詛魔法</td>
+                                <td class="py-2.5 px-4">擅長施展、轉移與解除詛咒的「咒法師」，須手持單手生活道具製成的〈咒法具〉（禁武器／盾牌）並以魔法文明語詠唱，精通削弱敵方屬性、弱點賦予與念動操作。</td>
                             </tr>
                             <tr class="hover:bg-zinc-800/40">
                                 <td class="py-2.5 px-4 font-bold text-violet-400">深智魔法 (Wizard)</td>
@@ -1027,7 +1039,7 @@ export const ruleSections = [
               <li><strong class="text-amber-300">鎧甲限制：</strong>與真語、操靈魔法相同，裝備必要筋力 10 以上的〈非金屬鎧〉承受 <span class="text-red-400 font-bold">-2</span> 懲罰；〈金屬鎧〉承受 <span class="text-red-400 font-bold">-4</span> 懲罰（〔異貌〕時的夢魘不受限）。</li>
               <li><strong class="text-amber-300">〈魔導書〉持握與多冊運用：</strong>〈魔導書〉視為「用法：1H」的道具。角色可雙手各持 1 冊，但單次行使僅能使用其中 1 冊（魔導書的特殊行使效果也僅限於該次使用的那一冊）。</li>
               <li><strong class="text-amber-300">武器／盾牌型〈魔導書〉：</strong>部分兼具武器或盾牌功能的魔導書可依規則「裝備」並常駐獲得效果（例如一手揮舞武器魔導書、另一手獲得盾牌魔導書的防護點，或在《多重行動》時揮舞武器魔導書並以另一冊特殊效果魔導書施法；但兩面盾牌效果依基本規則不疊加）。</li>
-              <li><strong class="text-amber-300">種族與出生表：</strong>狼人（リカント）在〔獸變貌〕狀態下無法發出魔法文明語，故無法行使。使用「細心創建」創角時，出生表的「真語魔法師」或「操靈魔法師」可替換為典籍魔導士技能。</li>
+              <li><strong class="text-amber-300">種族與出生表：</strong>獸化人（リカント）在〔獸變貌〕狀態下無法發出魔法文明語，故無法行使。使用「細心創建」創角時，出生表的「真語魔法師」或「操靈魔法師」可替換為典籍魔導士技能。</li>
             </ul>
           </div>
 
@@ -1878,5 +1890,201 @@ export const ruleSections = [
           </div>
         </div>
       `,
-    }
+    },
+    {
+      id: 'sec-vitalsmith_rules',
+      title: '生命工匠（闘學士）與闘理',
+      icon: 'fa-solid fa-hand-fist',
+      content: `
+          <div class="space-y-6">
+              <!-- 標題橫幅 -->
+              <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-wrap items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                      <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                          <i class="fa-solid fa-hand-fist text-2xl"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-xl font-bold text-amber-400 tracking-wider">生命工匠（ヴァイタルスミス）與闘理規則</h2>
+                          <p class="text-xs text-zinc-400">分類：戰士系技能 ｜ 經驗表：A表 ｜ 習得者稱號：闘學士</p>
+                      </div>
+                  </div>
+                  <span class="text-xs px-3 py-1 rounded-full bg-red-950/70 text-red-300 border border-red-800/70 font-medium">
+                      <i class="fa-solid fa-triangle-exclamation mr-1"></i>注意：無《追加攻擊》
+                  </span>
+              </div>
+  
+              <!-- 技能基本規範 -->
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs text-zinc-300 leading-relaxed">
+                  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
+                      <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-1.5">
+                          <i class="fa-solid fa-book-medical mr-1.5 text-amber-500"></i>技能特性與可用判定
+                      </h3>
+                      <p>以運動生理學與力學等「學問」體系化格鬥技的戰士系技能。相較於單發重擊，擅長以靈巧手法與踢技累積優勢；對生物（特別是人族、蠻族）的生理弱點極具壓制力，對其他魔物亦能透過關節狙擊牽制戰局。</p>
+                      <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800/80 space-y-1.5">
+                          <div class="font-bold text-cyan-300">可進行的行為判定：</div>
+                          <ul class="list-disc list-inside space-y-1 text-zinc-300">
+                              <li><strong>命中力判定</strong>（追加傷害為「生命工匠技能等級 ＋ 筋力加值」）</li>
+                              <li><strong>迴避力判定</strong></li>
+                              <li><strong>魔物知識判定（限定）</strong>：僅限對 <span class="text-amber-300">「分類：蠻族／動物／植物／幻獸／人族」</span> 進行</li>
+                          </ul>
+                      </div>
+                      <div class="flex justify-between text-zinc-400 pt-1">
+                          <span><strong class="text-amber-300">限制種族：</strong>無</span>
+                          <span><strong class="text-amber-300">自動習得特技：</strong>無</span>
+                      </div>
+                  </div>
+  
+                  <!-- 武器防具與戰鬥特技 -->
+                  <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
+                      <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-1.5">
+                          <i class="fa-solid fa-shield-halved mr-1.5 text-amber-500"></i>裝備限制與戰鬥特技
+                      </h3>
+                      <div class="space-y-2">
+                          <div>
+                              <span class="text-cyan-300 font-bold">● 可裝備武器：</span>僅限類別 <span class="text-amber-300 font-bold">〈格鬥〉</span>（含「※拳鬥士專用」武器）。
+                          </div>
+                          <div class="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80">
+                              <span class="text-pink-400 font-bold">〈掌打〉規則：</span>手上未裝備武器，或僅裝備「用法：1H拳」武器且該手未持有其他物品時方可使用。攻擊本身不強，但部分「闘理」僅能在使用〈掌打〉攻擊時宣言。
+                          </div>
+                          <div>
+                              <span class="text-cyan-300 font-bold">● 可裝備防具：</span>僅限「拳鬥士專用」「拳鬥士可裝備」防具，<span class="text-red-400 font-bold">完全不可裝備盾牌</span>。
+                          </div>
+                          <div>
+                              <span class="text-cyan-300 font-bold">● 可習得／使用之戰士系特技：</span>僅限 <span class="text-emerald-400 font-bold">《迴避行動Ⅱ》《頑強》《變幻自在Ⅰ》</span>（其餘需戰士系前提之特技皆不可使用）。
+                          </div>
+                      </div>
+                  </div>
+              </div>
+  
+              <!-- 闘理系統規則 -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-4 text-xs text-zinc-300 leading-relaxed">
+                  <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
+                      <span><i class="fa-solid fa-fire-flame-curved mr-2 text-amber-500"></i>專屬系統：「闘理」運用規則</span>
+                      <span class="text-[11px] font-normal text-zinc-400">隨技能等級自動習得對應等級之全部闘理</span>
+                  </h3>
+  
+                  <p>所有闘理皆視同戰鬥特技運作，且條件均為 <strong class="text-amber-300">「使用：生命工匠技能」</strong>（未使用生命工匠技能的判定無法套用效果）。</p>
+  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800 space-y-1.5">
+                          <div class="font-bold text-emerald-400 text-sm">◯ 常時型闘理</div>
+                          <p>只要處於可使用生命工匠技能的狀態，效果便<strong>常時自動適用</strong>。</p>
+                      </div>
+  
+                      <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800 space-y-1.5">
+                          <div class="font-bold text-amber-400 text-sm">🗨️ 宣言型闘理 ＆ 🗨️△ 戰鬥準備宣言</div>
+                          <ul class="list-disc list-inside space-y-1">
+                              <li><strong>與宣言特技共用次數</strong>：1 次輪次中，宣言型闘理與宣言型戰鬥特技合計僅能擇一宣言 1 次。</li>
+                              <li><strong>《變幻自在Ⅰ》連動</strong>：習得後每輪可自由組合宣言闘理與宣言特技最多 <strong>2 次</strong>（同名闘理不可重複套用於同一次動作）。</li>
+                              <li><strong>「適用：－」</strong>：可在自己輪次的任意時機宣言並立即生效。</li>
+                              <li><strong>「適用：1 次的＊＊攻擊」</strong>：若與同時攻擊複數目標的效果疊加，僅對攻擊者任選的 <strong>1 個對象</strong>生效。</li>
+                              <li><strong>🗨️△ 標記</strong>：可於<strong>戰鬥準備</strong>階段宣言並獲得效果。</li>
+                          </ul>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      `
+  },
+  {
+    id: 'sec-witch_rules',
+    title: '咒法師 與咒詛魔法',
+    icon: 'fa-solid fa-hat-witch',
+    content: `
+        <div class="space-y-6">
+            <!-- 標題橫幅 -->
+            <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                        <i class="fa-solid fa-wand-sparkles text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-amber-400 tracking-wider">咒法師（ウィッチ）與咒詛魔法規則</h2>
+                        <p class="text-xs text-zinc-400">分類：魔法使系技能 ｜ 經驗表：A表 ｜ 習得者稱號：咒法師</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-950 px-3.5 py-2 rounded-lg border border-zinc-800 text-xs">
+                    <span class="text-zinc-400">咒詛魔法魔力 ＝ </span>
+                    <span class="text-amber-400 font-bold">咒法師技能等級 ＋ 知力加值</span>
+                </div>
+            </div>
+
+            <!-- 技能基本規範與行使條件 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs text-zinc-300 leading-relaxed">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
+                    <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-1.5">
+                        <i class="fa-solid fa-book-skull mr-1.5 text-amber-500"></i>技能特性與基本限制
+                    </h3>
+                    <p>擅長操弄「詛咒」的魔法技能，源流自古代魔法文明並結合本土發展而成。隨技能等級自動習得對應等級之全部咒詛魔法。</p>
+                    <ul class="list-disc list-inside space-y-1.5 bg-zinc-950 p-3 rounded-lg border border-zinc-800/80">
+                        <li><strong>可用判定：</strong>魔法行使判定</li>
+                        <li><strong>習得語言：</strong>習得技能時自動學會 <span class="text-cyan-300 font-bold">魔法文明語（會話・讀文）</span></li>
+                        <li><strong>種族限制：</strong>獸化人（リカント）處於 <span class="text-red-400 font-bold">［獸變貌］</span> 時無法發聲，不可行使咒詛魔法</li>
+                        <li><strong>移動限制：</strong>行使魔法的輪次僅限 <span class="text-amber-300 font-bold">限制移動</span></li>
+                        <li><strong>發聲要求：</strong>須以魔法文明語詠唱（<span class="text-emerald-400">［異貌］</span>夜魔免除發聲）</li>
+                        <li><strong>戰鬥特技：</strong>適用一般魔法使系特技；《MP減輕／＊＊》可指定咒法師技能（消耗 MP -1）</li>
+                    </ul>
+                </div>
+
+                <!-- 鎧甲限制與轉移詛咒補充 -->
+                <div class="space-y-4">
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2.5">
+                        <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-1.5">
+                            <i class="fa-solid fa-shield-virus mr-1.5 text-amber-500"></i>鎧甲限制（［異貌］夢魘免除）
+                        </h3>
+                        <table class="w-full text-xs text-center border-collapse bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800">
+                            <thead>
+                                <tr class="bg-zinc-900 text-zinc-400 border-b border-zinc-800">
+                                    <th class="py-1.5 px-3 text-left">裝備鎧甲種類</th>
+                                    <th class="py-1.5 px-3">魔法行使判定修正</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-zinc-800/60">
+                                <tr>
+                                    <td class="py-1.5 px-3 text-left text-zinc-200">必要筋力 10 以上的〈非金屬鎧〉</td>
+                                    <td class="py-1.5 px-3 font-bold text-red-400 font-mono">-2</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-1.5 px-3 text-left text-zinc-200">〈金屬鎧〉</td>
+                                    <td class="py-1.5 px-3 font-bold text-red-400 font-mono">-4</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="bg-amber-950/15 border border-amber-900/40 rounded-xl p-4 space-y-2">
+                        <h3 class="text-sm font-bold text-amber-400">
+                            <i class="fa-solid fa-arrows-turn-to-dots mr-1.5"></i>轉移詛咒效果的補充規則
+                        </h3>
+                        <p>部分咒詛魔法可將詛咒效果從 A 角色轉移至 B 角色：</p>
+                        <ul class="list-disc list-inside space-y-1 text-zinc-300">
+                            <li>若原詛咒為「對象：1體全」或「對象：1體X」，無論轉移前後部位數多寡，<strong>轉移後目標的所有部位皆會承受該詛咒效果</strong>。</li>
+                            <li>即使原詛咒為「對象：1體X」且部位眾多，<strong>轉移詛咒的魔法本身不適用 MP 乘算</strong>。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 專用施法媒介〈咒法具〉 -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-3 text-xs text-zinc-300 leading-relaxed">
+                <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center justify-between">
+                    <span><i class="fa-solid fa-mug-hot mr-2 text-amber-500"></i>專用施法媒介：〈咒法具〉規範</span>
+                    <span class="text-xs font-mono text-amber-300 bg-zinc-950 px-2.5 py-0.5 rounded border border-zinc-800">製作費用：100G 特殊染料</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800 space-y-1.5">
+                        <div class="font-bold text-cyan-300">● 製作材質與使用條件</div>
+                        <p>咒法師耗費 <strong>100G 特殊染料</strong>，在常見的單手生活道具（茶器、餐具、筆、小鍋、手鏡、燭台、短手杖等）上刻下個人咒印製成（製成後仍可作日常工具使用）。</p>
+                        <p>施法時必須作為 <strong class="text-amber-300">「用法：1H」</strong> 道具握於手中，且為<strong>個人專用品</strong>（借用他人咒法具無法施法）。施法完成瞬間〈咒法具〉會化為不透光、不反光的漆黑。</p>
+                    </div>
+                    <div class="bg-zinc-950 p-3.5 rounded-lg border border-zinc-800 space-y-1.5">
+                        <div class="font-bold text-red-400">● 禁止武器與盾牌</div>
+                        <p>因詛咒追求「間接性」，與武器、盾牌「直接傷害或防禦」的本質衝突，<strong>不可選擇任何武器或盾牌製成〈咒法具〉</strong>。</p>
+                        <p class="text-zinc-400">※ 若將餐刀、餐叉等製成〈咒法具〉，必須強烈將其認知為純粹餐具；製成後雖可切開熟肉，但再也無法對生物造成任何傷害。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+  } 
   ];

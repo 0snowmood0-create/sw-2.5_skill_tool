@@ -328,7 +328,7 @@ export const racesContent = `
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-teal-950 text-teal-300 border border-teal-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">精靈 <span class="text-xs text-zinc-500 font-normal font-mono">(Elf)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -860,7 +860,7 @@ export const racesContent = `
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-pink-950 text-pink-300 border border-pink-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">塔彼特 <span class="text-xs text-zinc-500 font-normal font-mono">(Tabbit)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1089,7 +1089,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-blue-950 text-blue-300 border border-blue-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">符民 <span class="text-xs text-zinc-500 font-normal font-mono">(Runefolk)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1159,7 +1159,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">夢魘 <span class="text-xs text-zinc-500 font-normal font-mono">(Nightmare)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1200,12 +1200,12 @@ export const racesContent = `
         </div>
     </div>
 
-    <!-- 里坎特 (Lycanth) 卡片 -->
+    <!-- 獸化人 (Lycanth) 卡片 -->
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
-                <h3 class="text-lg font-bold text-amber-400">里坎特 <span class="text-xs text-zinc-500 font-normal font-mono">(Lycanth)</span></h3>
+                <h3 class="text-lg font-bold text-amber-400">獸化人 <span class="text-xs text-zinc-500 font-normal font-mono">(Lycanth)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
                 <span>污穢度：<strong class="text-amber-400">0</strong></span>
@@ -1245,7 +1245,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">龍人 <span class="text-xs text-zinc-500 font-normal font-mono">(Dragon-kin)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1290,7 +1290,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-lime-950 text-lime-300 border border-lime-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">草原妖精 <span class="text-xs text-zinc-500 font-normal font-mono">(Grassrunner)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1331,7 +1331,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-teal-950 text-teal-300 border border-teal-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">樹精靈 <span class="text-xs text-zinc-500 font-normal font-mono">(Dryad-kin)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1372,7 +1372,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">半魔人 <span class="text-xs text-zinc-500 font-normal font-mono">(Demon-hybrid)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1454,7 +1454,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-red-950 text-red-300 border border-red-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">血族 <span class="text-xs text-zinc-500 font-normal font-mono">(Arv)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1495,7 +1495,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-stone-900 text-stone-300 border border-stone-700 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">守護者 <span class="text-xs text-zinc-500 font-normal font-mono">(Spriggan)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1536,7 +1536,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-violet-950 text-violet-300 border border-violet-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">深淵之子 <span class="text-xs text-zinc-500 font-normal font-mono">(Abyss-born)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1577,7 +1577,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">慧人 <span class="text-xs text-zinc-500 font-normal font-mono">(Highman)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1614,7 +1614,7 @@ export const racesContent = `
     <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
-                <span class="text-xs px-2.5 py-1 rounded bg-sky-950 text-sky-300 border border-sky-800 font-bold">人族</span>
+                <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
                 <h3 class="text-lg font-bold text-amber-400">螢石人 <span class="text-xs text-zinc-500 font-normal font-mono">(Fluorite)</span></h3>
             </div>
             <div class="text-xs text-zinc-400 flex items-center gap-3">
@@ -1646,6 +1646,214 @@ export const racesContent = `
                 <div class="pt-2 border-t border-zinc-800/60 space-y-1.5 text-zinc-400">
                     <p><strong class="text-sky-400 font-medium">［晶石身體 LV2］(等級 6)：</strong> 防護點 +3，最大 MP +30。</p>
                     <p><strong class="text-sky-400 font-medium">［晶石身體 LV3］(等級 11)：</strong> 防護點 +4，最大 MP +45。</p>
+                </div>
+            </div>
+        </div>
+        <!-- ==================== 新增種族：霜晶人（サスカッチ） ==================== -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
+            <div class="p-4 bg-zinc-950/70 border-b border-zinc-800 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
+                    <h3 class="text-lg font-bold text-amber-400">
+                        霜晶人 <span class="text-xs text-zinc-400 font-normal font-mono">(サスカッチ / Sasquatch)</span>
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">分類：人族</span>
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">初期穢れ：0點</span>
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">壽命：約80年</span>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-4 text-xs text-zinc-300 leading-relaxed">
+                <!-- 基本資料與語言 -->
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800/80 space-y-1.5">
+                    <p>魔法文明時代於常冬之地「尼費爾吉」與月神辛簽訂「劍之誓約」誕生的人族。女性平均身高約 2m、男性約 2m20cm，體格魁梧，肩、背、前臂與小腿生有體內營養結晶化而成的雪白體毛（硬化時宛如波浪狀石英甲冑，源於古稱「居於石英之下者」）。可與人類通婚。</p>
+                    <div class="pt-1.5 border-t border-zinc-800/60 flex flex-wrap gap-x-6 gap-y-1 text-zinc-400">
+                        <span><strong class="text-amber-300">初期習得語言：</strong>尼費爾吉特區語（會話/讀文）、交易共通語（會話/讀文）、神紀文明語（讀文）</span>
+                        <span><strong class="text-amber-300">不可選擇技能：</strong>無</span>
+                    </div>
+                </div>
+
+                <!-- 文化、歷史與習俗細節（可摺疊檢視） -->
+                <details class="bg-zinc-950/40 border border-zinc-800 rounded-lg p-3">
+                    <summary class="font-bold text-cyan-300 cursor-pointer select-none">
+                        <i class="fa-solid fa-scroll mr-1.5 text-amber-400"></i>點擊展開：歷史背景、生理特徵與文化習俗細節
+                    </summary>
+                    <div class="mt-2.5 pt-2.5 border-t border-zinc-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-zinc-300">
+                        <div class="space-y-1.5">
+                            <div><strong class="text-amber-300">● 英雄後裔與外界誤解：</strong>世代守護尼費爾吉的英雄末裔，當地人極為敬重（亦有年長者施壓要求必須為繭都而戰）；但因背影酷似白毛蠻族「博格」，常被不熟悉尼費爾吉的外界人族誤認並攻擊。</div>
+                            <div><strong class="text-amber-300">● 闘學士的起源：</strong>雖常被期待站在前線，但尼費爾吉發祥技能「生命工匠（ヴァイタルスミス）」正是源於具備知性才華的霜晶人「一邊站在前衛一邊不忘學習」而開創。</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <div><strong class="text-amber-300">● 儲蓄本能與毛髮禮儀：</strong>為維持結晶體毛的營養偏好高熱量飲食（肥肉、濃粥）。親友會互相梳理體毛，但忌諱外人無端觸碰；成人男女習慣剃除心臟周圍的胸毛以示覺悟（故有「毛還沒掉光的小童」一語）。</div>
+                            <div><strong class="text-amber-300">● 結晶化與英雄像：</strong>死後體表完全結晶如冰雕安置於靈安所，殉職者則供奉為「英雄像」；隨歲月剝落的結晶碎片會由家屬裝入小袋珍藏（類比遺骨）。</div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 種族特徵與強化 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <div class="bg-zinc-950/40 p-3 rounded-lg border border-zinc-800 space-y-2">
+                        <div class="font-bold text-amber-400 border-b border-zinc-800 pb-1">種族特徵</div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［知識的偏差］</span>：對「分類：蠻族」之角色或行動的知識、觀察判定 <span class="text-emerald-400 font-bold">+2</span>；對「分類：魔動機」之角色或行動的知識、觀察判定 <span class="text-red-400 font-bold">-2</span>。
+                        </div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［劍之誓約／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
+                        </div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［劍之誓約／白之武裝］</span>：輔助動作或戰鬥準備消耗 <span class="text-pink-400 font-bold">HP 3 點</span>，持續 3 分鐘（18 輪）內<span class="text-emerald-400 font-bold">防護點 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（每 10 秒限用 1 次，不可疊加）。
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-amber-950/15 p-3 rounded-lg border border-amber-900/30 space-y-1.5">
+                            <div class="font-bold text-amber-400">種族特徵強化（強化［劍之誓約／白之武裝］）</div>
+                            <div><span class="text-amber-300 font-bold">6 級：</span>使用時額外多消耗 HP 3 點（合計 6 點），效果期間內追加獲得<span class="text-emerald-400 font-bold">筋力加值 +2 點</span>。</div>
+                            <div><span class="text-amber-300 font-bold">11 級：</span>效果可同時疊加至最多 <span class="text-emerald-400 font-bold">2 層</span>。</div>
+                        </div>
+
+                        <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                            <div class="font-bold text-cyan-300 mb-1.5">能力值決定骰法</div>
+                            <div class="grid grid-cols-6 text-center font-mono bg-zinc-900 rounded py-1.5 border border-zinc-800/80">
+                                <div><span class="text-zinc-500 block text-[10px]">A</span><span class="text-amber-300 font-bold">1d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">B</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">C</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">D</span><span class="text-amber-300 font-bold">1d+6</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">E</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">F</span><span class="text-amber-300 font-bold">1d</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 出身表 -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-center border-collapse bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800">
+                        <thead>
+                            <tr class="bg-zinc-900 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-1.5 px-2">2d</th>
+                                <th class="py-1.5 px-2">出身</th>
+                                <th class="py-1.5 px-2">初期所有技能</th>
+                                <th class="py-1.5 px-2">技</th>
+                                <th class="py-1.5 px-2">體</th>
+                                <th class="py-1.5 px-2">心</th>
+                                <th class="py-1.5 px-2">初期經驗點</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/60 text-zinc-200">
+                            <tr><td class="py-1.5 font-mono text-amber-400">2～5</td><td>戰士</td><td class="text-cyan-300">戰士（ファイター）</td><td>10</td><td>12</td><td>5</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">6～7</td><td>闘學士</td><td class="text-cyan-300">生命工匠（ヴァイタルスミス）</td><td>10</td><td>10</td><td>7</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">8～9</td><td>神官</td><td class="text-cyan-300">牧師（プリースト）</td><td>8</td><td>9</td><td>10</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">10～12</td><td>密偵</td><td class="text-cyan-300">斥候（スカウト）</td><td>12</td><td>8</td><td>7</td><td class="text-emerald-300">2,500 點</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 新增種族：月雪民（リューン） ==================== -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
+            <div class="p-4 bg-zinc-950/70 border-b border-zinc-800 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
+                    <h3 class="text-lg font-bold text-amber-400">
+                        月雪民 <span class="text-xs text-zinc-400 font-normal font-mono">(リューン / Lune)</span>
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">分類：人族</span>
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">初期穢れ：0點</span>
+                    <span class="px-2 py-0.5 rounded bg-zinc-800 text-zinc-300 border border-zinc-700">壽命：約80年</span>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-4 text-xs text-zinc-300 leading-relaxed">
+                <!-- 基本資料與語言 -->
+                <div class="bg-zinc-950/50 p-3 rounded-lg border border-zinc-800/80 space-y-1.5">
+                    <p>魔法文明時代於尼費爾吉與月神辛簽訂「劍之誓約」誕生的人族，名稱意為「月下之雪」。男性平均身高約 180cm、女性約 170cm，體型纖細、肌膚雪白微涼，前臂至手部（少數在臉或頸）浮現雪結晶紋樣並纏繞靈性微光。情緒激昂發動「燃燒之雪」時紋樣轉為暖色強光，體溫急升並散發海風與柑橘清香的水蒸氣。可與人類通婚。</p>
+                    <div class="pt-1.5 border-t border-zinc-800/60 flex flex-wrap gap-x-6 gap-y-1 text-zinc-400">
+                        <span><strong class="text-amber-300">初期習得語言：</strong>尼費爾吉特區語（會話/讀文）、交易共通語（會話/讀文）、神紀文明語（讀文）</span>
+                        <span><strong class="text-amber-300">不可選擇技能：</strong>無</span>
+                    </div>
+                </div>
+
+                <!-- 文化、歷史與習俗細節（可摺疊檢視） -->
+                <details class="bg-zinc-950/40 border border-zinc-800 rounded-lg p-3">
+                    <summary class="font-bold text-cyan-300 cursor-pointer select-none">
+                        <i class="fa-solid fa-scroll mr-1.5 text-amber-400"></i>點擊展開：歷史背景、生理特徵與文化習俗細節
+                    </summary>
+                    <div class="mt-2.5 pt-2.5 border-t border-zinc-800/80 grid grid-cols-1 md:grid-cols-2 gap-3 text-zinc-300">
+                        <div class="space-y-1.5">
+                            <div><strong class="text-amber-300">● 感情控制與坦率美學：</strong>因情緒起伏會直接引起發光與發熱，自幼普遍透過賞月冥想與調息修養情緒；但家人與戀人間亦信奉「燃燒之雪不會說謊」，推崇坦率接納彼此的光熱。</div>
+                            <div><strong class="text-amber-300">● 服飾與青春期情結：</strong>體溫低抗寒、衣物遮不住靈光，且發熱時需散發水蒸氣，服飾普遍清涼暴露。青春期常有人因柔白肌膚自卑而憧憬霜晶人或矮人；亦有人在發光處刺青作為龐克頹廢時尚。</div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <div><strong class="text-amber-300">● 「月歸」與冰之墓標：</strong>臨終時肉體化為光粒消散僅留手腕「冰細工」（72小時內可蘇生，逾時光化），稱為「月歸」。生前因無法隱藏光芒與真心，許多人希望臨終時獨自靜靜離去。悼念時會將逝者遺物在靈安所凍結成「冰之墓標」。</div>
+                            <div><strong class="text-amber-300">● 禁忌舊習：</strong>剪下的頭髮與指甲在本人死亡時亦會光化；古時曾採集月雪民頭髮讓其進入險地測知生死，現代已列為非人道禁忌全面禁止。</div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- 種族特徵與強化 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    <div class="bg-zinc-950/40 p-3 rounded-lg border border-zinc-800 space-y-2">
+                        <div class="font-bold text-amber-400 border-b border-zinc-800 pb-1">種族特徵</div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［月光之肌］</span>：全身常時纏繞影響觀測認知的靈性淡光，進行<span class="text-red-400 font-bold">隱密判定承受 -4 減值修正</span>（即使以衣物遮蓋全身亦不消失；此微光亦無法作為照明使用）。
+                        </div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［劍之誓約／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
+                        </div>
+                        <div>
+                            <span class="text-cyan-300 font-bold">［劍之誓約／燃燒之雪］</span>：輔助動作消耗 <span class="text-pink-400 font-bold">HP 2 點</span>，持續 10 秒（1 輪）內<span class="text-emerald-400 font-bold">魔法行使判定 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（不可疊加，每日累計限用 1 分鐘／6 輪）。
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-amber-950/15 p-3 rounded-lg border border-amber-900/30 space-y-1.5">
+                            <div class="font-bold text-amber-400">種族特徵強化（強化［劍之誓約／燃燒之雪］）</div>
+                            <div><span class="text-amber-300 font-bold">6 級：</span>使用時額外多消耗 HP 3 點（合計 5 點），效果變為 <span class="text-emerald-400 font-bold">2 倍（魔法行使判定 +2、水・冰屬性受傷害 -6 點）</span>。</div>
+                            <div><span class="text-amber-300 font-bold">11 級：</span>每日累計可使用時間上限提升為 <span class="text-emerald-400 font-bold">2 分鐘（12 輪）</span>。</div>
+                        </div>
+
+                        <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                            <div class="font-bold text-cyan-300 mb-1.5">能力值決定骰法</div>
+                            <div class="grid grid-cols-6 text-center font-mono bg-zinc-900 rounded py-1.5 border border-zinc-800/80">
+                                <div><span class="text-zinc-500 block text-[10px]">A</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">B</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">C</span><span class="text-amber-300 font-bold">1d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">D</span><span class="text-amber-300 font-bold">1d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">E</span><span class="text-amber-300 font-bold">2d</span></div>
+                                <div><span class="text-zinc-500 block text-[10px]">F</span><span class="text-amber-300 font-bold">2d</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 出身表 -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-center border-collapse bg-zinc-950 rounded-lg overflow-hidden border border-zinc-800">
+                        <thead>
+                            <tr class="bg-zinc-900 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-1.5 px-2">2d</th>
+                                <th class="py-1.5 px-2">出身</th>
+                                <th class="py-1.5 px-2">初期所有技能</th>
+                                <th class="py-1.5 px-2">技</th>
+                                <th class="py-1.5 px-2">體</th>
+                                <th class="py-1.5 px-2">心</th>
+                                <th class="py-1.5 px-2">初期經驗點</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/60 text-zinc-200">
+                            <tr><td class="py-1.5 font-mono text-amber-400">2～4</td><td>射手</td><td class="text-cyan-300">射手（シューター）</td><td>10</td><td>8</td><td>9</td><td class="text-emerald-300">2,500 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">5～6</td><td>神官</td><td class="text-cyan-300">牧師（プリースト）</td><td>7</td><td>9</td><td>11</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">7</td><td>闘學士</td><td class="text-cyan-300">生命工匠（ヴァイタルスミス）</td><td>9</td><td>9</td><td>9</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">8～9</td><td>魔法使い</td><td class="text-cyan-300">魔女／巫師（ウィッチ）</td><td>8</td><td>7</td><td>12</td><td class="text-emerald-300">2,000 點</td></tr>
+                            <tr><td class="py-1.5 font-mono text-amber-400">10～12</td><td>輕戰士</td><td class="text-cyan-300">劍客（フェンサー）</td><td>10</td><td>9</td><td>8</td><td class="text-emerald-300">2,500 點</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
