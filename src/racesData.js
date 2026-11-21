@@ -1702,16 +1702,16 @@ export const racesContent = `
                         <span class="text-cyan-300 font-bold">［知識的偏差］</span>：對「分類：蠻族」之角色或行動的知識、觀察判定 <span class="text-emerald-400 font-bold">+2</span>；對「分類：魔動機」之角色或行動的知識、觀察判定 <span class="text-red-400 font-bold">-2</span>。
                     </div>
                     <div>
-                        <span class="text-cyan-300 font-bold">［劍之誓約／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
+                        <span class="text-cyan-300 font-bold">［劍之加護／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
                     </div>
                     <div>
-                        <span class="text-cyan-300 font-bold">［劍之誓約／白之武裝］</span>：輔助動作或戰鬥準備消耗 <span class="text-pink-400 font-bold">HP 3 點</span>，持續 3 分鐘（18 輪）內<span class="text-emerald-400 font-bold">防護點 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（每 10 秒限用 1 次，不可疊加）。
+                        <span class="text-cyan-300 font-bold">［劍之加護／白之武裝］</span>：輔助動作或戰鬥準備消耗 <span class="text-pink-400 font-bold">HP 3 點</span>，持續 3 分鐘（18 輪）內<span class="text-emerald-400 font-bold">防護點 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（每 10 秒限用 1 次，不可疊加）。
                     </div>
                 </div>
 
                 <div class="space-y-3">
                     <div class="bg-amber-950/15 p-3 rounded-lg border border-amber-900/30 space-y-1.5">
-                        <div class="font-bold text-amber-400">種族特徵強化（強化［劍之誓約／白之武裝］）</div>
+                        <div class="font-bold text-amber-400">種族特徵強化（強化［劍之加護／白之武裝］）</div>
                         <div><span class="text-amber-300 font-bold">6 級：</span>使用時額外多消耗 HP 3 點（合計 6 點），效果期間內追加獲得<span class="text-emerald-400 font-bold">筋力加值 +2 點</span>。</div>
                         <div><span class="text-amber-300 font-bold">11 級：</span>效果可同時疊加至最多 <span class="text-emerald-400 font-bold">2 層</span>。</div>
                     </div>
@@ -1806,16 +1806,16 @@ export const racesContent = `
                         <span class="text-cyan-300 font-bold">［月光之肌］</span>：全身常時纏繞影響觀測認知的靈性淡光，進行<span class="text-red-400 font-bold">隱密判定承受 -4 減值修正</span>（即使以衣物遮蓋全身亦不消失；此微光亦無法作為照明使用）。
                     </div>
                     <div>
-                        <span class="text-cyan-300 font-bold">［劍之誓約／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
+                        <span class="text-cyan-300 font-bold">［劍之加護／月神］</span>：死亡蘇生後「穢れ」若變為 2～4 點則任何蘇生皆無效化（生存時達 2 點以上不會死亡；5 點以上仍不死生物化）。習得牧師技能時<span class="text-amber-300 font-bold">僅能信仰「月神辛」</span>。
                     </div>
                     <div>
-                        <span class="text-cyan-300 font-bold">［劍之誓約／燃燒之雪］</span>：輔助動作消耗 <span class="text-pink-400 font-bold">HP 2 點</span>，持續 10 秒（1 輪）內<span class="text-emerald-400 font-bold">魔法行使判定 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（不可疊加，每日累計限用 1 分鐘／6 輪）。
+                        <span class="text-cyan-300 font-bold">［劍之加護／燃燒之雪］</span>：輔助動作消耗 <span class="text-pink-400 font-bold">HP 2 點</span>，持續 10 秒（1 輪）內<span class="text-emerald-400 font-bold">魔法行使判定 +1</span>，且承受的水・冰屬性物理／魔法傷害 <span class="text-emerald-400 font-bold">-3 點</span>（不可疊加，每日累計限用 1 分鐘／6 輪）。
                     </div>
                 </div>
 
                 <div class="space-y-3">
                     <div class="bg-amber-950/15 p-3 rounded-lg border border-amber-900/30 space-y-1.5">
-                        <div class="font-bold text-amber-400">種族特徵強化（強化［劍之誓約／燃燒之雪］）</div>
+                        <div class="font-bold text-amber-400">種族特徵強化（強化［劍之加護／燃燒之雪］）</div>
                         <div><span class="text-amber-300 font-bold">6 級：</span>使用時額外多消耗 HP 3 點（合計 5 點），效果變為 <span class="text-emerald-400 font-bold">2 倍（魔法行使判定 +2、水・冰屬性受傷害 -6 點）</span>。</div>
                         <div><span class="text-amber-300 font-bold">11 級：</span>每日累計可使用時間上限提升為 <span class="text-emerald-400 font-bold">2 分鐘（12 輪）</span>。</div>
                     </div>
