@@ -168,21 +168,17 @@ window.switchMainTab = function(tabName) {
     const subtabsNav = document.getElementById('rule-subtabs-nav');
     const rulesContainer = document.getElementById('rules-container');
 
-    // 1. 重置所有導覽列按鈕高亮
     document.querySelectorAll('.main-tab-btn').forEach(btn => {
         btn.className = "main-tab-btn py-2 px-3 rounded-lg text-zinc-400 hover:text-amber-400 transition-all border border-transparent whitespace-nowrap";
     });
 
-    // 2. 僅高亮當前點擊的按鈕
     const activeBtn = document.getElementById(`tab-${tabName}`);
     if (activeBtn) {
         activeBtn.className = "main-tab-btn py-2 px-3 rounded-lg transition-all font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 whitespace-nowrap";
     }
 
-    // 3. 隱藏所有主要 Section 區塊
     [secBards, secItems, secRules].forEach(sec => sec && sec.classList.add('hidden'));
 
-    // 4. 切換顯示內容
     if (tabName === 'bards') {
         if (secBards) secBards.classList.remove('hidden');
         if (typeof window.filterBardSongs === 'function') window.filterBardSongs();
@@ -413,7 +409,7 @@ function executeItemFilter() {
 export function renderCombatFeatCard(feat) {
     const typeBadgeStyles = {
         '被動': 'bg-slate-900 text-slate-300 border-slate-700',
-        '宣告': 'bg-amber-950 text-amber-300 border-amber-800',
+        '宣言': 'bg-amber-950 text-amber-300 border-amber-800',
         '主動作': 'bg-purple-950 text-purple-300 border-purple-800',
         '自動': 'bg-emerald-950 text-emerald-300 border-emerald-800'
     };
@@ -616,6 +612,9 @@ function createSkillCardHTML(b) {
     const isDarkHunter = b.category === "操氣" || b.category === "暗獵者";
     const isDruid = b.category === "森羅魔法" || b.category === "德魯伊";
     const isAbyssgazer = b.category === "奈落魔法" || b.category === "奈落使";
+    const isCurse = b.category === "咒詛魔法" || b.category === "咒法師";
+    const isSummoner = b.category === "召異魔法" || b.category === "召異魔導士";
+    const isTori = b.category === "闘理" || b.category === "闘學士";
     const isRider = b.category === "騎藝" || b.category === "騎手技能" || b.category === "騎手";
 
     let badgeColor = "bg-blue-950 text-blue-300 border-blue-800";
@@ -636,6 +635,9 @@ function createSkillCardHTML(b) {
     else if (isDarkHunter) { badgeColor = "bg-red-950 text-red-400 border-red-800"; icon = "fa-crosshairs"; }
     else if (isDruid) { badgeColor = "bg-lime-950 text-lime-300 border-lime-800"; icon = "fa-leaf"; }
     else if (isAbyssgazer) { badgeColor = "bg-zinc-950 text-amber-500 border-amber-900/80"; icon = "fa-eye-low-vision"; }
+    else if (isCurse) { badgeColor = "bg-purple-950 text-fuchsia-300 border-fuchsia-800"; icon = "fa-skull"; }
+    else if (isSummoner) { badgeColor = "bg-pink-950 text-pink-300 border-pink-800"; icon = "fa-pentagram"; }
+    else if (isTori) { badgeColor = "bg-orange-950 text-amber-300 border-orange-700"; icon = "fa-hand-fist"; }
     else if (isRider) { badgeColor = "bg-emerald-950 text-emerald-400 border-emerald-700"; icon = "fa-horse"; }
 
     const uid = getItemUniqueId('skill', b.name, b.category);
@@ -688,6 +690,27 @@ function createSkillCardHTML(b) {
                 <span class="col-span-5 text-right text-cyan-300 font-medium">${b.prerequisite || '無'}</span>
             </div>
         `;
+    } else if (isTori) {
+        // 自動將 "10秒（1輪）持續 ／ 風險：無" 拆分為「適用」與「風險」，完全還原規則書版面
+        let applyText = b.usage || '－';
+        let riskText = '無';
+        if (b.usage && b.usage.includes('風險：')) {
+            const parts = b.usage.split(/\s*[／/]\s*風險：/);
+            applyText = parts[0] || '－';
+            riskText = parts[1] || '無';
+        }
+        middleTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
+                <span class="text-zinc-500 font-medium">適用</span>
+                <span class="col-span-3 text-amber-300 font-bold">${applyText}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">風險</span>
+                <span class="text-right ${riskText === '無' ? 'text-zinc-300' : 'text-rose-400 font-bold'}">${riskText}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40">
+                <span class="text-zinc-500 font-medium">前提條件</span>
+                <span class="col-span-5 text-right text-cyan-300 font-medium">${b.prerequisite || '無'}</span>
+            </div>
+        `;
     } else {
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
@@ -732,6 +755,7 @@ function createSkillCardHTML(b) {
                     ${reqLevelHTML}
                     <h3 class="text-base font-bold text-amber-400 ml-1">
                         <i class="fa-solid ${icon} mr-1 text-amber-500"></i>${b.name}
+                        ${b.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${b.nameJp})</span>` : ''}
                     </h3>
                 </div>
                 <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
@@ -792,8 +816,19 @@ function renderBardSongs(isNewSearch = false) {
     const fragment = document.createElement('template');
     let htmlChunk = '';
 
+    // 明確定義哪些分類屬於「特技/條件型卡片」，避免把 type === '主動作' 的魔法誤判為戰鬥特技
+    const featCategories = ["戰鬥特技", "秘傳", "流派秘傳", "種族特徵"];
+
     pageItems.forEach(b => {
-        const isCombatFeat = b.category === "戰鬥特技" || ['被動', '宣言', '主動作', '自動'].includes(b.type);
+        const isMagicOrSkill = b.category && (
+            b.category.includes("魔法") ||
+            ["魔動機術", "咒歌", "終律", "鼓咆", "陣率", "賦術", "操氣", "騎藝", "練技", "占瞳"].includes(b.category)
+        );
+        const isCombatFeat = !isMagicOrSkill && (
+            featCategories.includes(b.category) ||
+            (!b.category && ['被動', '宣言', '主動作', '自動'].includes(b.type))
+        );
+
         if (isCombatFeat) {
             htmlChunk += renderCombatFeatCard(b);
         } else {

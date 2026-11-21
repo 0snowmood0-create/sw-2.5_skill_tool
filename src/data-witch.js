@@ -539,7 +539,7 @@ export const witchSkillsData = [
 
     // ==================== 9 級咒詛魔法 ====================
     {
-        category: "咒詛魔法",
+        category: "▶▶咒詛魔法",
         type: "補助動作",
         req_level: 9,
         name: "威力增幅",
