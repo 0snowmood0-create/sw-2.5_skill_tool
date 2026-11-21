@@ -43,7 +43,7 @@ import { throwingItemsData } from './Item/data-throwing.js';
 import { warhammerItemsData } from './Item/data-warhammer.js';
 import { geographItemsData } from './Item/data-geographs.js';
 import { mountAnimalData, mountMythicalData, mountMagitechData, mountEquipmentData } from './Item/data-mounts.js';
-
+import { nonMetalArmorItemsData } from './Item/data-nonmetal-armors.js';
 // ==================== 整合導出 allSkillsData ====================
 export const allSkillsData = [
     ...(typeof bardSongsData !== 'undefined' ? bardSongsData : []),
@@ -113,6 +113,7 @@ export const allItemsData = [
     ...(livingAndTransitItemsData || []).map(i => ({ ...i, category: '生活與交通工具' })),
     ...(maceItemsData || []).map(i => ({ ...i, category: '武器-鈍器/錘' })),
     ...(metalArmorItemsData || []).map(i => ({ ...i, category: '防具-金屬鎧甲' })),
+    ...(nonMetalArmorItemsData || []).map(i => ({ ...i, category: '防具-非金屬鎧甲' })),
     ...(potionItemsData || []).map(i => ({ ...i, category: '藥水/練金卡片' })),
     ...(shieldItemsData || []).map(i => ({ ...i, category: '防具-盾牌' })),
     ...(spearItemsData || []).map(i => ({ ...i, category: '武器-槍' })),
