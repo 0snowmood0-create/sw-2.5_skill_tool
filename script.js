@@ -194,6 +194,9 @@ window.switchMainTab = function(tabName) {
                 const firstRuleId = (Array.isArray(ruleSections) && ruleSections.length > 0) ? ruleSections[0].id : 'bard_rules';
                 window.switchRuleSubTab(firstRuleId);
             }
+        } else if (tabName === 'feat-tree') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            renderFeatTreePage();
         } else if (tabName === 'other_rules') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof otherRulesContent !== 'undefined') {
@@ -205,7 +208,7 @@ window.switchMainTab = function(tabName) {
             if (rulesContainer && typeof equipmentEnhancementContent !== 'undefined') {
                 rulesContainer.innerHTML = equipmentEnhancementContent;
                 attachRulePinButton(tabName, '裝備強化與魔化規則', equipmentEnhancementContent);
-            } 
+            }
         } else if (tabName === 'reputation_rules') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             if (rulesContainer && typeof reputationRankContent !== 'undefined') {
@@ -1563,4 +1566,291 @@ window.renderCustomPage = function() {
     }
 
     rulesContainer.innerHTML = headerHTML + cardsGridHTML + rulesSectionHTML;
+};
+// ==================== 11. 戰鬥特技互動習得樹／等級篩選分頁 ====================
+const featTreeState = {
+    query: '',
+    type: '',
+    maxLevel: 15,
+    prereqMode: '',
+    selectedName: null
+};
+
+function getCombatFeatsForTree() {
+    const dataset = (typeof allSkillsData !== 'undefined' && Array.isArray(allSkillsData)) ? allSkillsData : [];
+    const featCategories = ['戰鬥特技', '秘傳', '流派秘傳'];
+
+    return dataset
+        .filter(item => {
+            if (!item) return false;
+            const isMagicOrSkill = item.category && (
+                item.category.includes('魔法') ||
+                ['魔動機術', '咒歌', '終律', '鼓咆', '陣率', '賦術', '操氣', '騎藝', '練技', '占瞳'].includes(item.category)
+            );
+            return !isMagicOrSkill && (
+                featCategories.includes(item.category) ||
+                (!item.category && ['被動', '宣言', '主動作', '自動'].includes(item.type))
+            );
+        })
+        .map(item => {
+            const prereq = item.prerequisite || '無';
+            const nums = (prereq.match(/\d+/g) || []).map(Number);
+            const level = typeof item.req_level === 'number'
+                ? item.req_level
+                : (nums.length ? Math.max(...nums) : 0);
+            return {
+                ...item,
+                name: item.name || '',
+                nameJp: item.nameJp || '',
+                type: item.type || '被動',
+                prerequisite: prereq,
+                usage: item.usage || '無',
+                summary: item.summary || item.effect || '',
+                level
+            };
+        });
+}
+
+function normalizeFeatBaseName(name) {
+    return (name || '').replace(/「舞」|\(浪\)|\(新技能\)|\/\*\*/g, '').trim();
+}
+
+function getFeatTreeRelations(feat, allFeats) {
+    const p = feat.prerequisite || '';
+    const prereqs = allFeats.filter(other => {
+        if (other.name === feat.name) return false;
+        const base = normalizeFeatBaseName(other.name);
+        return base.length >= 2 && p.includes(base);
+    });
+
+    const selfBase = normalizeFeatBaseName(feat.name);
+    const nexts = selfBase.length >= 2
+        ? allFeats.filter(other => other.name !== feat.name && (other.prerequisite || '').includes(selfBase))
+        : [];
+
+    return { prereqs, nexts };
+}
+
+function getFeatLevelBucket(level) {
+    if (!level || level <= 0) return 0;
+    for (const b of [1, 3, 5, 7, 9, 11, 13, 15]) {
+        if (level <= b) return b;
+    }
+    return 15;
+}
+
+function matchesFeatTreeFilter(feat, allFeats) {
+    if (featTreeState.type && feat.type !== featTreeState.type) return false;
+    if (feat.level > featTreeState.maxLevel) return false;
+
+    const p = feat.prerequisite || '';
+    const { prereqs, nexts } = getFeatTreeRelations(feat, allFeats);
+
+    if (featTreeState.prereqMode === 'none' && !['無', '-'].includes(p.trim())) return false;
+    if (featTreeState.prereqMode === 'chain' && prereqs.length === 0 && nexts.length === 0) return false;
+    if (featTreeState.prereqMode === '浪' && !feat.name.includes('浪') && !feat.nameJp.includes('浪')) return false;
+    if (featTreeState.prereqMode === '拳鬥士' && !p.includes('拳鬥士') && !feat.usage.includes('拳鬥士')) return false;
+    if (featTreeState.prereqMode === '咒歌' && !p.includes('咒歌') && !feat.usage.includes('咒歌') && !feat.summary.includes('咒歌') && !feat.summary.includes('演奏')) return false;
+    if (featTreeState.prereqMode === '魔法' && !(p.includes('魔') || p.includes('賦術') || feat.usage.includes('魔') || feat.usage.includes('賦術') || feat.summary.includes('魔') || feat.summary.includes('MP') || feat.summary.includes('賦術'))) return false;
+
+    if (featTreeState.query) {
+        const q = featTreeState.query.toLowerCase();
+        const hay = `${feat.name} ${feat.nameJp} ${feat.type} ${feat.prerequisite} ${feat.usage} ${feat.summary}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+    }
+    return true;
+}
+
+window.selectFeatTreeItem = function(name) {
+    featTreeState.selectedName = featTreeState.selectedName === name ? null : name;
+    renderFeatTreePage();
+};
+
+window.resetFeatTreeFilters = function() {
+    featTreeState.query = '';
+    featTreeState.type = '';
+    featTreeState.maxLevel = 15;
+    featTreeState.prereqMode = '';
+    featTreeState.selectedName = null;
+    renderFeatTreePage();
+};
+
+window.renderFeatTreePage = function() {
+    const rulesContainer = document.getElementById('rules-container');
+    if (!rulesContainer) return;
+
+    const allFeats = getCombatFeatsForTree();
+    const matched = allFeats.filter(f => matchesFeatTreeFilter(f, allFeats));
+    const matchedSet = new Set(matched.map(f => f.name));
+    const selectedFeat = allFeats.find(f => f.name === featTreeState.selectedName) || null;
+    const rel = selectedFeat ? getFeatTreeRelations(selectedFeat, allFeats) : { prereqs: [], nexts: [] };
+    const prereqSet = new Set(rel.prereqs.map(f => f.name));
+    const nextSet = new Set(rel.nexts.map(f => f.name));
+
+    const buckets = [0, 1, 3, 5, 7, 9, 11, 13, 15];
+    const borderMap = {
+        '宣言': 'border-l-red-500',
+        '被動': 'border-l-blue-500',
+        '主動作': 'border-l-emerald-500',
+        '自動': 'border-l-purple-500'
+    };
+
+    rulesContainer.innerHTML = `
+        <div class="space-y-4">
+            <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-4 shadow-lg flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                        <i class="fa-solid fa-diagram-project"></i>戰鬥特技互動習得樹／等級篩選
+                    </h2>
+                    <p class="text-xs text-zinc-400 mt-0.5">
+                        依需求等級分欄排列；點選特技可高亮 <span class="text-sky-400 font-bold">前置特技</span> 與 <span class="text-emerald-400 font-bold">後續可解鎖</span>。
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+                    <span><i class="fa-solid fa-square text-red-500 mr-1"></i>宣言</span>
+                    <span><i class="fa-solid fa-square text-blue-500 mr-1"></i>被動</span>
+                    <span><i class="fa-solid fa-square text-emerald-500 mr-1"></i>主動作</span>
+                    <span><i class="fa-solid fa-square text-purple-500 mr-1"></i>自動</span>
+                    <span class="text-amber-300 font-mono">符合：${matched.length} / ${allFeats.length}</span>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3.5 flex flex-wrap gap-2.5 items-center text-xs">
+                <input type="text" id="ft-search-input" value="${featTreeState.query.replace(/"/g, '&quot;')}"
+                    placeholder="搜尋特技名、日文、前提、摘要..."
+                    class="flex-1 min-w-[180px] bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-amber-500">
+
+                <select id="ft-type-select" class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-amber-500">
+                    <option value="">所有類型</option>
+                    ${['宣言', '被動', '主動作', '自動'].map(t => `<option value="${t}" ${featTreeState.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+                </select>
+
+                <select id="ft-level-select" class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-amber-500">
+                    ${[15, 13, 11, 9, 7, 5, 3, 1].map(lv => `<option value="${lv}" ${featTreeState.maxLevel === lv ? 'selected' : ''}>角色上限 Lv ${lv}${lv === 15 ? '（全部）' : ''}</option>`).join('')}
+                </select>
+
+                <select id="ft-prereq-select" class="bg-zinc-950 border border-zinc-700 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-amber-500">
+                    <option value="">所有前提條件</option>
+                    <option value="none" ${featTreeState.prereqMode === 'none' ? 'selected' : ''}>無需求</option>
+                    <option value="chain" ${featTreeState.prereqMode === 'chain' ? 'selected' : ''}>有前後置連鎖</option>
+                    <option value="浪" ${featTreeState.prereqMode === '浪' ? 'selected' : ''}>浪人（(浪)）</option>
+                    <option value="拳鬥士" ${featTreeState.prereqMode === '拳鬥士' ? 'selected' : ''}>拳鬥士相關</option>
+                    <option value="咒歌" ${featTreeState.prereqMode === '咒歌' ? 'selected' : ''}>咒歌／演奏</option>
+                    <option value="魔法" ${featTreeState.prereqMode === '魔法' ? 'selected' : ''}>魔法／賦術</option>
+                </select>
+
+                <button type="button" onclick="resetFeatTreeFilters()"
+                    class="px-3 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 border border-zinc-700 transition-colors">
+                    重設
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                <div class="lg:col-span-9 bg-zinc-900 border border-zinc-800 rounded-xl p-3 overflow-x-auto custom-scrollbar">
+                    <div class="grid grid-cols-9 gap-2.5 min-w-[1260px]">
+                        ${buckets.map(bucket => {
+                            const colItems = allFeats.filter(f => getFeatLevelBucket(f.level) === bucket);
+                            const label = bucket === 0 ? '無需求 / 0' : `Lv ${bucket}`;
+                            return `
+                                <div class="flex flex-col gap-2">
+                                    <div class="bg-zinc-950 border border-zinc-800 rounded-lg py-1.5 px-2 text-center text-xs font-bold text-amber-400 sticky top-0 z-10">
+                                        ${label} (${colItems.length})
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        ${colItems.map(feat => {
+                                            let ringClass = 'border-zinc-800 hover:border-amber-500/60';
+                                            if (featTreeState.selectedName === feat.name) ringClass = 'border-amber-400 ring-2 ring-amber-400/40';
+                                            else if (prereqSet.has(feat.name)) ringClass = 'border-sky-400 ring-2 ring-sky-400/40';
+                                            else if (nextSet.has(feat.name)) ringClass = 'border-emerald-400 ring-2 ring-emerald-400/40';
+
+                                            const dimClass = matchedSet.has(feat.name) ? '' : 'opacity-25';
+                                            const leftBorder = borderMap[feat.type] || 'border-l-blue-500';
+
+                                            return `
+                                                <div onclick="selectFeatTreeItem('${feat.name.replace(/'/g, "\\'")}')"
+                                                    class="bg-zinc-950/90 border border-l-4 ${leftBorder} ${ringClass} ${dimClass} rounded-lg p-2 cursor-pointer transition-all">
+                                                    <div class="flex justify-between items-start gap-1 text-xs font-bold text-zinc-100">
+                                                        <span>${feat.name}</span>
+                                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 shrink-0">${feat.type}</span>
+                                                    </div>
+                                                    <div class="text-[11px] text-amber-300/90 mt-1 break-words">前提：${feat.prerequisite}</div>
+                                                    <div class="text-[11px] text-zinc-400 mt-1 line-clamp-2">${feat.summary}</div>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <aside class="lg:col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3 text-xs lg:sticky lg:top-24">
+                    <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-2">特技詳情與連鎖</h3>
+                    ${selectedFeat ? `
+                        <div class="space-y-2">
+                            <div class="text-sm font-bold text-zinc-100">
+                                ${selectedFeat.name}
+                                ${selectedFeat.nameJp ? `<span class="text-xs text-zinc-500 font-mono font-normal">(${selectedFeat.nameJp})</span>` : ''}
+                            </div>
+                            <div><span class="text-zinc-500">類型／需求：</span><span class="text-zinc-200">${selectedFeat.type} ／ ${selectedFeat.level > 0 ? 'Lv ' + selectedFeat.level : '無等級限制'}</span></div>
+                            <div><span class="text-zinc-500">習得前提：</span><span class="text-amber-300 font-medium">${selectedFeat.prerequisite}</span></div>
+                            <div><span class="text-zinc-500">使用限制：</span><span class="text-zinc-200">${selectedFeat.usage}</span></div>
+                            <div class="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 text-zinc-300 leading-relaxed">${selectedFeat.summary}</div>
+
+                            <div class="pt-1">
+                                <div class="text-sky-400 font-bold mb-1">前置特技（${rel.prereqs.length}）</div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${rel.prereqs.length
+                                        ? rel.prereqs.map(p => `<button type="button" onclick="selectFeatTreeItem('${p.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-sky-300 border border-sky-500/40">← ${p.name}</button>`).join('')
+                                        : '<span class="text-zinc-500">無前置特技</span>'}
+                                </div>
+                            </div>
+
+                            <div class="pt-1">
+                                <div class="text-emerald-400 font-bold mb-1">可解鎖後續（${rel.nexts.length}）</div>
+                                <div class="flex flex-wrap gap-1.5">
+                                    ${rel.nexts.length
+                                        ? rel.nexts.map(n => `<button type="button" onclick="selectFeatTreeItem('${n.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-emerald-300 border border-emerald-500/40">→ ${n.name}</button>`).join('')
+                                        : '<span class="text-zinc-500">無後續特技</span>'}
+                                </div>
+                            </div>
+                        </div>
+                    ` : `
+                        <p class="text-zinc-400 leading-relaxed">點選左側任一戰鬥特技卡片，查看完整條件與前後置特技連鎖。</p>
+                    `}
+                </aside>
+            </div>
+        </div>
+    `;
+
+    const searchEl = document.getElementById('ft-search-input');
+    const typeEl = document.getElementById('ft-type-select');
+    const levelEl = document.getElementById('ft-level-select');
+    const prereqEl = document.getElementById('ft-prereq-select');
+
+    if (searchEl) {
+        searchEl.addEventListener('input', e => {
+            featTreeState.query = e.target.value;
+            renderFeatTreePage();
+        });
+    }
+    if (typeEl) {
+        typeEl.addEventListener('change', e => {
+            featTreeState.type = e.target.value;
+            renderFeatTreePage();
+        });
+    }
+    if (levelEl) {
+        levelEl.addEventListener('change', e => {
+            featTreeState.maxLevel = Number(e.target.value);
+            renderFeatTreePage();
+        });
+    }
+    if (prereqEl) {
+        prereqEl.addEventListener('change', e => {
+            featTreeState.prereqMode = e.target.value;
+            renderFeatTreePage();
+        });
+    }
 };
