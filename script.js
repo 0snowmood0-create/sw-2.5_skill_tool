@@ -4,7 +4,7 @@ import { racesContent } from './src/racesData.js';
 import { otherRulesContent } from './src/otherRulesData.js'; 
 import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
 import { reputationRankContent } from './src/reputationRankData.js';
-
+import { renderCharSheetPage, initCharSheetQuickAddObserver } from './src/charSheetUI.js';
 // ==================== 自定義頁面（收藏與快捷牌組）核心管理 ====================
 const CUSTOM_STORAGE_KEY = 'sw25_custom_deck_v1';
 
@@ -221,6 +221,9 @@ window.switchMainTab = function(tabName) {
                 rulesContainer.innerHTML = getFieldToolsHTML();
                 initFieldTools();
             }
+        } else if (tabName === 'char-sheet') {
+            if (subtabsNav) subtabsNav.classList.add('hidden');
+            renderCharSheetPage();
         } else if (tabName === 'custom') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             renderCustomPage();
@@ -860,6 +863,7 @@ window.addEventListener('scroll', () => {
 document.addEventListener('DOMContentLoaded', () => {
     updateCustomBadgeCount();
     switchMainTab('bards');
+    initCharSheetQuickAddObserver();
 });
 
 // ==================== 全域規則即時檢索系統 ====================
