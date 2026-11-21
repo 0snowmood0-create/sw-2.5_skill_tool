@@ -478,6 +478,9 @@ export function renderCombatFeatCard(feat) {
 export function renderItemCard(item) {
     const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
     const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-盾牌"].includes(item.category);
+    const isAccessory =
+        item.category === "裝飾品" ||
+        (typeof item.type === "string" && (item.type.includes("裝飾") || item.type === "裝飾品"));
     const isGeograph = item.name && item.name.includes("地貌儀");
     const isMount = item.category && item.category.startsWith("騎獸");
 
@@ -547,6 +550,20 @@ export function renderItemCard(item) {
                 <span class="col-span-5 text-right text-amber-400 font-bold">${item.price || '－'}</span>
             </div>
         `;
+    } else if (isAccessory) {
+        const slotLabel = item.type === "裝飾品" ? "通用／不限" : (item.type || "－");
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">部位</span>
+                <span class="col-span-3 text-cyan-300 font-bold">${slotLabel}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">分類</span>
+                <span class="col-span-5 text-emerald-300 font-medium">${item.category || '裝飾品'}</span>
+            </div>
+        `;  
     } else {
         attrTableHTML = `
             <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
