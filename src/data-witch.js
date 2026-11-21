@@ -350,7 +350,7 @@ export const witchSkillsData = [
         category: "咒詛魔法",
         type: "補助動作",
         req_level: 6,
-        name: "邪眼",
+        name: "▶▶邪眼",
         nameJp: "イビル・アイ",
         cost: "MP 5",
         target: "1 體全",
