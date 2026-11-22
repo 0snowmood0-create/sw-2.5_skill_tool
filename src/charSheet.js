@@ -6,15 +6,33 @@ export const EXP_TABLE_B = [0, 500, 1500, 2500, 4000, 5500, 7500, 10000, 13000, 
 
 const MAGIC_SKILLS = new Set([
   '真語魔法', '操靈魔法', '神聖魔法', '魔動機術', '妖精魔法',
-  '深智魔法', '奈落魔法', '祕奧魔法', '咒詛魔法'
+  '深智魔法', '奈落魔法', '祕奧魔法', '咒詛魔法',
+  // 相容常見職業名稱寫法
+  '魔術師', '操靈術師', '神官', '魔動機師', '妖精使',
+  '深智魔導師', '奈落魔導師', '咒術師', '女巫'
 ]);
 
 function nowIso() {
   return new Date().toISOString();
 }
 
+function toSafeNumber(val, fallback = 0) {
+  const num = Number(val);
+  return Number.isFinite(num) ? num : fallback;
+}
+
 function createEmptyAbility() {
   return { base: 12, growth: 0, misc: 0 };
+}
+
+function normalizeAbilityInput(ab) {
+  const baseAb = createEmptyAbility();
+  if (!ab || typeof ab !== 'object') return baseAb;
+  return {
+    base: toSafeNumber(ab.base, baseAb.base),
+    growth: toSafeNumber(ab.growth, baseAb.growth),
+    misc: toSafeNumber(ab.misc, baseAb.misc)
+  };
 }
 
 export function createDefaultCharacter(overrides = {}) {
@@ -87,12 +105,12 @@ export function createDefaultCharacter(overrides = {}) {
     ...overrides,
     meta: { ...baseChar.meta, ...(overrides.meta || {}) },
     abilities: {
-      dex: { ...baseChar.abilities.dex, ...(overrides.abilities?.dex || {}) },
-      agi: { ...baseChar.abilities.agi, ...(overrides.abilities?.agi || {}) },
-      str: { ...baseChar.abilities.str, ...(overrides.abilities?.str || {}) },
-      vit: { ...baseChar.abilities.vit, ...(overrides.abilities?.vit || {}) },
-      int: { ...baseChar.abilities.int, ...(overrides.abilities?.int || {}) },
-      mnd: { ...baseChar.abilities.mnd, ...(overrides.abilities?.mnd || {}) }
+      dex: normalizeAbilityInput(overrides.abilities?.dex),
+      agi: normalizeAbilityInput(overrides.abilities?.agi),
+      str: normalizeAbilityInput(overrides.abilities?.str),
+      vit: normalizeAbilityInput(overrides.abilities?.vit),
+      int: normalizeAbilityInput(overrides.abilities?.int),
+      mnd: normalizeAbilityInput(overrides.abilities?.mnd)
     },
     derived: { ...baseChar.derived, ...(overrides.derived || {}) },
     learnedAbilities: { ...baseChar.learnedAbilities, ...(overrides.learnedAbilities || {}) },
@@ -117,11 +135,11 @@ export function createDefaultCharacter(overrides = {}) {
 }
 
 function calcAbilityTotal(ab) {
-  return (Number(ab?.base) || 0) + (Number(ab?.growth) || 0) + (Number(ab?.misc) || 0);
+  return toSafeNumber(ab?.base) + toSafeNumber(ab?.growth) + toSafeNumber(ab?.misc);
 }
 
 function calcAbilityMod(total) {
-  return Math.floor((Number(total) || 0) / 6);
+  return Math.floor(toSafeNumber(total) / 6);
 }
 
 function getExpCost(expTable, level) {
@@ -134,20 +152,47 @@ function getBuffSum(activeBuffs, statKey) {
   return activeBuffs.reduce((acc, buff) => {
     if (!buff) return acc;
     if (typeof buff.modifiers === 'object' && buff.modifiers !== null) {
-      return acc + (Number(buff.modifiers[statKey]) || 0);
+      return acc + toSafeNumber(buff.modifiers[statKey]);
     }
     if (buff.stat === statKey) {
-      return acc + (Number(buff.value) || 0);
+      return acc + toSafeNumber(buff.value);
     }
     return acc;
   }, 0);
 }
 
 export function recalculateCharacter(rawChar, options = {}) {
-  const char = JSON.parse(JSON.stringify(rawChar));
-  const prevMaxHp = char.derived?.maxHp || 0;
-  const prevMaxMp = char.derived?.maxMp || 0;
-  const buffs = char.combatSync?.activeBuffs || [];
+  const char = JSON.parse(JSON.stringify(rawChar || {}));
+  char.meta = {
+    name: '未命名冒險者',
+    race: '人類',
+    gender: '',
+    age: '',
+    expTotal: 3000,
+    expUsed: 0,
+    honorPoints: 0,
+    honorRank: '無名',
+    moneyG: 1200,
+    notes: '',
+    ...(char.meta || {})
+  };
+  char.abilities = {
+    dex: normalizeAbilityInput(char.abilities?.dex),
+    agi: normalizeAbilityInput(char.abilities?.agi),
+    str: normalizeAbilityInput(char.abilities?.str),
+    vit: normalizeAbilityInput(char.abilities?.vit),
+    int: normalizeAbilityInput(char.abilities?.int),
+    mnd: normalizeAbilityInput(char.abilities?.mnd)
+  };
+  char.combatSync = {
+    sizeParts: toSafeNumber(char.combatSync?.sizeParts, 1),
+    meleeZone: char.combatSync?.meleeZone ?? true,
+    activeBuffs: Array.isArray(char.combatSync?.activeBuffs) ? char.combatSync.activeBuffs : []
+  };
+
+  const prevMaxHp = toSafeNumber(char.derived?.maxHp, 0);
+  const prevMaxMp = toSafeNumber(char.derived?.maxMp, 0);
+  const buffs = char.combatSync.activeBuffs;
 
   const abilityTotals = {};
   const abilityMods = {};
@@ -158,15 +203,16 @@ export function recalculateCharacter(rawChar, options = {}) {
     abilityMods[key] = calcAbilityMod(total);
   });
 
-  const skills = (char.skills || []).map(sk => {
-    const lv = Math.max(0, Math.min(15, parseInt(sk.level, 10) || 0));
-    const table = sk.expTable === 'B' ? 'B' : 'A';
-    const magicPower = MAGIC_SKILLS.has(sk.name)
+  const skills = (Array.isArray(char.skills) ? char.skills : []).map(sk => {
+    const name = String(sk?.name || '').trim();
+    const lv = Math.max(0, Math.min(15, parseInt(sk?.level, 10) || 0));
+    const table = sk?.expTable === 'B' ? 'B' : 'A';
+    const magicPower = MAGIC_SKILLS.has(name)
       ? lv + abilityMods.int + getBuffSum(buffs, 'magicPower')
-      : (Number(sk.magicPower) || 0);
+      : toSafeNumber(sk?.magicPower, 0);
 
     return {
-      name: sk.name || '',
+      name,
       expTable: table,
       level: lv,
       magicPower
@@ -175,17 +221,17 @@ export function recalculateCharacter(rawChar, options = {}) {
 
   const expUsed = skills.reduce((sum, sk) => sum + getExpCost(sk.expTable, sk.level), 0);
   const maxSkillLevel = skills.reduce((maxLv, sk) => Math.max(maxLv, sk.level), 0);
-
-  const fighterSkill = skills.find(s => ['戰士', '拳鬥士', '輕戰士', '舞鬥士'].includes(s.name));
-  const fighterLv = fighterSkill ? fighterSkill.level : 0;
+  const adventurerLv = maxSkillLevel;
 
   const scoutSkill = skills.find(s => s.name === '斥候');
   const rangerSkill = skills.find(s => s.name === '遊俠');
   const sageSkill = skills.find(s => s.name === '賢者');
   const scoutOrRangerLv = Math.max(scoutSkill?.level || 0, rangerSkill?.level || 0);
-  const adventurerLv = maxSkillLevel;
 
-  const maxHp = Math.max(0, abilityTotals.vit + fighterLv * 3 + getBuffSum(buffs, 'maxHp'));
+  // HP 上限 = 生命力總值 + (所有技能最大等級 * 3) + Buff 修正
+  const maxHp = Math.max(0, abilityTotals.vit + adventurerLv * 3 + getBuffSum(buffs, 'maxHp'));
+
+  // MP 上限 = 精神力總值 + (魔法技能等級總和 * 3) + Buff 修正
   const casterLevelsSum = skills
     .filter(s => MAGIC_SKILLS.has(s.name))
     .reduce((sum, s) => sum + s.level, 0);
@@ -195,7 +241,8 @@ export function recalculateCharacter(rawChar, options = {}) {
   const moveLimit = 10;
   const moveFull = moveNormal * 3;
 
-  const initiative = scoutOrRangerLv + abilityMods.agi + getBuffSum(buffs, 'initiative');
+  // 先制值沒有特定技能數值，固定為 0（僅疊加 Buff 修正）
+  const initiative = 0 + getBuffSum(buffs, 'initiative');
   const lifeResist = adventurerLv + abilityMods.vit + getBuffSum(buffs, 'lifeResist');
   const mindResist = adventurerLv + abilityMods.mnd + getBuffSum(buffs, 'mindResist');
 
@@ -224,10 +271,11 @@ export function recalculateCharacter(rawChar, options = {}) {
   char.computed = {
     abilityTotals,
     abilityMods,
-    expRemaining: (Number(char.meta.expTotal) || 0) - expUsed,
+    expRemaining: toSafeNumber(char.meta.expTotal, 0) - expUsed,
     adventurerLevel: adventurerLv,
     scoutOrRangerLv,
-    sageLv: sageSkill?.level || 0
+    sageLv: sageSkill?.level || 0,
+    casterLevelsSum
   };
   char.derived = {
     maxHp,
