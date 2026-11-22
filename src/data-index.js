@@ -4,7 +4,7 @@ import { magitechData } from './data-magitech.js';
 import { sorcererData } from './data-sorcerer.js';
 import { sorceryData } from './data-sorcery.js';
 import { wizardData } from './data-wizard.js';
-import { divineData } from './data-divine.js';
+import { divineData, specialDivineSpellsData } from './data-divine.js';
 import { fairyData } from './data-fairy.js';
 import { alchemistData } from './data-alchemist.js';
 import { bibliomancerSpellsData } from './data-bibliomancer.js';
@@ -52,6 +52,7 @@ export const allSkillsData = [
     ...(typeof sorceryData !== 'undefined' ? sorceryData : []),
     ...(typeof wizardData !== 'undefined' ? wizardData : []),
     ...(typeof divineData !== 'undefined' ? divineData : []),
+    ...(typeof specialDivineSpellsData !== 'undefined' ? specialDivineSpellsData : []),
     ...(typeof fairyData !== 'undefined' ? fairyData : []),
     ...(typeof alchemistData !== 'undefined' ? alchemistData : []),
     ...(typeof bibliomancerSpellsData !== 'undefined' ? bibliomancerSpellsData : []),
