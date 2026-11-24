@@ -8,6 +8,58 @@ import { renderCharSheetConsole, initCharSheetQuickAddObserver } from './src/cha
 
 // 頁面載入時啟用「技能檢索 / 道具檢索」卡片上的「+ 角色卡」快捷按鈕
 initCharSheetQuickAddObserver();
+
+// ==================== 資料正規化讀取輔助（相容新舊 Schema） ====================
+function getSkillLevel(item) {
+    if (typeof item.reqLevel === 'number') return item.reqLevel;
+    if (typeof item.req_level === 'number') return item.req_level;
+    return undefined;
+}
+
+function getSkillSubType(item) {
+    return item.subCategory || item.type || '';
+}
+
+function getExtraField(item, key, fallback = '') {
+    if (item?.extra && item.extra[key] !== undefined && item.extra[key] !== '') {
+        return item.extra[key];
+    }
+    if (item && item[key] !== undefined && item[key] !== '') {
+        return item[key];
+    }
+    return fallback;
+}
+
+function isCombatFeatItem(b) {
+    if (!b) return false;
+    const featCategories = ['戰鬥特技', '秘傳', '流派秘傳', '種族特徵'];
+    const nonFeatCategories = ['魔動機術', '咒歌', '終律', '鼓咆', '陣率', '賦術', '操氣', '騎藝', '練技', '占瞳', '軍師', '天地使', '吟遊詩人', '生命工匠'];
+    const subType = getSkillSubType(b);
+
+    if (b.category && (b.category.includes('魔法') || nonFeatCategories.includes(b.category))) {
+        return false;
+    }
+    return featCategories.includes(b.category) || (!b.category && ['被動', '宣言', '主動作', '自動'].includes(subType));
+}
+
+// 取得攤平後的道具陣列（相容 allItemsData 內含 golemsData: { golems, enhancements }）
+function getNormalizedItemsDataset() {
+    if (typeof allItemsData === 'undefined') return [];
+    if (Array.isArray(allItemsData)) {
+        return allItemsData.flatMap(entry => {
+            if (!entry) return [];
+            if (Array.isArray(entry.golems) || Array.isArray(entry.enhancements)) {
+                return [...(entry.golems || []), ...(entry.enhancements || [])];
+            }
+            return [entry];
+        });
+    }
+    if (allItemsData && typeof allItemsData === 'object') {
+        return [...(allItemsData.golems || []), ...(allItemsData.enhancements || [])];
+    }
+    return [];
+}
+
 // ==================== 自定義頁面（收藏與快捷牌組）核心管理 ====================
 const CUSTOM_STORAGE_KEY = 'sw25_custom_deck_v1';
 
@@ -53,7 +105,6 @@ window.togglePinDataItem = function(encodedData) {
     }
     saveCustomItems(list);
 
-    // 若當前就在自定義頁面則重繪，否則更新按鈕外觀
     const activeCustom = document.getElementById('tab-custom')?.classList.contains('text-amber-400');
     if (activeCustom) {
         renderCustomPage();
@@ -89,7 +140,6 @@ window.pinCurrentRuleSection = function(ruleId, ruleTitle, htmlContent) {
     }
     saveCustomItems(list);
 
-    // 重新刷新按鈕狀態
     const btn = document.getElementById('btn-pin-current-rule');
     if (btn) {
         const pinned = idx === -1;
@@ -332,25 +382,41 @@ function executeSkillFilter() {
 
     currentFilteredSkills = dataset.filter(b => {
         if (!b) return false;
-        
-        const matchesQuery = !query || 
-            (b.name && b.name.toLowerCase().includes(query)) || 
-            (b.nameJp && b.nameJp.toLowerCase().includes(query)) ||
-            (b.summary && b.summary.toLowerCase().includes(query)) ||
-            (b.effect && b.effect.toLowerCase().includes(query)) ||
-            (b.category && b.category.toLowerCase().includes(query)) ||
-            (b.type && b.type.toLowerCase().includes(query)) ||
-            (b.target_monsters && b.target_monsters.toLowerCase().includes(query)) ||
-            (b.applicable_parts && b.applicable_parts.toLowerCase().includes(query)) ||
-            (b.prerequisite && b.prerequisite.toLowerCase().includes(query)) ||
-            (b.usage && b.usage.toLowerCase().includes(query)) ||
-            (b.expansion && b.expansion.toLowerCase().includes(query));
+
+        const subType = getSkillSubType(b);
+        const lv = getSkillLevel(b);
+        const extraValues = (b.extra && typeof b.extra === 'object') ? Object.values(b.extra).join(' ') : '';
+
+        const searchableText = [
+            b.name,
+            b.nameJp,
+            b.summary,
+            b.effect,
+            b.category,
+            subType,
+            b.cost,
+            b.target,
+            b.range,
+            b.duration,
+            b.resistance,
+            b.element,
+            b.target_monsters,
+            b.applicable_parts,
+            b.prerequisite,
+            b.usage,
+            b.expansion,
+            extraValues
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const matchesQuery = !query || searchableText.includes(query);
 
         const matchesCategory = !categoryFilter || 
             b.category === categoryFilter || 
-            (categoryFilter === "吟遊詩人" && (b.type === "咒歌" || b.type === "終律"));
+            subType === categoryFilter ||
+            (categoryFilter === "吟遊詩人" && (subType === "咒歌" || subType === "終律")) ||
+            (categoryFilter === "軍師" && (subType === "鼓咆" || subType === "陣率" || b.category === "陣率" || b.category === "鼓咆"));
 
-        const matchesLevel = !levelFilterVal || (b.req_level !== undefined && b.req_level <= parseInt(levelFilterVal));
+        const matchesLevel = !levelFilterVal || (lv !== undefined && lv <= parseInt(levelFilterVal, 10));
 
         return matchesQuery && matchesCategory && matchesLevel;
     });
@@ -380,21 +446,27 @@ function executeItemFilter() {
     const rawQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const selectedCategory = categoryFilter ? categoryFilter.value : '';
 
-    const dataset = (typeof allItemsData !== 'undefined' && Array.isArray(allItemsData)) ? allItemsData : [];
+    const dataset = getNormalizedItemsDataset();
 
     const filtered = dataset.filter(item => {
         if (!item) return false;
 
         const matchesCategory = !selectedCategory || item.category === selectedCategory;
-        const matchesQuery = !rawQuery ||
-            (item.name && item.name.toLowerCase().includes(rawQuery)) ||
-            (item.nameJp && item.nameJp.toLowerCase().includes(rawQuery)) ||
-            (item.effect && item.effect.toLowerCase().includes(rawQuery)) ||
-            (item.note && item.note.toLowerCase().includes(rawQuery)) ||
-            (item.req && item.req.toLowerCase().includes(rawQuery)) ||
-            (item.summary && item.summary.toLowerCase().includes(rawQuery)) ||
-            (item.description && item.description.toLowerCase().includes(rawQuery)) ||
-            (item.price && item.price.toString().toLowerCase().includes(rawQuery));
+        const extraValues = (item.extra && typeof item.extra === 'object') ? Object.values(item.extra).join(' ') : '';
+        const searchableText = [
+            item.name,
+            item.nameJp,
+            item.effect,
+            item.note,
+            item.req,
+            item.summary,
+            item.description,
+            item.price,
+            item.cost,
+            extraValues
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        const matchesQuery = !rawQuery || searchableText.includes(rawQuery);
 
         return matchesCategory && matchesQuery;
     });
@@ -416,6 +488,11 @@ function executeItemFilter() {
 
 // ==================== 5. 戰鬥特技專用卡片 HTML 生成 ====================
 export function renderCombatFeatCard(feat) {
+    const subType = getSkillSubType(feat) || '被動';
+    const prereq = getExtraField(feat, 'prerequisite', '無');
+    const usage = getExtraField(feat, 'usage', '無');
+    const risk = getExtraField(feat, 'risk', '');
+
     const typeBadgeStyles = {
         '被動': 'bg-slate-900 text-slate-300 border-slate-700',
         '宣言': 'bg-amber-950 text-amber-300 border-amber-800',
@@ -423,7 +500,7 @@ export function renderCombatFeatCard(feat) {
         '自動': 'bg-emerald-950 text-emerald-300 border-emerald-800'
     };
 
-    const badgeClass = typeBadgeStyles[feat.type] || 'bg-zinc-800 text-zinc-300 border-zinc-700';
+    const badgeClass = typeBadgeStyles[subType] || 'bg-zinc-800 text-zinc-300 border-zinc-700';
 
     const uid = getItemUniqueId('feat', feat.name, feat.category);
     const pinned = isItemPinned(uid);
@@ -437,7 +514,7 @@ export function renderCombatFeatCard(feat) {
                         ${feat.category || '戰鬥特技'}
                     </span>
                     <span class="text-xs px-2 py-0.5 rounded border ${badgeClass} font-medium">
-                        ${feat.type || '被動'}
+                        ${subType}
                     </span>
                     <h3 class="text-base font-bold text-amber-400 ml-1">
                         <i class="fa-solid fa-shield-halved mr-1.5 text-amber-500"></i>${feat.name}
@@ -454,11 +531,11 @@ export function renderCombatFeatCard(feat) {
                 <div class="grid grid-cols-2 gap-2 text-xs bg-zinc-950 p-2.5 rounded-lg border border-zinc-800/80">
                     <div>
                         <span class="text-zinc-500 font-medium block mb-0.5">前提條件</span>
-                        <span class="text-cyan-300 font-medium">${feat.prerequisite || '無'}</span>
+                        <span class="text-cyan-300 font-medium">${prereq}</span>
                     </div>
                     <div>
                         <span class="text-zinc-500 font-medium block mb-0.5">使用限制 / 裝備</span>
-                        <span class="text-amber-300 font-medium">${feat.usage || '無'}</span>
+                        <span class="text-amber-300 font-medium">${usage}${risk && risk !== '無' ? `（風險：${risk}）` : ''}</span>
                     </div>
                 </div>
 
@@ -479,12 +556,13 @@ export function renderCombatFeatCard(feat) {
 
 // ==================== 6. 道具與裝備專用卡片 HTML 生成 ====================
 export function renderItemCard(item) {
+    const subType = getSkillSubType(item);
     const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
     const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-非金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isAccessory =
         item.category === "裝飾品" ||
         item.category === "飾品裝備" ||
-        (typeof item.type === "string" && (item.type.includes("裝飾") || item.type === "裝飾品"));
+        (typeof subType === "string" && (subType.includes("裝飾") || subType === "裝飾品"));
     const isGeograph = item.category === "地貌儀" || (item.name && item.name.includes("地貌儀"));
     const isMount = item.category && item.category.startsWith("騎獸");
     const isGrimoire =
@@ -574,7 +652,7 @@ export function renderItemCard(item) {
             </div>
         `;
     } else if (isAccessory) {
-        const slotLabel = item.type === "裝飾品" ? "通用／不限" : (item.type || "－");
+        const slotLabel = subType === "裝飾品" ? "通用／不限" : (subType || "－");
         attrTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
                 <span class="text-zinc-500 font-medium">部位</span>
@@ -588,16 +666,21 @@ export function renderItemCard(item) {
             </div>
         `;
     } else {
+        const reqLv = getSkillLevel(item);
+        const priceSML = getExtraField(item, 'priceSmallMediumLarge', '');
+        const normalMat = getExtraField(item, 'normalMaterial', '');
+        const superiorMat = getExtraField(item, 'superiorMaterial', '');
+
         const extraPairs = [
-            item.type && item.type !== item.category ? ['類型', item.type] : null,
+            subType && subType !== item.category ? ['類型', subType] : null,
             item.rank ? ['階級', item.rank] : null,
             item.usage ? ['用法', item.usage] : null,
             item.req ? ['需求', item.req] : null,
-            item.reqLevel !== undefined ? ['必要等級', `Lv ${item.reqLevel}`] : null,
+            reqLv !== undefined && reqLv > 0 ? ['必要等級', `Lv ${reqLv}`] : null,
             item.mpCost !== undefined ? ['消耗 MP', item.mpCost] : null,
-            item.priceSmallMediumLarge ? ['價格(小/中/大)', item.priceSmallMediumLarge] : null,
-            item.normalMaterial ? ['一般素材', item.normalMaterial] : null,
-            item.superiorMaterial ? ['上位素材', item.superiorMaterial] : null,
+            item.cost && item.cost !== '－' ? ['消耗／價格', item.cost] : null,
+            normalMat ? ['一般素材', normalMat] : null,
+            superiorMat ? ['上位素材', superiorMat] : null,
         ].filter(Boolean);
 
         const extraRowsHTML = extraPairs.length > 0
@@ -616,7 +699,7 @@ export function renderItemCard(item) {
                 <span class="text-zinc-500 font-medium">類別</span>
                 <span class="col-span-2 text-center text-cyan-300 font-medium">${item.category || '道具'}</span>
                 <span class="text-zinc-500 font-medium text-center">價格</span>
-                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || item.priceSmallMediumLarge || '非賣品'}</span>
+                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || priceSML || (item.cost && item.cost.startsWith('價格') ? item.cost.replace(/^價格.*?：/, '') : '非賣品')}</span>
             </div>
             ${extraRowsHTML}
         `;
@@ -667,27 +750,32 @@ export function renderItemCard(item) {
     `;
 }
 
-// 生成單張一般技能/魔法 HTML
+// ==================== 7. 單張一般技能/魔法卡片 HTML 生成 ====================
 function createSkillCardHTML(b) {
-    const isSong = b.type === "咒歌" || b.category === "咒歌";
-    const isFinale = b.type === "終律" || b.category === "終律";
-    const isCommand = b.type === "鼓咆" || b.category === "鼓咆";
-    const isTactics = b.type === "陣率" || b.category === "陣率" || b.category === "軍師";
+    const subType = getSkillSubType(b);
+    const reqLv = getSkillLevel(b);
+    const extra = (b.extra && typeof b.extra === 'object') ? b.extra : {};
+
+    const isSong = subType === "咒歌" || b.category === "咒歌";
+    const isFinale = subType === "終律" || b.category === "終律";
+    const isCommand = subType === "鼓咆" || b.category === "鼓咆";
+    const isTactics = subType === "陣率" || b.category === "陣率" || b.category === "軍師";
     const isMagi = b.category === "魔動機術";
     const isSorcerer = b.category === "操靈魔法";
     const isSorcery = b.category === "真語魔法";
     const isDivine = b.category === "神聖魔法" || b.category === "特殊神聖魔法";
     const isWizard = b.category === "深智魔法";
     const isFairy = b.category === "妖精魔法";
-    const isAlchemist = b.category === "賦術" || b.type === "賦術";
+    const isAlchemist = b.category === "賦術" || subType === "賦術";
     const isBibliomancer = b.category === "祕奧魔法" || b.category === "典籍魔導士";
     const isDarkHunter = b.category === "操氣" || b.category === "暗獵者";
     const isDruid = b.category === "森羅魔法" || b.category === "德魯伊";
     const isAbyssgazer = b.category === "奈落魔法" || b.category === "奈落使";
     const isCurse = b.category === "咒詛魔法" || b.category === "咒法師";
     const isSummoner = b.category === "召異魔法" || b.category === "召異魔導士";
-    const isTori = b.category === "闘理" || b.category === "闘學士";
+    const isTori = b.category === "闘理" || b.category === "闘學士" || b.category === "練體士";
     const isRider = b.category === "騎藝" || b.category === "騎手技能" || b.category === "騎手";
+    const isGeomancer = b.category === "相域" || b.category === "天地使";
 
     let badgeColor = "bg-blue-950 text-blue-300 border-blue-800";
     let icon = "fa-wand-magic-sparkles";
@@ -711,18 +799,35 @@ function createSkillCardHTML(b) {
     else if (isSummoner) { badgeColor = "bg-pink-950 text-pink-300 border-pink-800"; icon = "fa-pentagram"; }
     else if (isTori) { badgeColor = "bg-orange-950 text-amber-300 border-orange-700"; icon = "fa-hand-fist"; }
     else if (isRider) { badgeColor = "bg-emerald-950 text-emerald-400 border-emerald-700"; icon = "fa-horse"; }
+    else if (isGeomancer) { badgeColor = "bg-sky-950 text-sky-300 border-sky-800"; icon = "fa-compass"; }
 
     const uid = getItemUniqueId('skill', b.name, b.category);
     const pinned = isItemPinned(uid);
     const payload = encodeURIComponent(JSON.stringify({ id: uid, itemType: 'skill', data: b }));
 
     const categoryBadgeHTML = b.category ? `<span class="text-xs px-2 py-0.5 rounded border ${badgeColor}">${b.category}</span>` : '';
-    const typeBadgeHTML = b.type ? `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 font-medium">${b.type}</span>` : '';
-    const godBadgeHTML = b.god ? `<span class="text-xs bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded border border-amber-700/80 font-medium"><i class="fa-solid fa-ankh mr-1 text-[10px]"></i>${b.god}</span>` : '';
-    const reqLevelHTML = b.req_level !== undefined ? `<span class="text-xs bg-zinc-800/80 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700/60">Req: Lv ${b.req_level}</span>` : '';
+    const typeBadgeHTML = (subType && subType !== b.category && !isDivine)
+        ? `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 font-medium">${subType}</span>`
+        : '';
+    const godName = b.god || (isDivine && subType ? subType : '');
+    const godBadgeHTML = godName
+        ? `<span class="text-xs bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded border border-amber-700/80 font-medium"><i class="fa-solid fa-ankh mr-1 text-[10px]"></i>${godName}</span>`
+        : '';
+    const reqLevelHTML = (reqLv !== undefined && reqLv > 0)
+        ? `<span class="text-xs bg-zinc-800/80 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700/60">Req: Lv ${reqLv}</span>`
+        : '';
+
+    const costVal = b.cost || b.row1_val1 || '－';
+    const targetVal = b.target || b.row1_val3 || '－';
+    const rangeVal = b.range || b.row2_val1 || '－';
+    const durationVal = b.duration || b.row2_val5 || '－';
+    const resistVal = b.resistance || b.resist || '－';
+    const elementVal = b.element || '－';
 
     let middleTableHTML = '';
+
     if (b.row3_label) {
+        // 向下相容舊格式三列資料
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">${b.row1_label}</span>
@@ -747,30 +852,35 @@ function createSkillCardHTML(b) {
                 <span class="text-right text-pink-400 font-bold">${b.row3_bonus_val}</span>
             </div>
         `;
-    } else if (isRider || b.target_monsters || b.applicable_parts) {
+    } else if (isRider || extra.targetMonsters || extra.applicableParts || b.target_monsters || b.applicable_parts) {
+        const targetMonsters = extra.targetMonsters || b.target_monsters || b.target || '全種類';
+        const applicableParts = extra.applicableParts || b.applicable_parts || b.range || '無';
+        const prereq = extra.prerequisite || b.prerequisite || '無';
+
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">對應魔物</span>
-                <span class="col-span-5 text-right text-emerald-300 font-medium">${b.target_monsters || '全種類'}</span>
+                <span class="col-span-5 text-right text-emerald-300 font-medium">${targetMonsters}</span>
             </div>
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
                 <span class="text-zinc-500 font-medium">適用部位</span>
-                <span class="col-span-5 text-right text-amber-300 font-medium">${b.applicable_parts || '無'}</span>
+                <span class="col-span-5 text-right text-amber-300 font-medium">${applicableParts}</span>
             </div>
             <div class="grid grid-cols-6 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">前提條件</span>
-                <span class="col-span-5 text-right text-cyan-300 font-medium">${b.prerequisite || '無'}</span>
+                <span class="col-span-5 text-right text-cyan-300 font-medium">${prereq}</span>
             </div>
         `;
     } else if (isTori) {
-        // 自動將 "10秒（1輪）持續 ／ 風險：無" 拆分為「適用」與「風險」，完全還原規則書版面
-        let applyText = b.usage || '－';
-        let riskText = '無';
-        if (b.usage && b.usage.includes('風險：')) {
-            const parts = b.usage.split(/\s*[／/]\s*風險：/);
+        let applyText = extra.usage || b.usage || b.range || '－';
+        let riskText = extra.risk || '無';
+        if (!extra.risk && applyText.includes('風險：')) {
+            const parts = applyText.split(/\s*[／/]\s*風險：/);
             applyText = parts[0] || '－';
             riskText = parts[1] || '無';
         }
+        const prereq = extra.prerequisite || b.prerequisite || '無';
+
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">適用</span>
@@ -780,39 +890,107 @@ function createSkillCardHTML(b) {
             </div>
             <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40">
                 <span class="text-zinc-500 font-medium">前提條件</span>
-                <span class="col-span-5 text-right text-cyan-300 font-medium">${b.prerequisite || '無'}</span>
+                <span class="col-span-5 text-right text-cyan-300 font-medium">${prereq}</span>
             </div>
+        `;
+    } else if (isSong || isFinale) {
+        const extraRows = [
+            extra.singing ? ['歌唱／條件', extra.singing] : null,
+            extra.pet ? ['寵物', extra.pet] : null,
+            extra.condition ? ['條件／對象', extra.condition] : null,
+            extra.targetValue ? ['目標值', extra.targetValue] : null,
+            extra.bonusCost ? ['追加消耗', extra.bonusCost] : null,
+        ].filter(Boolean);
+
+        middleTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
+                <span class="text-zinc-500 font-medium">消耗／巧奏</span>
+                <span class="col-span-2 text-cyan-300 font-bold">${costVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">抵抗</span>
+                <span class="col-span-2 text-right text-amber-300 font-medium">${resistVal}</span>
+            </div>
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
+                <span class="text-zinc-500 font-medium">條件／範圍</span>
+                <span class="col-span-2 text-zinc-300">${rangeVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
+                <span class="col-span-2 text-right text-purple-300 font-medium">${elementVal}</span>
+            </div>
+            ${extraRows.length > 0 ? `
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 py-1.5 px-3 text-xs">
+                    ${extraRows.map(([k, v]) => `
+                        <div class="flex justify-between gap-2">
+                            <span class="text-zinc-500 font-medium">${k}</span>
+                            <span class="text-emerald-300 font-medium text-right">${v}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
+        `;
+    } else if (isCommand || isTactics || isGeomancer) {
+        const extraRows = [
+            extra.system ? ['系統', extra.system] : null,
+            extra.rankOrPre ? ['階級／前提', extra.rankOrPre] : null,
+            extra.kiGain ? ['氣勢獲得', extra.kiGain] : null,
+            extra.veinType ? ['命脈類型', extra.veinType] : null,
+            extra.limit ? ['上限／限制', extra.limit] : null,
+            (extra.bonusLabel && extra.bonusVal) ? [extra.bonusLabel, extra.bonusVal] : null,
+        ].filter(Boolean);
+
+        middleTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
+                <span class="text-zinc-500 font-medium">消耗</span>
+                <span class="col-span-2 text-cyan-300 font-bold">${costVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">時間</span>
+                <span class="col-span-2 text-right text-zinc-300">${durationVal}</span>
+            </div>
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
+                <span class="text-zinc-500 font-medium">條件／範圍</span>
+                <span class="col-span-2 text-zinc-300">${rangeVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
+                <span class="col-span-2 text-right text-purple-300 font-medium">${elementVal}</span>
+            </div>
+            ${extraRows.length > 0 ? `
+                <div class="grid grid-cols-2 gap-x-4 gap-y-1 py-1.5 px-3 text-xs">
+                    ${extraRows.map(([k, v]) => `
+                        <div class="flex justify-between gap-2">
+                            <span class="text-zinc-500 font-medium">${k}</span>
+                            <span class="text-amber-300 font-medium text-right">${v}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
         `;
     } else {
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">消耗</span>
-                <span class="col-span-2 text-cyan-300 font-bold">${b.row1_val1 || b.cost || '－'}</span>
+                <span class="col-span-2 text-cyan-300 font-bold">${costVal}</span>
                 <span class="text-zinc-500 font-medium text-right pr-2">對象</span>
-                <span class="col-span-2 text-right text-zinc-300">${b.row1_val3 || b.target || '－'}</span>
+                <span class="col-span-2 text-right text-zinc-300">${targetVal}</span>
             </div>
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
                 <span class="text-zinc-500 font-medium">射程</span>
-                <span class="col-span-2 text-zinc-300 whitespace-nowrap">${b.row2_val1 || b.range || '－'}</span>
+                <span class="col-span-2 text-zinc-300 whitespace-nowrap">${rangeVal}</span>
                 <span class="text-zinc-500 font-medium text-right pr-2">時間</span>
-                <span class="col-span-2 text-right text-zinc-300">${b.row2_val5 || b.duration || '－'}</span>
+                <span class="col-span-2 text-right text-zinc-300">${durationVal}</span>
             </div>
             <div class="grid grid-cols-6 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">抵抗</span>
-                <span class="col-span-2 text-amber-300 font-medium">${b.resistance || b.resist || '－'}</span>
+                <span class="col-span-2 text-amber-300 font-medium">${resistVal}</span>
                 <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
-                <span class="col-span-2 text-right text-purple-300 font-medium">${b.element || '－'}</span>
+                <span class="col-span-2 text-right text-purple-300 font-medium">${elementVal}</span>
             </div>
         `;
     }
 
-    const expansionHTML = b.expansion ? `
+    const expansionText = extra.expansion || b.expansion || '';
+    const expansionHTML = expansionText ? `
         <div class="space-y-1 pt-2 border-t border-zinc-800/60">
             <div class="text-xs font-bold text-amber-400 flex items-center">
                 <i class="fa-solid fa-angles-up mr-1.5 text-xs text-amber-500"></i>擴張效果：
             </div>
             <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-amber-950/20 p-2.5 rounded border border-amber-900/30">
-                ${b.expansion}
+                ${expansionText}
             </p>
         </div>
     ` : '';
@@ -857,7 +1035,7 @@ function createSkillCardHTML(b) {
     `;
 }
 
-// ==================== 7. 技能 DOM 渲染與捲動懶載入 ====================
+// ==================== 8. 技能 DOM 渲染與捲動懶載入 ====================
 function renderBardSongs(isNewSearch = false) {
     const container = document.getElementById('bard-list');
     const countEl = document.getElementById('song-count');
@@ -888,20 +1066,8 @@ function renderBardSongs(isNewSearch = false) {
     const fragment = document.createElement('template');
     let htmlChunk = '';
 
-    // 明確定義哪些分類屬於「特技/條件型卡片」，避免把 type === '主動作' 的魔法誤判為戰鬥特技
-    const featCategories = ["戰鬥特技", "秘傳", "流派秘傳", "種族特徵"];
-
     pageItems.forEach(b => {
-        const isMagicOrSkill = b.category && (
-            b.category.includes("魔法") ||
-            ["魔動機術", "咒歌", "終律", "鼓咆", "陣率", "賦術", "操氣", "騎藝", "練技", "占瞳"].includes(b.category)
-        );
-        const isCombatFeat = !isMagicOrSkill && (
-            featCategories.includes(b.category) ||
-            (!b.category && ['被動', '宣言', '主動作', '自動'].includes(b.type))
-        );
-
-        if (isCombatFeat) {
+        if (isCombatFeatItem(b)) {
             htmlChunk += renderCombatFeatCard(b);
         } else {
             htmlChunk += createSkillCardHTML(b);
@@ -925,7 +1091,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// ==================== 8. 頁面初始化 ====================
+// ==================== 9. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
     updateCustomBadgeCount();
     switchMainTab('bards');
@@ -933,7 +1099,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==================== 全域規則即時檢索系統 ====================
-
 function getSearchableDatabase() {
     const db = [];
     const standaloneRuleIds = ['advanced_combat_rules', 'power_table_rules', 'sec-advanced_combat_rules', 'sec-power_table_rules'];
@@ -1264,7 +1429,7 @@ window.renderPowerTableRows = function() {
     tbody2.innerHTML = html2;
 };
 
-// ==================== 9. TRPG 跑團現場實用小工具 ====================
+// ==================== 10. TRPG 跑團現場實用小工具 ====================
 const expTableA = [0, 1000, 2000, 3500, 5000, 7000, 9500, 12500, 16500, 21500, 28000, 36000, 46000, 58500, 73500, 93500];
 const expTableB = [0, 500, 1500, 2500, 4000, 5500, 7500, 10000, 13000, 17000, 22000, 28500, 36500, 46500, 59000, 74000];
 
@@ -1527,7 +1692,7 @@ window.recalcSkillExp = function() {
     }
 };
 
-// ==================== 10. 自定義頁面渲染邏輯 ====================
+// ==================== 11. 自定義頁面渲染邏輯 ====================
 window.renderCustomPage = function() {
     const rulesContainer = document.getElementById('rules-container');
     if (!rulesContainer) return;
@@ -1637,7 +1802,8 @@ window.renderCustomPage = function() {
 
     rulesContainer.innerHTML = headerHTML + cardsGridHTML + rulesSectionHTML;
 };
-// ==================== 11. 戰鬥特技互動習得樹／等級篩選分頁 ====================
+
+// ==================== 12. 戰鬥特技互動習得樹／等級篩選分頁 ====================
 const featTreeState = {
     query: '',
     type: '',
@@ -1648,33 +1814,27 @@ const featTreeState = {
 
 function getCombatFeatsForTree() {
     const dataset = (typeof allSkillsData !== 'undefined' && Array.isArray(allSkillsData)) ? allSkillsData : [];
-    const featCategories = ['戰鬥特技', '秘傳', '流派秘傳'];
 
     return dataset
-        .filter(item => {
-            if (!item) return false;
-            const isMagicOrSkill = item.category && (
-                item.category.includes('魔法') ||
-                ['魔動機術', '咒歌', '終律', '鼓咆', '陣率', '賦術', '操氣', '騎藝', '練技', '占瞳'].includes(item.category)
-            );
-            return !isMagicOrSkill && (
-                featCategories.includes(item.category) ||
-                (!item.category && ['被動', '宣言', '主動作', '自動'].includes(item.type))
-            );
-        })
+        .filter(item => isCombatFeatItem(item))
         .map(item => {
-            const prereq = item.prerequisite || '無';
+            const subType = getSkillSubType(item) || '被動';
+            const prereq = getExtraField(item, 'prerequisite', '無');
+            const usage = getExtraField(item, 'usage', '無');
+            const rawLv = getSkillLevel(item);
             const nums = (prereq.match(/\d+/g) || []).map(Number);
-            const level = typeof item.req_level === 'number'
-                ? item.req_level
+            const level = typeof rawLv === 'number' && rawLv > 0
+                ? rawLv
                 : (nums.length ? Math.max(...nums) : 0);
+
             return {
                 ...item,
                 name: item.name || '',
                 nameJp: item.nameJp || '',
-                type: item.type || '被動',
+                type: subType,
+                subCategory: subType,
                 prerequisite: prereq,
-                usage: item.usage || '無',
+                usage,
                 summary: item.summary || item.effect || '',
                 level
             };
@@ -1716,7 +1876,7 @@ function matchesFeatTreeFilter(feat, allFeats) {
     const p = feat.prerequisite || '';
     const { prereqs, nexts } = getFeatTreeRelations(feat, allFeats);
 
-    if (featTreeState.prereqMode === 'none' && !['無', '-'].includes(p.trim())) return false;
+    if (featTreeState.prereqMode === 'none' && !['無', '-', '－'].includes(p.trim())) return false;
     if (featTreeState.prereqMode === 'chain' && prereqs.length === 0 && nexts.length === 0) return false;
     if (featTreeState.prereqMode === '浪' && !feat.name.includes('浪') && !feat.nameJp.includes('浪')) return false;
     if (featTreeState.prereqMode === '拳鬥士' && !p.includes('拳鬥士') && !feat.usage.includes('拳鬥士')) return false;
@@ -1725,7 +1885,7 @@ function matchesFeatTreeFilter(feat, allFeats) {
 
     if (featTreeState.query) {
         const q = featTreeState.query.toLowerCase();
-        const hay = `${feat.name} ${feat.nameJp} ${feat.type} ${feat.prerequisite} ${feat.usage} ${feat.summary}`.toLowerCase();
+        const hay = `${feat.name} ${feat.nameJp} ${feat.type} ${feat.prerequisite} ${feat.usage} ${feat.summary} ${feat.effect || ''}`.toLowerCase();
         if (!hay.includes(q)) return false;
     }
     return true;
@@ -1747,7 +1907,6 @@ window.addFeatTreeItemToCharSheet = function(featName, event) {
         feat: target
     };
 
-    // 優先呼叫 charSheetConsole 掛載的全域新增函式
     const handler =
         window.addCardToActiveCharacter ||
         window.addFeatToActiveCharacter ||
@@ -1757,11 +1916,9 @@ window.addFeatTreeItemToCharSheet = function(featName, event) {
     if (typeof handler === 'function') {
         handler(payload);
     } else {
-        // 後備方案：派發自訂事件，方便外部監聽接收
         document.dispatchEvent(new CustomEvent('sw25:add-to-charsheet', { detail: payload }));
     }
 
-    // 視覺回饋：按鈕短暫顯示「已加入」
     const btn = event?.currentTarget;
     if (btn) {
         const originalHTML = btn.innerHTML;
