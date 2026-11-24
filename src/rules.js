@@ -2075,22 +2075,95 @@ export const ruleSections = [
       icon: 'fa-solid fa-swords',
       content: `
         <div class="space-y-6 text-zinc-300">
+          <!-- 標題區塊 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl shadow-md">
             <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
               <h2 class="text-xl font-bold text-amber-400 flex items-center">
                 <i class="fa-solid fa-swords mr-2.5 text-amber-500"></i>SW2.5 上級戰鬥規則 (Advanced Combat)
               </h2>
-              <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">戰鬥系統規則</span>
+              <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">戰鬥系統完整規則</span>
             </div>
             <p class="text-xs text-zinc-400 leading-relaxed">
-              以 1m (整數米) 為單位精確管理戰場座標、自由移動、動態亂戰區域與精密的射程/移動妨害機制。
+              以 <strong>1m（整數米）</strong>為單位在「一維假想直線」上精確管理戰場座標、角色相對距離、多重動態亂戰區域、移動妨害、射程遮蔽與貫通／突破判定。
             </p>
           </div>
-  
+
+          <!-- 1. 戰場座標與位置管理原則 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
             <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
-              <i class="fa-solid fa-person-boot mr-2 text-amber-500"></i>1. 移動種類與距離限制
+              <i class="fa-solid fa-ruler-horizontal mr-2 text-amber-500"></i>1. 戰場座標與位置管理原則
             </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+                <div class="font-bold text-amber-400 text-sm">【一維直線與整數米座標】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>一維直線管理：</strong>戰場上假想一條連接敵我雙方的直線，所有角色皆以此直線上的座標管理位置，不處理未滿 1m 的小數單位（禁止停在有小數點的位置）。</li>
+                  <li><strong>靈活的亂戰區域：</strong>與「基本戰鬥」僅有單一亂戰區不同，上級戰鬥允許突破前線切入敵方後衛，戰場上可<strong>同時存在多個亂戰區域</strong>。</li>
+                  <li><strong>同一座標重疊：</strong>多名角色（無論敵我）可同時存在於同一座標。「座標相同」代表處於無法區分的極近距離，可進行近戰攻擊及施加「射程：接觸」的魔法或效果。</li>
+                </ul>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+                <div class="font-bold text-cyan-300 text-sm">【GM 裁定指南：相對距離與座標上限】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>重視相對距離：</strong>核心在於掌握角色彼此相距幾公尺。GM 可設定多個基準點或依戰況調整（例：「A 與 B 相距 3m，C 再往後 5m，故 AC 相距 8m」），無須執著於嚴格比例尺。</li>
+                  <li><strong>座標限制（地形邊界）：</strong>GM 可依戰場地形限制可移動或作為魔法起點的座標範圍（例：在房間最深處遭遇魔物時，魔物後方不存在更深的座標）。</li>
+                </ul>
+                <div class="mt-2 p-2.5 bg-zinc-900/90 rounded border border-zinc-800 font-mono text-[11px] text-zinc-300 text-center">
+                  [白1] ←─ 5m ─→ [白2] ←─ 5m ─→ [黑1] ←─── 15m ───→ [黑2 + 黑3 (同座標)]
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. 戰鬥手順與初期配置距離 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-list-ol mr-2 text-amber-500"></i>2. 戰鬥流程與戰力初期配置
+            </h3>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 text-xs leading-relaxed">
+              <div class="lg:col-span-5 bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【戰鬥手順（與基本戰鬥相同）】</div>
+                <ol class="list-decimal list-inside space-y-1 text-zinc-300">
+                  <li><strong>戰鬥開始處理：</strong>1.1 陣營確認 → 1.2 戰鬥準備 → 1.3 魔物知識判定 → 1.4 先制判定 → 1.5 戰力初期配置。</li>
+                  <li><strong>先攻側順次行動：</strong>依序執行（移動 → 主動作，補助動作原則於手番內任意時機執行）。</li>
+                  <li><strong>後攻側順次行動：</strong>同上，一人行動完畢才換下一位，不可穿插他人行動。</li>
+                  <li><strong>戰鬥繼續／結束確認：</strong>若繼續則回到步驟 2 進入下一輪。</li>
+                  <li><strong>戰鬥後處理：</strong>戰利品獲得等結算。</li>
+                </ol>
+              </div>
+              <div class="lg:col-span-7 bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【1.5 初期配置與戰鬥開始距離目安】</div>
+                <p class="text-zinc-300">
+                  無特殊狀況時，雙方最前線（先頭）距離於 <strong>5m ～ 30m</strong> 間決定；其餘角色置於同座標或更後方。有編組隊列時列間約 <strong>1～2m</strong>，未編隊的後衛型角色建議置於先頭後方 <strong>3～5m</strong>。
+                </p>
+                <table class="w-full text-left border-collapse border border-zinc-800 mt-2">
+                  <thead class="bg-zinc-900 text-amber-400">
+                    <tr>
+                      <th class="p-2 border border-zinc-800">遭遇狀況</th>
+                      <th class="p-2 border border-zinc-800 text-right">建議距離目安</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">狹窄房間內的遭遇</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-cyan-300 font-bold">5 m</td></tr>
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">較寬敞房間內的遭遇</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-cyan-300 font-bold">10 m</td></tr>
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">森林中、惡劣天候等視線不良的戶外遭遇</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-cyan-300 font-bold">10 m</td></tr>
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">視野良好的戶外遭遇</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-cyan-300 font-bold">20 m</td></tr>
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">騎馬等移動狀態下遭遇</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-emerald-300 font-bold">+10 ～ 20 m</td></tr>
+                    <tr><td class="p-1.5 px-2 border border-zinc-800">遭遇敵方包含「多部位魔物」</td><td class="p-1.5 px-2 border border-zinc-800 text-right font-mono text-emerald-300 font-bold">+5 ～ 10 m</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. 移動力、移動種類與無法移動的處理 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-person-boot mr-2 text-amber-500"></i>3. 移動力、移動種類與距離限制
+            </h3>
+            <p class="text-xs text-zinc-300 leading-relaxed">
+              上級戰鬥中，角色的<strong>「移動力」原則上等於敏捷度</strong>（隨魔法、裝備加減；魔物資料中的「移動速度」即為移動力）。手番由「移動、主動作、補助動作」構成，移動後才執行主動作。
+            </p>
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left text-zinc-300 border-collapse border border-zinc-800">
                 <thead class="bg-zinc-950 text-amber-400 font-bold border-b border-zinc-800">
@@ -2112,45 +2185,299 @@ export const ruleSections = [
                     <td class="p-2.5 border border-zinc-800 font-bold text-amber-400">通常移動</td>
                     <td class="p-2.5 border border-zinc-800 text-cyan-300 font-mono">移動力 (m)</td>
                     <td class="p-2.5 border border-zinc-800">可執行 主動作 + 補助動作</td>
-                    <td class="p-2.5 border border-zinc-800">移動途中可能遭受敵方移動妨害。移動中途可執行補助動作。</td>
+                    <td class="p-2.5 border border-zinc-800">移動途中可能遭受敵方或亂戰區移動妨害。移動中途可執行補助動作。</td>
                   </tr>
                   <tr>
                     <td class="p-2.5 border border-zinc-800 font-bold text-pink-400">全力移動</td>
                     <td class="p-2.5 border border-zinc-800 text-cyan-300 font-mono">移動力 × 3 (m)</td>
-                    <td class="p-2.5 border border-zinc-800 text-pink-300">迴避修正 <strong>-4</strong>，不可執行主動作</td>
-                    <td class="p-2.5 border border-zinc-800">高速長距離奔跑。僅可於移動前後執行補助動作。</td>
+                    <td class="p-2.5 border border-zinc-800 text-pink-300">迴避力判定 <strong>-4</strong>，不可執行主動作</td>
+                    <td class="p-2.5 border border-zinc-800">高速長距離奔跑（仍可能受移動妨害）。僅可於移動前後執行補助動作。</td>
                   </tr>
                 </tbody>
               </table>
             </div>
+            <div class="bg-zinc-950/80 border border-amber-500/30 rounded-lg p-3 text-xs text-zinc-300">
+              <strong class="text-amber-400"><i class="fa-solid fa-ban mr-1.5"></i>無法移動的情況（亂戰中／定身效果）：</strong>
+              角色在<strong>亂戰狀態下原則上無法移動</strong>，或因魔法、特殊能力被禁止移動。此時該角色視為不移動，<strong>仍可執行「制限移動」下允許的主動作與補助動作</strong>。
+            </div>
           </div>
-  
+
+          <!-- 4. 亂戰區域的發生、範圍與半徑表 -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
             <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
-              <i class="fa-solid fa-users-rays mr-2 text-amber-500"></i>2. 亂戰區域與移動妨害
+              <i class="fa-solid fa-users-rays mr-2 text-amber-500"></i>4. 亂戰區域的發生與範圍對照表
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【亂戰區域的發生與中心點】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>自動發生：</strong>敵對雙方處於<strong>同一座標</strong>，其中一方對另一方進行攻擊、行使魔法或使用特殊能力時，雙方立即進入「亂戰狀態」，該座標成為<strong>中心點</strong>並自動產生亂戰區域（若任一方已在亂戰中則不新建，依參加／干涉規則處理）。</li>
+                  <li><strong>範圍判定：</strong>依參加亂戰的<strong>「亂戰狀態」總人數（含部位數）</strong>決定前後對稱延伸距離；<strong>剛好位於邊界距離（如 3m 處）的座標視為在亂戰區域內</strong>。</li>
+                  <li><strong>多部位與人數上限：</strong>多部位魔物依部位數計入人數（2 部位算 2 人）。<strong>單一亂戰區域上限為 20 人（部位）</strong>，GM 需調整戰場避免超限。</li>
+                </ul>
+              </div>
               <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
                 <div class="font-bold text-amber-400 text-sm">【亂戰半徑對照表 (上限 20 人/部位)】</div>
                 <table class="w-full text-center border-collapse border border-zinc-800 font-mono">
                   <thead class="bg-zinc-900 text-amber-400">
-                    <tr><th class="p-1.5 border border-zinc-800">參與人數 (含部位)</th><th class="p-1.5 border border-zinc-800">前後半徑</th></tr>
+                    <tr><th class="p-1.5 border border-zinc-800">亂戰狀態人數 (含部位)</th><th class="p-1.5 border border-zinc-800">前後半徑</th></tr>
                   </thead>
                   <tbody class="divide-y divide-zinc-800">
-                    <tr><td class="p-1.5 border border-zinc-800">2 ～ 5 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">3 m</td></tr>
-                    <tr><td class="p-1.5 border border-zinc-800">6 ～ 10 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">4 m</td></tr>
-                    <tr><td class="p-1.5 border border-zinc-800">11 ～ 15 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">5 m</td></tr>
-                    <tr><td class="p-1.5 border border-zinc-800">16 ～ 20 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">6 m</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800">2 ～ 5 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">前後 3 m</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800">6 ～ 10 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">前後 4 m</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800">11 ～ 15 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">前後 5 m</td></tr>
+                    <tr><td class="p-1.5 border border-zinc-800">16 ～ 20 人</td><td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">前後 6 m</td></tr>
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          <!-- 5. 亂戰狀態 vs 獨立狀態、參加與脫離 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-arrows-left-right-to-line mr-2 text-amber-500"></i>5. 亂戰狀態 vs 獨立狀態、參加與脫離
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
               <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
-                <div class="font-bold text-amber-400 text-sm">【移動妨害、遮蔽與貫通/突破】</div>
-                <ul class="list-disc list-inside space-y-1 text-zinc-300">
-                  <li><strong>移動妨害：</strong>妨害側總部位數必須高於通過側半數（1:2 比例），截停後於該座標形成新亂戰（制限移動與「形狀：突破」免疫）。</li>
-                  <li><strong>遮蔽與誤射：</strong>跨過亂戰射擊後方產生遮蔽（需《鷹眼》）；往亂戰內射擊無《精密射擊》會隨機誤射。</li>
+                <div class="font-bold text-emerald-400 text-sm">【亂戰狀態（已捲入交戰）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>座標統一：</strong>所有「亂戰狀態」角色的座標<strong>一律視為該亂戰區域的中心點</strong>。</li>
+                  <li><strong>可干涉對象：</strong>可對同一亂戰區域內的任何角色（包含亂戰狀態與獨立狀態）進行近戰攻擊或施加「射程：接觸」的魔法／效果，無須在意原本座標差。</li>
+                  <li><strong>如何參加亂戰：</strong>移動至既有的<strong>「亂戰區域中心點」</strong>並表明參加意思，即自動加入成為亂戰狀態。</li>
                 </ul>
               </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-sky-400 text-sm">【獨立狀態（在範圍內但尚未捲入）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>保留固有座標：</strong>身處亂戰區域範圍內（例如因附近爆發亂戰或範圍擴大被捲入），但尚未處於亂戰狀態的角色稱為「獨立狀態」，<strong>仍保留各自的固有座標</strong>（即使與中心點同座標亦同）。</li>
+                  <li><strong>不計入範圍人數：</strong>獨立狀態角色<strong>不計入</strong>亂戰區域半徑的人數計算。</li>
+                  <li><strong>轉為亂戰狀態（僅限可依自身意志行動者）：</strong><br>
+                    ① 獨立狀態下輪到<strong>自己的手番開始時</strong>，自動轉為亂戰狀態。<br>
+                    ② 受到<strong>敵對亂戰狀態角色干涉</strong>（近戰／接觸效果）時，自動轉為亂戰狀態。<br>
+                    <span class="text-zinc-400">※ 轉為亂戰狀態的瞬間，座標立即移動至亂戰中心點；若處於氣絕／睡眠等無法依自身意志行動狀態，則維持獨立狀態且座標不變。</span>
+                  </li>
+                  <li><strong>亂戰 → 獨立：</strong>戰鬥中因氣絕、睡眠等失去自主行動能力時，從亂戰狀態轉為獨立狀態（座標留在中心點）。</li>
+                </ul>
+              </div>
+            </div>
+            <div class="bg-zinc-950/90 border border-emerald-500/30 rounded-lg p-3.5 text-xs text-zinc-300 space-y-1">
+              <div class="font-bold text-emerald-400"><i class="fa-solid fa-person-running mr-1.5"></i>從亂戰區域脫離的 2 種條件</div>
+              <p>亂戰狀態角色原則上不可移動（否則會在移動開始時被亂戰區移動妨害截停），但符合以下任一條件即可不受妨害移動脫離：</p>
+              <ol class="list-decimal list-inside space-y-1">
+                <li><strong>已執行脫離準備：</strong>上一個自身手番已宣告並完成「從亂戰區域脫離準備」，本回合可用任意移動方式移動脫離。</li>
+                <li><strong>人數壓倒性優勢（超過 2 倍）：</strong>亂戰內<strong>「自身以外」的我方亂戰狀態人數</strong>，<strong>嚴格大於</strong>敵對陣營在該亂戰區域內總人數（亂戰＋獨立皆計）的 <strong>2 倍</strong>時，可直接移動脫離。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 6. 亂戰區域的動態變化（擴大、縮小、結合、消滅） -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-arrows-to-circle mr-2 text-amber-500"></i>6. 亂戰區域的變化（擴大、縮小、結合與消滅）
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【擴大與縮小（結算時機是關鍵）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>擴大與縮小：</strong>當亂戰狀態人數增減（新角色參加、獨立狀態被干涉加入、脫離或被擊倒）導致跨越人數門檻時，前後半徑隨之擴大或縮小。</li>
+                  <li><strong>結算時機：</strong>範圍的擴大或縮小，一律在<strong>移動或動作產生結果「之後」</strong>才進行判定。</li>
+                </ul>
+                <div class="p-2.5 bg-zinc-900 rounded border border-zinc-800 text-[11px] text-zinc-300 space-y-1">
+                  <div class="font-bold text-cyan-300">📖 規則書範例（5人亂戰半徑 3m，敵人 B 在 4m 處）：</div>
+                  <p>角色 D 移動至中心點表明參加亂戰，<strong>此時尚未擴大</strong>（D 還打不到 4m 外的 B）。D 攻擊亂戰內原目標後，人數變為 6 人、範圍擴大為 4m，B 進入範圍成為獨立狀態；若 D 習得《雙擊》，第 2 擊便可攻擊 B（但若第 1 擊就擊倒原目標使人數維持 5 人，則不擴大）。</p>
+                </div>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-pink-400 text-sm">【亂戰區域的結合與消滅】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>結合條件：</strong>當某個亂戰區域的<strong>「中心點」被包含進另一個亂戰區域範圍內</strong>時，兩個亂戰合併為一（<strong>僅外圍範圍重疊不會結合</strong>）。結合發生於亂戰「發生」或「擴大」之後緊接著處理。</li>
+                  <li><strong>結合後的新中心點：</strong>取結合前兩中心點的<strong>中點</strong>；若非整數米，則向<strong>原本亂戰人數較多的一方偏移 0.5m</strong>（人數相同由 GM 決定）。原兩邊的亂戰狀態角色全數移至新中心點，並依總人數重新計算範圍。</li>
+                  <li><strong>消滅條件：</strong>亂戰需有敵對雙方才能成立。當任一方陣營的所有角色皆被擊倒、氣絕等失去自主行動能力時，該亂戰區域立即消滅。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. 移動妨害完整規則 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-hand mr-2 text-amber-500"></i>7. 移動妨害（亂戰外截停、多部位比例與通過／離脫比較）
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【A. 亂戰區域外的角色進行移動妨害】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>觸發條件：</strong>手番角色宣告移動種別與目標座標後，若其移動路徑（<strong>包含移動起點</strong>）的任一點落入敵對角色（亂戰外）的<strong>制限移動距離內（通常前後 3m）</strong>，該敵人即可宣告進行移動妨害。</li>
+                  <li><strong>截停座標與限制：</strong>妨害者於「手番角色移動路徑上」且「自身制限移動範圍內」指定一點，<strong>雙方皆移動至該座標</strong>並結束手番角色的移動（不可指定亂戰區域內的座標為妨害點）。</li>
+                  <li><strong>多部位比例限制（2:1 以內）：</strong>角色無法單獨妨害<strong>超過自身部位數 2 倍</strong>的角色（剛好 2 倍可妨害；故 1 部位無法單獨攔下 3 部位以上魔物）。多名角色可<strong>共同妨害</strong>（全員皆須能以制限移動抵達該截停座標），只要合計部位數達到對方一半以上（2:1 以內）即可成立。</li>
+                  <li><strong>自動形成亂戰：</strong>被移動妨害後，即使手番角色未執行任何攻擊動作，<strong>手番結束時該座標也會自動形成亂戰區域</strong>，雙方進入亂戰狀態（若妨害者處於「透明」狀態，則無須等手番結束，<strong>立即</strong>形成亂戰）。</li>
+                </ul>
+              </div>
+
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-cyan-300 text-sm">【B. 亂戰區域的移動妨害（通過 vs 離脫）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>截停結果：</strong>亂戰內角色可妨害試圖通過該亂戰的敵人；一旦成立，移動者<strong>強制移至亂戰中心點並轉為亂戰狀態</strong>。</li>
+                  <li><strong>獨立狀態與內外限制：</strong>妨害側可由亂戰內「亂戰＋獨立」角色共同參與（參與妨害的獨立狀態角色立即轉為亂戰狀態並移至中心點）。<strong>亂戰外與亂戰內角色不可共同妨害</strong>。</li>
+                  <li><strong>人數（部位數）2 倍比較：</strong>當<strong>移動側計入人數 ＞ 妨害側計入人數 × 2</strong> 時，無法妨害。注意「通過（從區外穿過）」與「離脫（從區內離開）」是否計入移動者自身不同：</li>
+                </ul>
+                <table class="w-full text-center border-collapse border border-zinc-800 mt-1.5 text-[11px]">
+                  <thead class="bg-zinc-900 text-amber-400">
+                    <tr>
+                      <th class="p-1.5 border border-zinc-800" rowspan="2">移動類型</th>
+                      <th class="p-1.5 border border-zinc-800" colspan="3">移動側計入</th>
+                      <th class="p-1.5 border border-zinc-800" colspan="2">妨害側計入</th>
+                    </tr>
+                    <tr>
+                      <th class="p-1 border border-zinc-800">自身</th>
+                      <th class="p-1 border border-zinc-800">亂戰狀態</th>
+                      <th class="p-1 border border-zinc-800">獨立狀態</th>
+                      <th class="p-1 border border-zinc-800">亂戰狀態</th>
+                      <th class="p-1 border border-zinc-800">獨立狀態</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800">
+                    <tr>
+                      <td class="p-1.5 border border-zinc-800 font-bold text-amber-300">通過（穿過亂戰）</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                      <td class="p-1.5 border border-zinc-800 text-zinc-500">×</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                    </tr>
+                    <tr>
+                      <td class="p-1.5 border border-zinc-800 font-bold text-sky-300">離脫（離開亂戰）</td>
+                      <td class="p-1.5 border border-zinc-800 text-zinc-500">×</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                      <td class="p-1.5 border border-zinc-800 text-zinc-500">×</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                      <td class="p-1.5 border border-zinc-800 text-emerald-400 font-bold">○</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="text-[11px] text-zinc-400 pt-1">
+                  ※ <strong>重要注釋：</strong>被妨害導致實際移動距離縮短時，距離計算依實際移動距離為準，但<strong>「移動種別」維持原宣告</strong>（例：宣告通常移動卻在 2m 被攔下，仍視為通常移動，不可改算制限移動）。此外，以<strong>「形狀：突破」</strong>移動時<strong>免疫一切移動妨害</strong>。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. 射程、範圍效果、誤射與遮蔽 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-crosshairs mr-2 text-amber-500"></i>8. 射程、範圍魔法、誤射與遮蔽判定
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【射程、範圍效果與誤射】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>「射程：接觸」：</strong>僅可對「與自身同座標者」或「自身處於亂戰狀態時，同一亂戰區域內的（包含獨立狀態）角色」使用。</li>
+                  <li><strong>距離與半徑數值：</strong>「射程：○（△m）」直接依 △m 判定距離；範圍魔法「對象：○區域（半徑△m）／～」依半徑 △m 決定涵蓋座標。</li>
+                  <li><strong>範圍效果涵蓋亂戰：</strong>只要<strong>亂戰中心點</strong>落入範圍半徑內，該亂戰內<strong>所有亂戰狀態角色皆成為對象</strong>；獨立狀態角色則依各自固有座標判定是否在半徑內。</li>
+                  <li><strong>誤射規則：</strong>從<strong>亂戰區域外</strong>以遠隔攻擊或「形狀：射擊」瞄準亂戰內目標時，若該目標所在座標還有其他角色（亂戰狀態全部同在中心點；獨立狀態若同座標亦計），會從同座標全體中<strong>隨機抽選目標（誤射）</strong>。<strong>身處亂戰區域內向同亂戰內射擊不會發生誤射</strong>。</li>
+                </ul>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-pink-400 text-sm">【遮蔽判定（《鷹眼》需求）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>亂戰區域造成的遮蔽：</strong>對亂戰外的角色而言，亂戰區域會阻擋視線；<strong>跨越亂戰區域瞄準後方目標需要戰鬥特技《鷹眼》</strong>。亂戰內角色瞄準同亂戰內目標、或亂戰外直接瞄準亂戰內目標，<strong>均不產生遮蔽</strong>。</li>
+                  <li><strong>敵對角色造成的遮蔽：</strong>位於自身與目標之間的<strong>亂戰外敵對角色</strong>也會形成遮蔽（跨越瞄準需《鷹眼》）。</li>
+                  <li><strong>不構成遮蔽的例外：</strong>與使用者同座標的敵人、與目標同座標的敵人、<strong>我方角色</strong>（任何情況），以及<strong>獨立狀態角色</strong>（任何情況）皆<strong>不會產生遮蔽</strong>。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9. 「形狀：貫通」與「形狀：突破」特殊規則 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-bolt mr-2 text-amber-500"></i>9. 「形狀：貫通」與「形狀：突破」特殊規則
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【起點、目標與終點（A / B 選擇）】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>起點與波及：</strong>以使用者所在座標為起點（含起點與終點，範圍內角色以 1/2 機率受影響；使用者可將自身除外，但<strong>同座標隊友可能被捲入</strong>，貫通時可先制限移動 1m 再施放）。</li>
+                  <li><strong>始點近傍除外（僅限突破）：</strong>「形狀：突破」可指定自身<strong>制限移動距離以內</strong>的近傍座標排除在效果外（但在亂戰狀態下發動突破時不可使用此除外）。</li>
+                  <li><strong>目標選擇：</strong>可指定「座標地點」（不可選自身同座標）或「單一角色」（不可選同座標者；若從亂戰外指定亂戰內角色且可能誤射，除「無同座標者的獨立狀態角色」外，<strong>需要《精準射擊／ターゲッティング》</strong>）。</li>
+                  <li><strong>終點決定：</strong><br>
+                    ・<strong>「形狀：貫通」：</strong>一律延伸至該方向的<strong>射程極限</strong>為終點。<br>
+                    ・<strong>「形狀：突破」：</strong>宣告時二選一 —— <strong>A. 停在目標地點／目標角色處</strong>；或 <strong>B. 穿過目標並一路衝至射程極限（不可中途停下）</strong>。</li>
+                </ul>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-emerald-400 text-sm">【亂戰中發動突破與地形撞擊裁定】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>亂戰狀態下發動「突破」的 4 種允許條件：</strong>原則上亂戰中不可宣告突破，除非符合可脫離條件之一：<br>
+                    ① 上一自身手番已執行<strong>「從亂戰區域脫離準備」</strong>。<br>
+                    ② 自身以外我方亂戰人數達到敵方<strong>「2：1」以上優勢</strong>（嚴格超過 2 倍）。<br>
+                    ③ 處於<strong>「透明」</strong>等未被視認狀態（若移動或主動作會解除透明則不成立）。<br>
+                    ④ 習得戰鬥特技<strong>《影走り》</strong>或具備同類能力。
+                  </li>
+                  <li><strong>撞牆傷害（突破）：</strong>突破路徑被牆壁阻擋時使用者撞牆並<strong>轉倒</strong>，上級戰鬥中以宣告起點至終點距離的 <strong>1/5（無條件進位）m</strong> 作為落下距離計算落下傷害。若牆壁設有防護點與 HP（構造物），可嘗試以貫通／突破傷害破壞；破壞成功則繼續前進，失敗則受阻並承受撞擊傷害。</li>
+                  <li><strong>坑洞墜落與角色不阻擋：</strong>路徑上有落穴或懸崖會墜落（由 GM 裁定）；無論體型多龐大，<strong>「角色」原則上不會阻擋貫通或突破</strong>。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 10. 亂戰離脫方向與移動中途補助動作 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-route mr-2 text-amber-500"></i>10. 亂戰離脫方向與移動中途補助動作
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-emerald-400 text-sm">【亂戰區域的離脫方向與脫出要求】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>前後皆可離脫：</strong>與基本戰鬥只能後退不同，上級戰鬥從亂戰脫離時，可任選<strong>前方或後方</strong>方向移動[cite: 31]。</li>
+                  <li><strong>必須徹底脫出：</strong>移動種別可任選，但<strong>必須移動到足以完全脫出亂戰區域的距離</strong>[cite: 32]。若移動距離不足以脫出，則<strong>無法執行該次移動</strong>，且先前已做的「亂戰區域離脫準備」權利也會喪失[cite: 32]。</li>
+                </ul>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-cyan-300 text-sm">【補助動作時機 vs 主動作時機】</div>
+                <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>移動中途可做補助動作：</strong>除移動前後外，上級戰鬥允許在<strong>移動中途</strong>執行補助動作（例：前進 10m 時，走到第 7m 座標時執行補助動作）[cite: 32]。</li>
+                  <li><strong>主動作必須在終點座標：</strong>主動作<strong>不可於移動中途執行</strong>，必須在完成移動、抵達終點座標後才可進行[cite: 32]。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 11. 武器與道具的傳遞（受け渡し） -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-handshake mr-2 text-amber-500"></i>11. 武器與道具的傳遞規則
+            </h3>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 text-xs leading-relaxed">
+              <div class="lg:col-span-5 bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                <div class="font-bold text-amber-400 text-sm">【傳遞步驟（手渡す → 受け取る）】</div>
+                <ol class="list-decimal list-inside space-y-1.5 text-zinc-300">
+                  <li><strong>交出方（主動作）：</strong>移動完成後，於該座標執行「傳遞（手渡す）」主動作並結束自身手番[cite: 33]。</li>
+                  <li><strong>接收方（補助動作）：</strong>於自身手番中，在移動前、移動後或<strong>移動中途與交出方座標一致的時機</strong>，以補助動作接收[cite: 33]。</li>
+                </ol>
+              </div>
+              <div class="lg:col-span-7 bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-cyan-300 text-sm">📖 規則書範例（座標以數值表示：沃夫初始 (6)、畢特初始 (1)）[cite: 34]</div>
+                <p class="text-zinc-300">
+                  畢特（移動力 7）通常移動前進至座標 <strong>(8)</strong>，以補助動作丟棄左手〈圓盾〉空出單手，再以補助動作取出〈治療藥水〉並以主動作交出（結束手番）[cite: 34]。隨後沃夫（移動力 13）先以補助動作將雙手握持的〈混種劍〉改為單手握持空出手，前進至座標 <strong>(8)</strong> 時以補助動作接過藥水，繼續前進至座標 <strong>(12)</strong> 完成移動，最後以主動作喝下藥水回復 HP[cite: 34]。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12. 製作牆壁的魔法 -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-wall-brick mr-2 text-amber-500"></i>12. 製作牆壁的魔法
+            </h3>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 text-xs leading-relaxed">
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>生成方位與座標限制：</strong>牆壁建於單一座標並阻斷戰場，一律<strong>垂直於戰場直線</strong>（不可沿直線方向建造）[cite: 33]。已有牆壁或角色的座標無法生成牆壁，角色亦<strong>不可在已有牆壁的座標結束移動</strong>（牆壁與角色不可同座標）[cite: 33]。</li>
+                <li><strong>翻越／繞行距離 +10m：</strong>越過牆壁移動時，移動距離<strong>追加 +10m</strong> 計算；若剩餘移動力足夠，視為繞行通過[cite: 33]。</li>
+                <li><strong>截斷亂戰區域：</strong>若牆壁出現在亂戰區域內，亂戰區域會<strong>在該處中斷</strong>[cite: 33]。</li>
+              </ul>
             </div>
           </div>
         </div>
