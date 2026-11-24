@@ -18,113 +18,136 @@ import { enhancerData } from './data-enhancer.js';
 import { combatFeatsData, passiveFeatsData, majorActionFeatsData, autoFeatsData } from './data-combatFeats.js';
 import { vitalsmithSkillsData } from './data-vitalsmith.js';
 import { witchSkillsData } from './data-witch.js';
-// ==================== 道具與裝備資料匯入 (請務必確認 ./Item/ 路徑正確) ====================
-import { accessoryItemsData } from './Item/data-accessories.js';
+
+// ==================== 道具與裝備資料匯入 (請務必確認 ./Item/ 路徑與檔名正確) ====================
+import { accessoriesData } from './Item/data-accessories.js';
 import { ammoItemsData } from './Item/data-ammo.js';
-import { axeItemsData } from './Item/data-axes.js';
-import { bowItemsData } from './Item/data-bows.js';
-import { crossbowItemsData } from './Item/data-crossbows.js';
-import { flailItemsData } from './Item/data-flail.js';
-import { golemData } from './Item/data-golems.js';
-import { grappleItemsData } from './Item/data-grapple.js';
-import { gunItemsData } from './Item/data-guns.js';
-import { specialItemData } from './Item/data-special-items.js';
-import { instrumentItemsData } from './Item/data-instruments.js';
-import { itemData } from './Item/data-items.js';
-import { livingAndTransitItemsData } from './Item/data-items.js';
-import { maceItemsData } from './Item/data-maces.js';
-import { metalArmorItemsData } from './Item/data-metal-armors.js';
-import { potionItemsData } from './Item/data-potions.js';
-import { shieldItemsData } from './Item/data-shields.js';
-import { spearItemsData } from './Item/data-spears.js';
-import { staffItemsData } from './Item/data-staff.js';
-import { swordItemsData } from './Item/data-swords.js';
-import { throwingItemsData } from './Item/data-throwing.js';
-import { warhammerItemsData } from './Item/data-warhammer.js';
-import { geographItemsData } from './Item/data-geographs.js';
-import { mountAnimalData, mountMythicalData, mountMagitechData, mountEquipmentData } from './Item/data-mounts.js';
-import { nonMetalArmorItemsData } from './Item/data-nonmetal-armors.js';
+import { metalArmorData } from './Item/data-armor-metal.js';
+import { nonmetalArmorData } from './Item/data-armor-nonmetal.js';
+import { geographsData } from './Item/data-geographs.js';
+import { golemsData } from './Item/data-golems.js';
+import { grimoiresData } from './Item/data-grimoires.js';
+import { herbsPotionsData } from './Item/data-herbs-potions.js';
+import { generalItemsData } from './Item/data-items-general.js';
+import { livingExpensesData } from './Item/data-living-expenses.js';
+import { shieldsData } from './Item/data-shields.js';
+import { skillItemsData } from './Item/data-skill-items.js';
+import { specialInstrumentsData } from './Item/data-special-instruments.js';
+import { axeWeaponsData } from './Item/data-weapons-axe.js';
+import { bowWeaponsData } from './Item/data-weapons-bow.js';
+import { crossbowWeaponsData } from './Item/data-weapons-crossbow.js'; // 若檔名為 data-crossbows.js 請改為 './Item/data-crossbows.js'
+import { firearmWeaponsData } from './Item/data-weapons-firearm.js';
+import { flailWeaponsData } from './Item/data-weapons-flail.js';
+import { grapplingWeaponsData } from './Item/data-weapons-grappling.js';
+import { maceWeaponsData } from './Item/data-weapons-mace.js';
+import { spearWeaponsData } from './Item/data-weapons-spear.js';
+import { staffWeaponsData } from './Item/data-weapons-staff.js';
+import { swordWeaponsData } from './Item/data-weapons-sword.js';
+import { throwingWeaponsData } from './Item/data-weapons-throwing.js';
+import { warhammerWeaponsData } from './Item/data-weapons-warhammer.js';
+import {
+  mountAnimalData,
+  mountMythicalData,
+  mountMagitechData,
+  mountEquipmentData,
+} from './Item/data-mounts.js';
+
+const asArray = (val) => (Array.isArray(val) ? val : []);
+const toTaggedItems = (val, category) =>
+  asArray(val).map((item) => ({ ...item, category }));
+
+const allGolemItems = [
+  ...asArray(golemsData?.golems),
+  ...asArray(golemsData?.enhancements),
+];
+
 // ==================== 整合導出 allSkillsData ====================
 export const allSkillsData = [
-    ...(typeof bardSongsData !== 'undefined' ? bardSongsData : []),
-    ...(typeof magitechData !== 'undefined' ? magitechData : []),
-    ...(typeof sorcererData !== 'undefined' ? sorcererData : []),
-    ...(typeof sorceryData !== 'undefined' ? sorceryData : []),
-    ...(typeof wizardData !== 'undefined' ? wizardData : []),
-    ...(typeof divineData !== 'undefined' ? divineData : []),
-    ...(typeof specialDivineSpellsData !== 'undefined' ? specialDivineSpellsData : []),
-    ...(typeof fairyData !== 'undefined' ? fairyData : []),
-    ...(typeof alchemistData !== 'undefined' ? alchemistData : []),
-    ...(typeof bibliomancerSpellsData !== 'undefined' ? bibliomancerSpellsData : []),
-    ...(typeof darkhunterData !== 'undefined' ? darkhunterData : []),
-    ...(typeof druidData !== 'undefined' ? druidData : []),
-    ...(typeof warLeaderData !== 'undefined' ? warLeaderData : []),
-    ...(typeof geomancerData !== 'undefined' ? geomancerData : []),
-    ...(typeof abyssgazerData !== 'undefined' ? abyssgazerData : []),
-    ...(typeof riderData !== 'undefined' ? riderData : []),
-    ...(typeof enhancerData !== 'undefined' ? enhancerData : []),
-    ...(typeof combatFeatsData !== 'undefined' ? combatFeatsData : []),
-    ...(typeof passiveFeatsData !== 'undefined' ? passiveFeatsData : []),
-    ...(typeof majorActionFeatsData !== 'undefined' ? majorActionFeatsData : []),
-    ...(typeof autoFeatsData !== 'undefined' ? autoFeatsData : []),
-    ...(typeof vitalsmithSkillsData !== 'undefined' ? vitalsmithSkillsData : []),
-    ...(typeof witchSkillsData !== 'undefined' ? witchSkillsData : []),
+  ...(typeof bardSongsData !== 'undefined' ? bardSongsData : []),
+  ...(typeof magitechData !== 'undefined' ? magitechData : []),
+  ...(typeof sorcererData !== 'undefined' ? sorcererData : []),
+  ...(typeof sorceryData !== 'undefined' ? sorceryData : []),
+  ...(typeof wizardData !== 'undefined' ? wizardData : []),
+  ...(typeof divineData !== 'undefined' ? divineData : []),
+  ...(typeof specialDivineSpellsData !== 'undefined' ? specialDivineSpellsData : []),
+  ...(typeof fairyData !== 'undefined' ? fairyData : []),
+  ...(typeof alchemistData !== 'undefined' ? alchemistData : []),
+  ...(typeof bibliomancerSpellsData !== 'undefined' ? bibliomancerSpellsData : []),
+  ...(typeof darkhunterData !== 'undefined' ? darkhunterData : []),
+  ...(typeof druidData !== 'undefined' ? druidData : []),
+  ...(typeof warLeaderData !== 'undefined' ? warLeaderData : []),
+  ...(typeof geomancerData !== 'undefined' ? geomancerData : []),
+  ...(typeof abyssgazerData !== 'undefined' ? abyssgazerData : []),
+  ...(typeof riderData !== 'undefined' ? riderData : []),
+  ...(typeof enhancerData !== 'undefined' ? enhancerData : []),
+  ...(typeof combatFeatsData !== 'undefined' ? combatFeatsData : []),
+  ...(typeof passiveFeatsData !== 'undefined' ? passiveFeatsData : []),
+  ...(typeof majorActionFeatsData !== 'undefined' ? majorActionFeatsData : []),
+  ...(typeof autoFeatsData !== 'undefined' ? autoFeatsData : []),
+  ...(typeof vitalsmithSkillsData !== 'undefined' ? vitalsmithSkillsData : []),
+  ...(typeof witchSkillsData !== 'undefined' ? witchSkillsData : []),
 
-    // 道具陣列
-    ...(typeof accessoryItemsData !== 'undefined' ? accessoryItemsData : []),
-    ...(typeof ammoItemsData !== 'undefined' ? ammoItemsData : []),
-    ...(typeof axeItemsData !== 'undefined' ? axeItemsData : []),
-    ...(typeof bowItemsData !== 'undefined' ? bowItemsData : []),
-    ...(typeof crossbowItemsData !== 'undefined' ? crossbowItemsData : []),
-    ...(typeof flailItemsData !== 'undefined' ? flailItemsData : []),
-    ...(typeof golemData !== 'undefined' ? golemData : []),
-    ...(typeof grappleItemsData !== 'undefined' ? grappleItemsData : []),
-    ...(typeof gunItemsData !== 'undefined' ? gunItemsData : []),
-    ...(typeof specialItemData !== 'undefined' ? specialItemData : []),
-    ...(typeof instrumentItemsData !== 'undefined' ? instrumentItemsData : []),
-    ...(typeof itemData !== 'undefined' ? itemData : []),
-    ...(typeof maceItemsData !== 'undefined' ? maceItemsData : []),
-    ...(typeof metalArmorItemsData !== 'undefined' ? metalArmorItemsData : []),
-    ...(typeof potionItemsData !== 'undefined' ? potionItemsData : []),
-    ...(typeof shieldItemsData !== 'undefined' ? shieldItemsData : []),
-    ...(typeof spearItemsData !== 'undefined' ? spearItemsData : []),
-    ...(typeof staffItemsData !== 'undefined' ? staffItemsData : []),
-    ...(typeof swordItemsData !== 'undefined' ? swordItemsData : []),
-    ...(typeof throwingItemsData !== 'undefined' ? throwingItemsData : []),
-    ...(typeof warhammerItemsData !== 'undefined' ? warhammerItemsData : []),
-    ...(typeof geographItemsData !== 'undefined' ? geographItemsData : []),
-
-
+  // 道具與裝備陣列
+  ...(typeof accessoriesData !== 'undefined' ? accessoriesData : []),
+  ...(typeof ammoItemsData !== 'undefined' ? ammoItemsData : []),
+  ...(typeof metalArmorData !== 'undefined' ? metalArmorData : []),
+  ...(typeof nonmetalArmorData !== 'undefined' ? nonmetalArmorData : []),
+  ...(typeof geographsData !== 'undefined' ? geographsData : []),
+  ...allGolemItems,
+  ...(typeof grimoiresData !== 'undefined' ? grimoiresData : []),
+  ...(typeof herbsPotionsData !== 'undefined' ? herbsPotionsData : []),
+  ...(typeof generalItemsData !== 'undefined' ? generalItemsData : []),
+  ...(typeof livingExpensesData !== 'undefined' ? livingExpensesData : []),
+  ...(typeof shieldsData !== 'undefined' ? shieldsData : []),
+  ...(typeof skillItemsData !== 'undefined' ? skillItemsData : []),
+  ...(typeof specialInstrumentsData !== 'undefined' ? specialInstrumentsData : []),
+  ...(typeof axeWeaponsData !== 'undefined' ? axeWeaponsData : []),
+  ...(typeof bowWeaponsData !== 'undefined' ? bowWeaponsData : []),
+  ...(typeof crossbowWeaponsData !== 'undefined' ? crossbowWeaponsData : []),
+  ...(typeof firearmWeaponsData !== 'undefined' ? firearmWeaponsData : []),
+  ...(typeof flailWeaponsData !== 'undefined' ? flailWeaponsData : []),
+  ...(typeof grapplingWeaponsData !== 'undefined' ? grapplingWeaponsData : []),
+  ...(typeof maceWeaponsData !== 'undefined' ? maceWeaponsData : []),
+  ...(typeof spearWeaponsData !== 'undefined' ? spearWeaponsData : []),
+  ...(typeof staffWeaponsData !== 'undefined' ? staffWeaponsData : []),
+  ...(typeof swordWeaponsData !== 'undefined' ? swordWeaponsData : []),
+  ...(typeof throwingWeaponsData !== 'undefined' ? throwingWeaponsData : []),
+  ...(typeof warhammerWeaponsData !== 'undefined' ? warhammerWeaponsData : []),
+  ...(typeof mountAnimalData !== 'undefined' ? mountAnimalData : []),
+  ...(typeof mountMythicalData !== 'undefined' ? mountMythicalData : []),
+  ...(typeof mountMagitechData !== 'undefined' ? mountMagitechData : []),
+  ...(typeof mountEquipmentData !== 'undefined' ? mountEquipmentData : []),
 ];
 
 // ==================== 統一標記分類並合併為全域道具陣列 ====================
 export const allItemsData = [
-    ...(accessoryItemsData || []).map(i => ({ ...i, category: '飾品裝備' })),
-    ...(ammoItemsData || []).map(i => ({ ...i, category: '彈藥/消耗品' })),
-    ...(axeItemsData || []).map(i => ({ ...i, category: '武器-斧' })),
-    ...(bowItemsData || []).map(i => ({ ...i, category: '武器-弓' })),
-    ...(crossbowItemsData || []).map(i => ({ ...i, category: '武器-弩' })),
-    ...(flailItemsData || []).map(i => ({ ...i, category: '武器-連枷' })),
-    ...(golemData || []).map(i => ({ ...i, category: '魔像/強化物件' })),
-    ...(grappleItemsData || []).map(i => ({ ...i, category: '武器-格鬥/抓握' })),
-    ...(gunItemsData || []).map(i => ({ ...i, category: '武器-魔導槍' })),
-    ...(specialItemData || []).map(i => ({ ...i, category: '特殊道具' })),
-    ...(instrumentItemsData || []).map(i => ({ ...i, category: '樂器/吟遊詩人' })),
-    ...(itemData || []).map(i => ({ ...i, category: '一般冒險道具' })),
-    ...(livingAndTransitItemsData || []).map(i => ({ ...i, category: '生活與交通工具' })),
-    ...(maceItemsData || []).map(i => ({ ...i, category: '武器-鈍器/錘' })),
-    ...(metalArmorItemsData || []).map(i => ({ ...i, category: '防具-金屬鎧甲' })),
-    ...(nonMetalArmorItemsData || []).map(i => ({ ...i, category: '防具-非金屬鎧甲' })),
-    ...(potionItemsData || []).map(i => ({ ...i, category: '藥水/練金卡片' })),
-    ...(shieldItemsData || []).map(i => ({ ...i, category: '防具-盾牌' })),
-    ...(spearItemsData || []).map(i => ({ ...i, category: '武器-槍' })),
-    ...(staffItemsData || []).map(i => ({ ...i, category: '武器-長杖' })),
-    ...(swordItemsData || []).map(i => ({ ...i, category: '武器-劍' })),
-    ...(throwingItemsData || []).map(i => ({ ...i, category: '武器-投擲' })),
-    ...(warhammerItemsData || []).map(i => ({ ...i, category: '武器-戰錘' })),
-    ...(geographItemsData || []).map(i => ({ ...i, category: '地貌儀' })),
-    ...(mountAnimalData || []).map(i => ({ ...i, category: '騎獸-動物' })),
-    ...(mountMythicalData || []).map(i => ({ ...i, category: '騎獸-幻獸' })),
-    ...(mountMagitechData || []).map(i => ({ ...i, category: '騎獸-魔動機' })),
-    ...(mountEquipmentData || []).map(i => ({ ...i, category: '騎獸裝備與道具' }))
+  ...(typeof accessoriesData !== 'undefined' ? accessoriesData.map(i => ({ ...i, category: '飾品裝備' })) : []),
+  ...(typeof ammoItemsData !== 'undefined' ? ammoItemsData.map(i => ({ ...i, category: '彈藥/消耗品' })) : []),
+  ...(typeof axeWeaponsData !== 'undefined' ? axeWeaponsData.map(i => ({ ...i, category: '武器-斧' })) : []),
+  ...(typeof bowWeaponsData !== 'undefined' ? bowWeaponsData.map(i => ({ ...i, category: '武器-弓' })) : []),
+  ...(typeof crossbowWeaponsData !== 'undefined' ? crossbowWeaponsData.map(i => ({ ...i, category: '武器-弩' })) : []),
+  ...(typeof flailWeaponsData !== 'undefined' ? flailWeaponsData.map(i => ({ ...i, category: '武器-連枷' })) : []),
+  ...toTaggedItems(allGolemItems, '魔像/強化物件'),
+  ...(typeof grapplingWeaponsData !== 'undefined' ? grapplingWeaponsData.map(i => ({ ...i, category: '武器-格鬥/抓握' })) : []),
+  ...(typeof firearmWeaponsData !== 'undefined' ? firearmWeaponsData.map(i => ({ ...i, category: '武器-魔導槍' })) : []),
+  ...(typeof grimoiresData !== 'undefined' ? grimoiresData.map(i => ({ ...i, category: '魔導書' })) : []),
+  ...(typeof skillItemsData !== 'undefined' ? skillItemsData.map(i => ({ ...i, category: '技能道具' })) : []),
+  ...(typeof specialInstrumentsData !== 'undefined' ? specialInstrumentsData.map(i => ({ ...i, category: '樂器/吟遊詩人' })) : []),
+  ...(typeof generalItemsData !== 'undefined' ? generalItemsData.map(i => ({ ...i, category: '一般冒險道具' })) : []),
+  ...(typeof livingExpensesData !== 'undefined' ? livingExpensesData.map(i => ({ ...i, category: '生活與交通工具' })) : []),
+  ...(typeof maceWeaponsData !== 'undefined' ? maceWeaponsData.map(i => ({ ...i, category: '武器-鈍器/錘' })) : []),
+  ...(typeof metalArmorData !== 'undefined' ? metalArmorData.map(i => ({ ...i, category: '防具-金屬鎧甲' })) : []),
+  ...(typeof nonmetalArmorData !== 'undefined' ? nonmetalArmorData.map(i => ({ ...i, category: '防具-非金屬鎧甲' })) : []),
+  ...(typeof herbsPotionsData !== 'undefined' ? herbsPotionsData.map(i => ({ ...i, category: '藥水/練金卡片' })) : []),
+  ...(typeof shieldsData !== 'undefined' ? shieldsData.map(i => ({ ...i, category: '防具-盾牌' })) : []),
+  ...(typeof spearWeaponsData !== 'undefined' ? spearWeaponsData.map(i => ({ ...i, category: '武器-槍' })) : []),
+  ...(typeof staffWeaponsData !== 'undefined' ? staffWeaponsData.map(i => ({ ...i, category: '武器-長杖' })) : []),
+  ...(typeof swordWeaponsData !== 'undefined' ? swordWeaponsData.map(i => ({ ...i, category: '武器-劍' })) : []),
+  ...(typeof throwingWeaponsData !== 'undefined' ? throwingWeaponsData.map(i => ({ ...i, category: '武器-投擲' })) : []),
+  ...(typeof warhammerWeaponsData !== 'undefined' ? warhammerWeaponsData.map(i => ({ ...i, category: '武器-戰錘' })) : []),
+  ...(typeof geographsData !== 'undefined' ? geographsData.map(i => ({ ...i, category: '地貌儀' })) : []),
+  ...(typeof mountAnimalData !== 'undefined' ? mountAnimalData.map(i => ({ ...i, category: '騎獸-動物' })) : []),
+  ...(typeof mountMythicalData !== 'undefined' ? mountMythicalData.map(i => ({ ...i, category: '騎獸-幻獸' })) : []),
+  ...(typeof mountMagitechData !== 'undefined' ? mountMagitechData.map(i => ({ ...i, category: '騎獸-魔動機' })) : []),
+  ...(typeof mountEquipmentData !== 'undefined' ? mountEquipmentData.map(i => ({ ...i, category: '騎獸裝備與道具' })) : []),
 ];

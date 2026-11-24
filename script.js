@@ -4,7 +4,10 @@ import { racesContent } from './src/racesData.js';
 import { otherRulesContent } from './src/otherRulesData.js'; 
 import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
 import { reputationRankContent } from './src/reputationRankData.js';
-import { renderCharSheetPage, initCharSheetQuickAddObserver } from './src/charSheetUI.js';
+import { renderCharSheetConsole, initCharSheetQuickAddObserver } from './src/charSheetConsole.js';
+
+// 頁面載入時啟用「技能檢索 / 道具檢索」卡片上的「+ 角色卡」快捷按鈕
+initCharSheetQuickAddObserver();
 // ==================== 自定義頁面（收藏與快捷牌組）核心管理 ====================
 const CUSTOM_STORAGE_KEY = 'sw25_custom_deck_v1';
 
@@ -223,7 +226,7 @@ window.switchMainTab = function(tabName) {
             }
         } else if (tabName === 'char-sheet') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
-            renderCharSheetPage();
+            renderCharSheetConsole('rules-container');
         } else if (tabName === 'custom') {
             if (subtabsNav) subtabsNav.classList.add('hidden');
             renderCustomPage();
@@ -477,12 +480,17 @@ export function renderCombatFeatCard(feat) {
 // ==================== 6. 道具與裝備專用卡片 HTML 生成 ====================
 export function renderItemCard(item) {
     const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
-    const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-盾牌"].includes(item.category);
+    const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-非金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isAccessory =
         item.category === "裝飾品" ||
+        item.category === "飾品裝備" ||
         (typeof item.type === "string" && (item.type.includes("裝飾") || item.type === "裝飾品"));
-    const isGeograph = item.name && item.name.includes("地貌儀");
+    const isGeograph = item.category === "地貌儀" || (item.name && item.name.includes("地貌儀"));
     const isMount = item.category && item.category.startsWith("騎獸");
+    const isGrimoire =
+        item.category === "魔導書" ||
+        (typeof item.effect === "string" && item.effect.includes("<魔導書>")) ||
+        (item.rank !== undefined && item.usage !== undefined && !isWeapon && !isArmor);
 
     const uid = getItemUniqueId('item', item.name, item.category);
     const pinned = isItemPinned(uid);
@@ -526,6 +534,21 @@ export function renderItemCard(item) {
                 <span class="col-span-3 text-right text-amber-400 font-bold">${item.price || '－'}</span>
             </div>
         `;
+    } else if (isGrimoire) {
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">階級</span>
+                <span class="text-center text-purple-300 font-bold">${item.rank || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">用法</span>
+                <span class="text-center text-cyan-300 font-bold">${item.usage || '－'}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">類別</span>
+                <span class="col-span-5 text-emerald-300 font-medium">${item.category || '魔導書'}</span>
+            </div>
+        `;
     } else if (isGeograph) {
         attrTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
@@ -563,15 +586,39 @@ export function renderItemCard(item) {
                 <span class="text-zinc-500 font-medium">分類</span>
                 <span class="col-span-5 text-emerald-300 font-medium">${item.category || '裝飾品'}</span>
             </div>
-        `;  
+        `;
     } else {
+        const extraPairs = [
+            item.type && item.type !== item.category ? ['類型', item.type] : null,
+            item.rank ? ['階級', item.rank] : null,
+            item.usage ? ['用法', item.usage] : null,
+            item.req ? ['需求', item.req] : null,
+            item.reqLevel !== undefined ? ['必要等級', `Lv ${item.reqLevel}`] : null,
+            item.mpCost !== undefined ? ['消耗 MP', item.mpCost] : null,
+            item.priceSmallMediumLarge ? ['價格(小/中/大)', item.priceSmallMediumLarge] : null,
+            item.normalMaterial ? ['一般素材', item.normalMaterial] : null,
+            item.superiorMaterial ? ['上位素材', item.superiorMaterial] : null,
+        ].filter(Boolean);
+
+        const extraRowsHTML = extraPairs.length > 0
+            ? `<div class="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-zinc-800/60 py-1.5 px-3 text-xs">
+                ${extraPairs.map(([label, val]) => `
+                    <div class="flex justify-between gap-2">
+                        <span class="text-zinc-500 font-medium shrink-0">${label}</span>
+                        <span class="text-cyan-300 font-medium text-right">${val}</span>
+                    </div>
+                `).join('')}
+               </div>`
+            : '';
+
         attrTableHTML = `
             <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
                 <span class="text-zinc-500 font-medium">類別</span>
                 <span class="col-span-2 text-center text-cyan-300 font-medium">${item.category || '道具'}</span>
                 <span class="text-zinc-500 font-medium text-center">價格</span>
-                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || '非賣品'}</span>
+                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || item.priceSmallMediumLarge || '非賣品'}</span>
             </div>
+            ${extraRowsHTML}
         `;
     }
 
@@ -583,7 +630,7 @@ export function renderItemCard(item) {
                         ${item.category || '道具'}
                     </span>
                     <h3 class="text-base font-bold text-amber-400 ml-1">
-                        <i class="fa-solid ${isMount ? 'fa-horse' : 'fa-box-open'} mr-1.5 text-amber-500"></i>${item.name}
+                        <i class="fa-solid ${isMount ? 'fa-horse' : isGrimoire ? 'fa-book-skull' : 'fa-box-open'} mr-1.5 text-amber-500"></i>${item.name}
                         ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
                     </h3>
                 </div>
@@ -604,9 +651,11 @@ export function renderItemCard(item) {
                             <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${item.summary}
                         </div>
                     ` : ''}
-                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
-                        ${item.effect || item.description || ''}
-                    </p>
+                    ${(item.effect || item.description) ? `
+                        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
+                            ${item.effect || item.description}
+                        </p>
+                    ` : ''}
                     ${item.note ? `
                         <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/60 p-2.5 rounded border border-amber-900/30 font-mono">
                             ${item.note}
@@ -1682,6 +1731,49 @@ function matchesFeatTreeFilter(feat, allFeats) {
     return true;
 }
 
+// 將習得樹中的戰鬥特技加入當前角色卡
+window.addFeatTreeItemToCharSheet = function(featName, event) {
+    if (event) event.stopPropagation();
+
+    const allFeats = getCombatFeatsForTree();
+    const target = allFeats.find(f => f.name === featName);
+    if (!target) return;
+
+    const payload = {
+        itemType: 'feat',
+        type: 'feat',
+        category: target.category || '戰鬥特技',
+        data: target,
+        feat: target
+    };
+
+    // 優先呼叫 charSheetConsole 掛載的全域新增函式
+    const handler =
+        window.addCardToActiveCharacter ||
+        window.addFeatToActiveCharacter ||
+        window.quickAddToCharSheet ||
+        window.addItemToCharacterSheet;
+
+    if (typeof handler === 'function') {
+        handler(payload);
+    } else {
+        // 後備方案：派發自訂事件，方便外部監聽接收
+        document.dispatchEvent(new CustomEvent('sw25:add-to-charsheet', { detail: payload }));
+    }
+
+    // 視覺回饋：按鈕短暫顯示「已加入」
+    const btn = event?.currentTarget;
+    if (btn) {
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>已加入';
+        btn.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/40');
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+            btn.classList.remove('bg-emerald-500/20', 'text-emerald-300', 'border-emerald-500/40');
+        }, 1200);
+    }
+};
+
 window.selectFeatTreeItem = function(name) {
     featTreeState.selectedName = featTreeState.selectedName === name ? null : name;
     renderFeatTreePage();
@@ -1724,7 +1816,7 @@ window.renderFeatTreePage = function() {
                         <i class="fa-solid fa-diagram-project"></i>戰鬥特技互動習得樹／等級篩選
                     </h2>
                     <p class="text-xs text-zinc-400 mt-0.5">
-                        依需求等級分欄排列；點選特技可高亮 <span class="text-sky-400 font-bold">前置特技</span> 與 <span class="text-emerald-400 font-bold">後續可解鎖</span>。
+                        依需求等級分欄排列；點選特技可高亮 <span class="text-sky-400 font-bold">前置特技</span> 與 <span class="text-emerald-400 font-bold">後續可解鎖</span>，並可一鍵加入角色卡。
                     </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
@@ -1786,16 +1878,25 @@ window.renderFeatTreePage = function() {
 
                                             const dimClass = matchedSet.has(feat.name) ? '' : 'opacity-25';
                                             const leftBorder = borderMap[feat.type] || 'border-l-blue-500';
+                                            const escapedName = feat.name.replace(/'/g, "\\'");
 
                                             return `
-                                                <div onclick="selectFeatTreeItem('${feat.name.replace(/'/g, "\\'")}')"
-                                                    class="bg-zinc-950/90 border border-l-4 ${leftBorder} ${ringClass} ${dimClass} rounded-lg p-2 cursor-pointer transition-all">
-                                                    <div class="flex justify-between items-start gap-1 text-xs font-bold text-zinc-100">
-                                                        <span>${feat.name}</span>
-                                                        <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 shrink-0">${feat.type}</span>
+                                                <div onclick="selectFeatTreeItem('${escapedName}')"
+                                                    class="bg-zinc-950/90 border border-l-4 ${leftBorder} ${ringClass} ${dimClass} rounded-lg p-2 cursor-pointer transition-all flex flex-col justify-between gap-1.5">
+                                                    <div>
+                                                        <div class="flex justify-between items-start gap-1 text-xs font-bold text-zinc-100">
+                                                            <span>${feat.name}</span>
+                                                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 shrink-0">${feat.type}</span>
+                                                        </div>
+                                                        <div class="text-[11px] text-amber-300/90 mt-1 break-words">前提：${feat.prerequisite}</div>
+                                                        <div class="text-[11px] text-zinc-400 mt-1 line-clamp-2">${feat.summary}</div>
                                                     </div>
-                                                    <div class="text-[11px] text-amber-300/90 mt-1 break-words">前提：${feat.prerequisite}</div>
-                                                    <div class="text-[11px] text-zinc-400 mt-1 line-clamp-2">${feat.summary}</div>
+                                                    <div class="flex justify-end pt-0.5">
+                                                        <button type="button" onclick="addFeatTreeItemToCharSheet('${escapedName}', event)"
+                                                            class="text-[10px] px-2 py-0.5 rounded bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-700/60 transition-colors">
+                                                            <i class="fa-solid fa-user-plus mr-1"></i>角色卡
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             `;
                                         }).join('')}
@@ -1810,9 +1911,15 @@ window.renderFeatTreePage = function() {
                     <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-2">特技詳情與連鎖</h3>
                     ${selectedFeat ? `
                         <div class="space-y-2">
-                            <div class="text-sm font-bold text-zinc-100">
-                                ${selectedFeat.name}
-                                ${selectedFeat.nameJp ? `<span class="text-xs text-zinc-500 font-mono font-normal">(${selectedFeat.nameJp})</span>` : ''}
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="text-sm font-bold text-zinc-100">
+                                    ${selectedFeat.name}
+                                    ${selectedFeat.nameJp ? `<span class="text-xs text-zinc-500 font-mono font-normal">(${selectedFeat.nameJp})</span>` : ''}
+                                </div>
+                                <button type="button" onclick="addFeatTreeItemToCharSheet('${selectedFeat.name.replace(/'/g, "\\'")}', event)"
+                                    class="text-xs px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/70 transition-colors shrink-0">
+                                    <i class="fa-solid fa-user-plus mr-1"></i>+ 角色卡
+                                </button>
                             </div>
                             <div><span class="text-zinc-500">類型／需求：</span><span class="text-zinc-200">${selectedFeat.type} ／ ${selectedFeat.level > 0 ? 'Lv ' + selectedFeat.level : '無等級限制'}</span></div>
                             <div><span class="text-zinc-500">習得前提：</span><span class="text-amber-300 font-medium">${selectedFeat.prerequisite}</span></div>
@@ -1838,7 +1945,7 @@ window.renderFeatTreePage = function() {
                             </div>
                         </div>
                     ` : `
-                        <p class="text-zinc-400 leading-relaxed">點選左側任一戰鬥特技卡片，查看完整條件與前後置特技連鎖。</p>
+                        <p class="text-zinc-400 leading-relaxed">點選左側任一戰鬥特技卡片，查看完整條件與前後置特技連鎖，或直接點擊卡片上的「角色卡」按鈕加入。</p>
                     `}
                 </aside>
             </div>
