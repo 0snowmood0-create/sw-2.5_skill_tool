@@ -13,6 +13,62 @@ const MAGIC_SKILLS = new Set([
   '深智魔導師', '奈落魔導師', '咒術師', '女巫'
 ]);
 
+const SKILL_EXP_TABLE_MAP = {
+  '戰士': 'A',
+  '拳鬥士': 'A',
+  '舞鬥士': 'A',
+  '輕戰士': 'B',
+  '射手': 'B',
+  '生命工匠': 'A',
+  '真語魔法': 'A',
+  '操靈魔法': 'A',
+  '神聖魔法': 'A',
+  '魔動機術': 'A',
+  '妖精魔法': 'A',
+  '奈落魔法': 'A',
+  '祕奧魔法': 'A',
+  '咒詛魔法': 'A',
+  '斥候': 'B',
+  '遊俠': 'B',
+  '賢者': 'B',
+  '吟遊詩人': 'B',
+  '練技師': 'B',
+  '賦術師': 'B',
+  '騎士': 'B',
+  '軍師': 'B',
+  '天地使': 'B'
+};
+
+// 技能等級達標自動習得戰鬥特技規則
+const AUTO_FEATS_BY_SKILL = [
+  { skill: '拳鬥士', minLv: 1, name: '追加攻撃', req: '拳鬥士Lv.1 / 1H〈格闘〉', cost: '常時', range: '1H〈格闘〉近接', desc: '以 1H〈格闘〉武器近接攻撃時，可對同一目標再進行一次 1H〈格闘〉近接攻撃。' },
+  { skill: '拳鬥士', minLv: 7, name: '反擊', req: '拳鬥士Lv.7', cost: '宣言/特殊', range: '近接攻撃受擊時', desc: '受到近接攻撃時，可改以裝備武器的命中力判定與對方比拼達成值進行反擊。' },
+  { skill: '拳鬥士', minLv: 13, name: '戰鬥大師', req: '拳鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '戰士', minLv: 7, name: '強韌', req: '戰士Lv.7', cost: '常時', range: '自身', desc: '最大 HP +15。' },
+  { skill: '戰士', minLv: 13, name: '戰鬥大師', req: '戰士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '舞鬥士', minLv: 7, name: '舞流', req: '舞鬥士Lv.7', cost: '常時', range: '自身', desc: '擴大可進行迴避力判定對應的攻撃範圍（射撃1體、貫通、突破等依規則判定）。' },
+  { skill: '舞鬥士', minLv: 13, name: '戰鬥大師', req: '舞鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '斥候', minLv: 5, name: '尋寶獵人', req: '斥候Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1。' },
+  { skill: '斥候', minLv: 7, name: '迅捷動作', req: '斥候Lv.7', cost: '常時', range: '先制奪取時', desc: '先制判定勝出時，第 1 回合可額外進行 1 次主動作。' },
+  { skill: '斥候', minLv: 9, name: '影步', req: '斥候Lv.9', cost: '常時', range: '自身移動', desc: '移動不受移動妨害影響，且可不經脫離準備直接脫離亂戰區。' },
+  { skill: '斥候', minLv: 12, name: '尋寶大師', req: '斥候Lv.12', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面再 +1。' },
+  { skill: '斥候', minLv: 15, name: '匠技', req: '斥候Lv.15', cost: '1次/判定', range: '斥候基準判定', desc: '使用斥候技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' },
+  { skill: '遊俠', minLv: 5, name: '生存本能', req: '遊俠Lv.5', cost: '1次/日', range: '自然環境抵抗', desc: '於自然環境進行生命／精神抵抗力判定前宣告，可不擲骰直接自動成功。' },
+  { skill: '遊俠', minLv: 7, name: '不屈', req: '遊俠Lv.7', cost: '常時', range: 'HP 歸 0 時', desc: 'HP 降至 0 時若生死判定成功，可不陷入昏迷繼續行動；失敗則死亡。' },
+  { skill: '遊俠', minLv: 9, name: '魔藥大師', req: '遊俠Lv.9', cost: '戰鬥準備/1次/R', range: '自身〈藥水〉', desc: '對自身使用〈藥水〉分類道具時，可改以戰鬥準備或補助動作使用。' },
+  { skill: '遊俠', minLv: 12, name: '縮地', req: '遊俠Lv.12', cost: '常時', range: '全力移動回合', desc: '進行全力移動的回合也可執行通常移動可做的動作（移動類別與迴避 -4 不變）。' },
+  { skill: '遊俠', minLv: 15, name: '跑射', req: '遊俠Lv.15', cost: '常時', range: '通常移動回合', desc: '進行通常移動的回合也可執行限制移動可做的動作（移動類別不變）。' },
+  { skill: '賢者', minLv: 5, name: '銳眼', req: '賢者Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1。' },
+  { skill: '賢者', minLv: 7, name: '弱點看破', req: '賢者Lv.7', cost: '常時', range: '魔物知識判定', desc: '以賢者技能進行魔物知識判定並達弱點值時，自身適用的弱點效果／增傷加倍。' },
+  { skill: '賢者', minLv: 9, name: '魔力節約', req: '賢者Lv.9', cost: '常時', range: '消耗 MP 時', desc: '魔法或能力消耗 MP 時可減免 1 點（最低消耗 1 點，於倍加前計算）。' },
+  { skill: '賢者', minLv: 12, name: '魔力耐性', req: '賢者Lv.12', cost: '常時', range: '受魔法傷害時', desc: '自身受到的所有魔法傷害常時 -5。' },
+  { skill: '賢者', minLv: 15, name: '賢者智慧', req: '賢者Lv.15', cost: '1次/判定', range: '賢者基準判定', desc: '使用賢者技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' }
+];
+
+const EVASION_SKILLS = new Set(['戰士', '輕戰士', '拳鬥士', '舞鬥士']);
+
+const ACCESSORY_SLOTS = ['頭', '臉', '耳', '首', '背', '右手', '左手', '腰', '足', '其他'];
+
 const ABILITY_LABELS = [
   ['dex', '靈巧度'],
   ['agi', '敏捷度'],
@@ -83,6 +139,12 @@ const SCOPED_CSS = `
   color: var(--cc-text);
   padding: 6px 10px;
 }
+.sw25-cc-root input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--cc-accent);
+  cursor: pointer;
+}
 .sw25-cc-root input:focus,
 .sw25-cc-root select:focus,
 .sw25-cc-root textarea:focus {
@@ -135,6 +197,8 @@ const SCOPED_CSS = `
   justify-content: space-between;
   border-bottom: 1px solid var(--cc-border);
   padding-bottom: 6px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 .sw25-cc-pool {
   border-radius: 8px;
@@ -209,6 +273,44 @@ const SCOPED_CSS = `
 .sw25-cc-field label { font-size: 0.76rem; color: var(--cc-muted); }
 .sw25-cc-field input, .sw25-cc-field select { width: 100%; }
 
+.sw25-cc-equip-box {
+  background: #09090b;
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.sw25-cc-equip-box.equipped {
+  border-color: rgba(245, 158, 11, 0.55);
+}
+.sw25-cc-equip-grid {
+  display: grid;
+  grid-template-columns: 95px 2.2fr 0.9fr 1fr 1fr;
+  gap: 8px;
+  align-items: end;
+}
+@media (max-width: 768px) {
+  .sw25-cc-equip-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.sw25-cc-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sw25-cc-slot-card {
+  background: #09090b;
+  border: 1px solid var(--cc-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sw25-cc-slot-card.equipped {
+  border-color: rgba(56, 189, 248, 0.55);
+}
+
 .sw25-cc-tabs {
   display: flex;
   gap: 6px;
@@ -244,6 +346,7 @@ const SCOPED_CSS = `
 }
 .sw25-cc-badge.warn { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border-color: rgba(245, 158, 11, 0.4); }
 .sw25-cc-badge.good { background: rgba(34, 197, 94, 0.15); color: #86efac; border-color: rgba(34, 197, 94, 0.4); }
+.sw25-cc-badge.danger { background: rgba(239, 68, 68, 0.16); color: #fca5a5; border-color: rgba(239, 68, 68, 0.45); }
 
 .sw25-cc-buff-item {
   display: flex;
@@ -280,6 +383,20 @@ const SCOPED_CSS = `
 .sw25-cc-crit { color: #4ade80; font-weight: 700; }
 .sw25-cc-fumble { color: #f87171; font-weight: 700; }
 
+.sw25-cc-feat-box {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+}
+.sw25-cc-auto-feat-card {
+  background: rgba(56, 189, 248, 0.06);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
 .sw25-cc-ability-card {
   background: #09090b;
   border: 1px solid var(--cc-border);
@@ -296,6 +413,7 @@ const SCOPED_CSS = `
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 .sw25-cc-ability-meta {
   font-size: 0.78rem;
@@ -358,17 +476,156 @@ function normalizeAbilityInput(ab) {
 
 function normalizeAbilityCardItem(item) {
   if (typeof item === 'string') {
-    return { name: item, cost: '', range: '', desc: '' };
+    return { name: item, req: '', cost: '', range: '', desc: '' };
   }
   if (item && typeof item === 'object') {
     return {
       name: String(item.name || ''),
+      req: String(item.req || item.restriction || item.condition || ''),
       cost: String(item.cost || ''),
       range: String(item.range || ''),
       desc: String(item.desc || '')
     };
   }
-  return { name: '', cost: '', range: '', desc: '' };
+  return { name: '', req: '', cost: '', range: '', desc: '' };
+}
+
+function getDancerSkillLevel(skills = []) {
+  const found = skills.find(s => s.name === '舞鬥士' || s.name === '舞踏家');
+  return found?.level ?? 0;
+}
+
+// 一般選擇習得格數：冒險者等級每 2 級 1 格 + 舞鬥士習得(+1)
+function getMaxFeatSlots(adventurerLv, skills = []) {
+  const lv = Math.max(0, parseInt(adventurerLv, 10) || 0);
+  const baseSlots = lv <= 0 ? 0 : Math.floor((lv + 1) / 2);
+  const dancerBonus = getDancerSkillLevel(skills) >= 1 ? 1 : 0;
+  return baseSlots + dancerBonus;
+}
+
+// 依技能等級計算自動習得戰鬥特技（不占用一般選擇特技格數）
+function getAutoFeatsForSkills(skills = []) {
+  const skillLvMap = new Map();
+  let casterSum = 0;
+  skills.forEach(sk => {
+    const lv = parseInt(sk.level, 10) || 0;
+    skillLvMap.set(sk.name, Math.max(skillLvMap.get(sk.name) || 0, lv));
+    if (MAGIC_SKILLS.has(sk.name)) casterSum += lv;
+  });
+
+  const list = AUTO_FEATS_BY_SKILL.filter(rule => (skillLvMap.get(rule.skill) || 0) >= rule.minLv).map(r => ({
+    name: r.name,
+    req: r.req,
+    cost: r.cost,
+    range: r.range,
+    desc: r.desc,
+    autoSource: `${r.skill}Lv.${r.minLv}`
+  }));
+
+  if (casterSum >= 11) {
+    list.push({
+      name: '符文大師',
+      req: '魔法系技能合計Lv.11',
+      cost: '常時',
+      range: '自身',
+      desc: '每回合可宣告 2 次宣言特技，但至少 1 次須為「使用：魔法系技能」之特技。',
+      autoSource: `魔法系合計Lv.${casterSum}`
+    });
+  }
+
+  return list;
+}
+
+function evaluateFeatRequirement(reqText, char) {
+  const raw = String(reqText || '').trim();
+  if (!raw) return { status: 'none', text: '' };
+
+  const advLv = char.computed?.adventurerLevel ?? 0;
+  const totals = char.computed?.abilityTotals || {};
+  const mods = char.computed?.abilityMods || {};
+  const skills = char.skills || [];
+
+  const statNameMap = {
+    '靈巧': 'dex', '靈巧度': 'dex',
+    '敏捷': 'agi', '敏捷度': 'agi',
+    '筋力': 'str',
+    '生命': 'vit', '生命力': 'vit',
+    '知力': 'int',
+    '精神': 'mnd', '精神力': 'mnd'
+  };
+
+  const advMatch = raw.match(/冒險者\s*(?:Lv\.?|等級)?\s*(\d+)/i);
+  if (advMatch) {
+    const needLv = Number(advMatch[1]);
+    if (advLv < needLv) {
+      return { status: 'unmet', text: `需冒險者Lv.${needLv}（目前Lv.${advLv}）` };
+    }
+  }
+
+  const skillMatches = [...raw.matchAll(/([\u4e00-\u9fa5A-Za-z]+)\s*(?:Lv\.?|等級)\s*(\d+)/gi)];
+  for (const m of skillMatches) {
+    const skName = m[1];
+    if (skName === '冒險者') continue;
+    const needSkLv = Number(m[2]);
+    const found = skills.find(s => s.name === skName || s.name.includes(skName));
+    const curSkLv = found?.level ?? 0;
+    if (curSkLv < needSkLv) {
+      return { status: 'unmet', text: `需${skName}Lv.${needSkLv}（目前Lv.${curSkLv}）` };
+    }
+  }
+
+  const modMatches = [...raw.matchAll(/(靈巧度?|敏捷度?|筋力|生命力?|知力|精神力?)\s*(?:加值|B)\s*\+\s*(\d+)/gi)];
+  for (const m of modMatches) {
+    const key = statNameMap[m[1]];
+    const needMod = Number(m[2]);
+    const curMod = key ? (mods[key] ?? 0) : 0;
+    if (curMod < needMod) {
+      return { status: 'unmet', text: `需${m[1]}加值+${needMod}（目前+${curMod}）` };
+    }
+  }
+
+  const valMatches = [...raw.matchAll(/(靈巧度?|敏捷度?|筋力|生命力?|知力|精神力?)\s*(\d+)/g)];
+  for (const m of valMatches) {
+    if (raw.includes('加值') || raw.includes('B+')) continue;
+    const key = statNameMap[m[1]];
+    const needVal = Number(m[2]);
+    const curVal = key ? (totals[key] ?? 0) : 0;
+    if (curVal < needVal) {
+      return { status: 'unmet', text: `需${m[1]}${needVal}（目前${curVal}）` };
+    }
+  }
+
+  return { status: 'met', text: '條件符合' };
+}
+
+function normalizeAccessoryItem(item) {
+  if (!item || typeof item !== 'object') {
+    return { slot: '其他', name: '', note: '', equipped: true };
+  }
+  const rawSlot = String(item.slot || '其他').trim();
+  const normalizedSlot = ACCESSORY_SLOTS.includes(rawSlot) ? rawSlot : (rawSlot || '其他');
+  return {
+    slot: normalizedSlot,
+    name: String(item.name || ''),
+    note: String(item.note || ''),
+    equipped: item.equipped !== false
+  };
+}
+
+function normalizeWeaponItem(w) {
+  if (!w || typeof w !== 'object') {
+    return { name: '', usage: '1H', reqStr: 0, hitMod: 0, power: 10, crit: 10, extraDmg: 0, equipped: true };
+  }
+  return {
+    name: String(w.name || ''),
+    usage: String(w.usage || '1H'),
+    reqStr: toSafeNumber(w.reqStr, 0),
+    hitMod: toSafeNumber(w.hitMod, 0),
+    power: toSafeNumber(w.power, 10),
+    crit: toSafeNumber(w.crit, 10),
+    extraDmg: toSafeNumber(w.extraDmg, 0),
+    equipped: w.equipped !== false
+  };
 }
 
 export function createDefaultCharacter(overrides = {}) {
@@ -400,7 +657,8 @@ export function createDefaultCharacter(overrides = {}) {
     derived: {
       maxHp: 0, currentHp: 0, maxMp: 0, currentMp: 0,
       moveNormal: 0, moveLimit: 10, moveFull: 0,
-      initiative: 0, lifeResist: 0, mindResist: 0
+      initiative: 0, lifeResist: 0, mindResist: 0,
+      evasionBase: 0, totalDefense: 0
     },
     skills: [
       { name: '戰士', expTable: 'A', level: 1, magicPower: 0 },
@@ -412,8 +670,8 @@ export function createDefaultCharacter(overrides = {}) {
     },
     equipment: {
       weapons: [],
-      armor: { name: '', category: '防具-金屬鎧甲', reqStr: 0, evasionMod: 0, defense: 0, equipped: false },
-      shield: { name: '', category: '防具-盾牌', reqStr: 0, evasionMod: 0, defense: 0, equipped: false },
+      armor: { name: '', category: '防具-金屬鎧甲', reqStr: 0, evasionMod: 0, defense: 0, equipped: true },
+      shield: { name: '', category: '防具-盾牌', reqStr: 0, evasionMod: 0, defense: 0, equipped: true },
       accessories: []
     },
     combatSync: { sizeParts: 1, meleeZone: true, activeBuffs: [] }
@@ -438,8 +696,8 @@ export function createDefaultCharacter(overrides = {}) {
       ...(overrides.equipment || {}),
       armor: { ...baseChar.equipment.armor, ...(overrides.equipment?.armor || {}) },
       shield: { ...baseChar.equipment.shield, ...(overrides.equipment?.shield || {}) },
-      weapons: Array.isArray(overrides.equipment?.weapons) ? overrides.equipment.weapons : [],
-      accessories: Array.isArray(overrides.equipment?.accessories) ? overrides.equipment.accessories : []
+      weapons: Array.isArray(overrides.equipment?.weapons) ? overrides.equipment.weapons.map(normalizeWeaponItem) : [],
+      accessories: Array.isArray(overrides.equipment?.accessories) ? overrides.equipment.accessories.map(normalizeAccessoryItem) : []
     },
     combatSync: {
       ...baseChar.combatSync,
@@ -498,11 +756,28 @@ export function recalculateCharacter(rawChar, options = {}) {
   ['spells', 'songs', 'tactics', 'alchemy', 'enhancements', 'riding'].forEach(k => {
     char.learnedAbilities[k] = (Array.isArray(char.learnedAbilities[k]) ? char.learnedAbilities[k] : []).map(normalizeAbilityCardItem);
   });
+
+  const rawArmor = char.equipment?.armor || {};
+  const rawShield = char.equipment?.shield || {};
   char.equipment = {
-    weapons: Array.isArray(char.equipment?.weapons) ? char.equipment.weapons : [],
-    armor: { name: '', category: '防具-金屬鎧甲', reqStr: 0, evasionMod: 0, defense: 0, equipped: false, ...(char.equipment?.armor || {}) },
-    shield: { name: '', category: '防具-盾牌', reqStr: 0, evasionMod: 0, defense: 0, equipped: false, ...(char.equipment?.shield || {}) },
-    accessories: Array.isArray(char.equipment?.accessories) ? char.equipment.accessories : []
+    weapons: (Array.isArray(char.equipment?.weapons) ? char.equipment.weapons : []).map(normalizeWeaponItem),
+    armor: {
+      name: String(rawArmor.name || ''),
+      category: String(rawArmor.category || '防具-金屬鎧甲'),
+      reqStr: toSafeNumber(rawArmor.reqStr, 0),
+      evasionMod: toSafeNumber(rawArmor.evasionMod, 0),
+      defense: toSafeNumber(rawArmor.defense, 0),
+      equipped: rawArmor.equipped !== false
+    },
+    shield: {
+      name: String(rawShield.name || ''),
+      category: String(rawShield.category || '防具-盾牌'),
+      reqStr: toSafeNumber(rawShield.reqStr, 0),
+      evasionMod: toSafeNumber(rawShield.evasionMod, 0),
+      defense: toSafeNumber(rawShield.defense, 0),
+      equipped: rawShield.equipped !== false
+    },
+    accessories: (Array.isArray(char.equipment?.accessories) ? char.equipment.accessories : []).map(normalizeAccessoryItem)
   };
   char.combatSync = {
     sizeParts: toSafeNumber(char.combatSync?.sizeParts, 1),
@@ -525,7 +800,9 @@ export function recalculateCharacter(rawChar, options = {}) {
   const skills = (Array.isArray(char.skills) ? char.skills : []).map(sk => {
     const name = String(sk?.name || '').trim();
     const lv = Math.max(0, Math.min(15, parseInt(sk?.level, 10) || 0));
-    const table = sk?.expTable === 'B' ? 'B' : 'A';
+    const table = (sk?.expTable === 'A' || sk?.expTable === 'B')
+      ? sk.expTable
+      : (SKILL_EXP_TABLE_MAP[name] || 'A');
     const magicPower = MAGIC_SKILLS.has(name)
       ? lv + abilityMods.int + getBuffSum(buffs, 'magicPower')
       : toSafeNumber(sk?.magicPower, 0);
@@ -535,8 +812,11 @@ export function recalculateCharacter(rawChar, options = {}) {
   const expUsed = skills.reduce((sum, sk) => sum + getExpCost(sk.expTable, sk.level), 0);
   const maxSkillLevel = skills.reduce((maxLv, sk) => Math.max(maxLv, sk.level), 0);
   const adventurerLv = maxSkillLevel;
+  const featMaxSlots = getMaxFeatSlots(adventurerLv, skills);
+  const autoFeats = getAutoFeatsForSkills(skills);
+  const hasToughness = autoFeats.some(f => f.name === '強韌');
 
-  const maxHp = Math.max(0, abilityTotals.vit + adventurerLv * 3 + getBuffSum(buffs, 'maxHp'));
+  const maxHp = Math.max(0, abilityTotals.vit + adventurerLv * 3 + (hasToughness ? 15 : 0) + getBuffSum(buffs, 'maxHp'));
   const casterLevelsSum = skills
     .filter(s => MAGIC_SKILLS.has(s.name))
     .reduce((sum, s) => sum + s.level, 0);
@@ -548,6 +828,17 @@ export function recalculateCharacter(rawChar, options = {}) {
   const wizardPower = (sorceryLv > 0 && sorcererLv > 0)
     ? Math.max(sorceryLv, sorcererLv) + abilityMods.int + getBuffSum(buffs, 'magicPower')
     : 0;
+
+  const maxEvasionSkillLv = skills
+    .filter(s => EVASION_SKILLS.has(s.name))
+    .reduce((maxLv, s) => Math.max(maxLv, s.level), 0);
+  const armorEva = char.equipment.armor.equipped ? toSafeNumber(char.equipment.armor.evasionMod, 0) : 0;
+  const shieldEva = char.equipment.shield.equipped ? toSafeNumber(char.equipment.shield.evasionMod, 0) : 0;
+  const armorDef = char.equipment.armor.equipped ? toSafeNumber(char.equipment.armor.defense, 0) : 0;
+  const shieldDef = char.equipment.shield.equipped ? toSafeNumber(char.equipment.shield.defense, 0) : 0;
+
+  const evasionBase = (maxEvasionSkillLv > 0 ? maxEvasionSkillLv + abilityMods.agi : 0) + armorEva + shieldEva + getBuffSum(buffs, 'evasion');
+  const totalDefense = armorDef + shieldDef + getBuffSum(buffs, 'defense');
 
   const moveNormal = Math.max(0, abilityTotals.agi + getBuffSum(buffs, 'moveNormal'));
   const moveLimit = 10;
@@ -583,14 +874,21 @@ export function recalculateCharacter(rawChar, options = {}) {
     abilityMods,
     expRemaining: toSafeNumber(char.meta.expTotal, 0) - expUsed,
     adventurerLevel: adventurerLv,
+    featMaxSlots,
+    autoFeats,
+    dancerBonusSlot: getDancerSkillLevel(skills) >= 1 ? 1 : 0,
     casterLevelsSum,
     wizardLevel,
-    wizardPower
+    wizardPower,
+    maxEvasionSkillLv,
+    evasionBase,
+    totalDefense
   };
   char.derived = {
     maxHp, currentHp, maxMp, currentMp,
     moveNormal, moveLimit, moveFull,
-    initiative, lifeResist, mindResist
+    initiative, lifeResist, mindResist,
+    evasionBase, totalDefense
   };
   char.updatedAt = nowIso();
   return char;
@@ -643,50 +941,108 @@ export function saveCharacter(updatedChar, options = {}) {
 }
 
 // ==================== 供「技能檢索 / 道具檢索」快捷加入 ====================
-function classifyCardPayload(payload) {
-  const data = payload?.data || {};
-  if (payload.itemType === 'feat') return { bucket: 'feats', label: data.name };
-  if (payload.itemType === 'item') {
-    const cat = data.category || '';
-    const isWeapon = cat.includes('武器') || ['劍', '槍', '斧', '打擊', '拋射', '格鬥', '扔擲', '魔動機槍'].includes(cat);
-    return { bucket: isWeapon ? 'weapon' : 'item', label: data.name };
+function parseCardPayload(encodedOrObj) {
+  if (encodedOrObj && typeof encodedOrObj === 'object') {
+    return encodedOrObj;
   }
-  const cat = data.category || data.type || '';
-  if (['咒歌', '終律', '鼓咆', '陣率', '軍師', '闘理'].includes(cat)) return { bucket: 'songs', label: data.name };
-  if (['賦術', '練技', '練體士', '騎藝', '騎手'].includes(cat)) return { bucket: 'enhancements', label: data.name };
-  return { bucket: 'spells', label: data.name };
+  const raw = String(encodedOrObj || '').trim();
+  if (!raw) return null;
+  try {
+    return JSON.parse(decodeURIComponent(raw));
+  } catch {
+    return JSON.parse(raw);
+  }
+}
+
+function inferAccessorySlotFromData(data) {
+  const raw = `${data.subCategory || ''} ${data.type || ''} ${data.name || ''}`;
+  for (const s of ['頭', '臉', '耳', '首', '背', '右手', '左手', '腰', '足']) {
+    if (raw.includes(s)) return s;
+  }
+  if (raw.includes('手')) return '右手';
+  return '其他';
+}
+
+function classifyCardPayload(payload) {
+  const data = payload?.data || payload || {};
+  const itemType = payload?.itemType || payload?.type || data.itemType || data.type || '';
+  const name = String(data.name || payload?.name || '').trim();
+  const cat = String(data.category || data.subCategory || '').trim();
+
+  if (itemType === 'feat' || cat.includes('戰鬥特技')) {
+    return { bucket: 'feats', label: name };
+  }
+  if (
+    itemType === 'skill' ||
+    itemType === 'class' ||
+    cat === '技能' ||
+    cat.includes('技能') ||
+    Object.prototype.hasOwnProperty.call(SKILL_EXP_TABLE_MAP, name) ||
+    MAGIC_SKILLS.has(name)
+  ) {
+    return { bucket: 'skill', label: name };
+  }
+  if (itemType === 'item') {
+    const isWeapon = cat.includes('武器') || ['劍', '槍', '斧', '打擊', '拋射', '格鬥', '扔擲', '魔動機槍'].includes(cat);
+    return { bucket: isWeapon ? 'weapon' : 'item', label: name };
+  }
+  if (['咒歌', '終律', '鼓咆', '陣率', '軍師', '闘理'].includes(cat)) return { bucket: 'songs', label: name };
+  if (['賦術', '練技', '練體士', '騎藝', '騎手'].includes(cat)) return { bucket: 'enhancements', label: name };
+  return { bucket: 'spells', label: name };
 }
 
 export function addCardToActiveCharacter(encodedPayload) {
-  const payload = JSON.parse(decodeURIComponent(encodedPayload));
+  let payload;
+  try {
+    payload = parseCardPayload(encodedPayload);
+  } catch (err) {
+    console.warn('無法解析卡片資料:', err);
+    return;
+  }
+  if (!payload || typeof payload !== 'object') return;
+
   const char = getActiveCharacter();
   if (!char) return;
-  const data = payload.data || {};
+  const data = payload.data || payload;
   const info = classifyCardPayload(payload);
+  const name = String(data.name || payload.name || '').trim();
+  if (!name) return;
 
   const cardObj = {
-    name: data.name || '',
+    name,
+    req: data.req || data.requirement || data.restriction || '',
     cost: data.cost || data.mp || data.timing || '',
     range: data.range || data.target || '',
     desc: data.effect || data.summary || data.description || ''
   };
 
-  if (info.bucket === 'weapon') {
-    if (!char.equipment.weapons.some(w => w.name === data.name)) {
+  if (info.bucket === 'skill') {
+    const existing = char.skills.find(s => s.name === name);
+    const expTable = (data.expTable === 'A' || data.expTable === 'B')
+      ? data.expTable
+      : (SKILL_EXP_TABLE_MAP[name] || 'A');
+    const level = Math.max(0, Math.min(15, parseInt(data.level, 10) || 1));
+    if (!existing) {
+      char.skills.push({ name, expTable, level, magicPower: 0 });
+    }
+  } else if (info.bucket === 'weapon') {
+    if (!char.equipment.weapons.some(w => w.name === name)) {
       char.equipment.weapons.push({
-        name: data.name || '',
+        name,
+        usage: data.usage || '1H',
         reqStr: parseInt(data.req_str, 10) || 0,
         hitMod: parseInt(data.acc, 10) || 0,
         power: parseInt(data.power, 10) || 10,
         crit: parseInt(data.crit, 10) || 10,
-        extraDmg: 0
+        extraDmg: 0,
+        equipped: true
       });
     }
   } else if (info.bucket === 'item') {
     const cat = data.category || '';
     if (cat.includes('鎧甲') || cat.includes('金屬鎧') || cat.includes('非金屬鎧')) {
       char.equipment.armor = {
-        name: data.name || '',
+        name,
         category: cat,
         reqStr: parseInt(data.req_str, 10) || 0,
         evasionMod: parseInt(data.evasion, 10) || 0,
@@ -695,7 +1051,7 @@ export function addCardToActiveCharacter(encodedPayload) {
       };
     } else if (cat.includes('盾')) {
       char.equipment.shield = {
-        name: data.name || '',
+        name,
         category: cat,
         reqStr: parseInt(data.req_str, 10) || 0,
         evasionMod: parseInt(data.evasion, 10) || 0,
@@ -703,10 +1059,14 @@ export function addCardToActiveCharacter(encodedPayload) {
         equipped: true
       };
     } else {
+      const slot = (cat === '裝飾品' || cat === '飾品裝備')
+        ? inferAccessorySlotFromData(data)
+        : (cat || '其他');
       char.equipment.accessories.push({
-        slot: cat || '道具',
-        name: data.name || '',
-        note: data.effect || data.summary || ''
+        slot,
+        name,
+        note: data.effect || data.summary || '',
+        equipped: true
       });
     }
   } else if (info.bucket === 'feats') {
@@ -716,12 +1076,13 @@ export function addCardToActiveCharacter(encodedPayload) {
     if (!arr.some(x => x.name === cardObj.name)) arr.push(cardObj);
   }
 
-  saveCharacter(char);
+  saveCharacter(char, { syncMaxDelta: true });
   if (document.getElementById('sw25-cc-root')) {
     renderCharSheetConsole();
   }
 
-  document.querySelectorAll(`[data-char-add-id="${CSS.escape(payload.id)}"]`).forEach(btn => {
+  const cardId = payload.id || data.id || name;
+  document.querySelectorAll(`[data-char-add-id="${CSS.escape(String(cardId))}"]`).forEach(btn => {
     const prev = btn.innerHTML;
     btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> 已加入';
     setTimeout(() => { btn.innerHTML = prev; }, 1200);
@@ -729,23 +1090,25 @@ export function addCardToActiveCharacter(encodedPayload) {
 }
 
 export function initCharSheetQuickAddObserver() {
-  const injectButtonsIntoContainer = (containerId) => {
-    const container = document.getElementById(containerId);
+  const injectButtonsIntoContainer = (container) => {
     if (!container) return;
     container.querySelectorAll('[data-pin-id]').forEach(pinBtn => {
       if (pinBtn.nextElementSibling?.classList.contains('char-quick-add-btn')) return;
       const onclickAttr = pinBtn.getAttribute('onclick') || '';
-      const match = onclickAttr.match(/togglePinDataItem\('([^']+)'\)/);
+      const match = onclickAttr.match(/togglePinDataItem\(\s*(['"])([\s\S]*?)\1\s*\)/);
       if (!match) return;
 
-      const encodedPayload = match[1];
+      const encodedPayload = match[2];
       let decodedId = '';
-      try { decodedId = JSON.parse(decodeURIComponent(encodedPayload)).id || ''; } catch {}
+      try {
+        const parsed = parseCardPayload(encodedPayload);
+        decodedId = parsed?.id || parsed?.data?.id || parsed?.data?.name || '';
+      } catch {}
 
       const addBtn = document.createElement('button');
       addBtn.type = 'button';
       addBtn.setAttribute('data-char-add-id', decodedId);
-      addBtn.setAttribute('onclick', `addCardToActiveCharacter('${encodedPayload}')`);
+      addBtn.setAttribute('onclick', `addCardToActiveCharacter('${encodedPayload.replace(/'/g, "\\'")}')`);
       addBtn.className = 'char-quick-add-btn ml-1.5 text-xs px-2.5 py-1 rounded-lg bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 transition-all shrink-0';
       addBtn.innerHTML = '<i class="fa-solid fa-user-plus"></i> 角色卡';
       pinBtn.insertAdjacentElement('afterend', addBtn);
@@ -753,8 +1116,13 @@ export function initCharSheetQuickAddObserver() {
   };
 
   const run = () => {
-    injectButtonsIntoContainer('bard-list');
-    injectButtonsIntoContainer('item-list');
+    ['bard-list', 'item-list', 'skill-list', 'magic-list', 'feat-list'].forEach(id => {
+      injectButtonsIntoContainer(document.getElementById(id));
+    });
+    document.querySelectorAll('[data-pin-id]').forEach(pinBtn => {
+      const parentList = pinBtn.closest('#bard-list, #item-list, #skill-list, #magic-list, #feat-list, [id$="-list"]');
+      if (parentList) injectButtonsIntoContainer(parentList);
+    });
   };
   run();
   const observer = new MutationObserver(run);
@@ -829,9 +1197,12 @@ const CONSOLE_TEMPLATE = `
           <div class="sw25-cc-pill"><div class="lbl">生命抵抗力</div><div class="num" id="cc-drv-life">0</div></div>
           <div class="sw25-cc-pill"><div class="lbl">精神抵抗力</div><div class="num" id="cc-drv-mind">0</div></div>
           <div class="sw25-cc-pill"><div class="lbl">先制值</div><div class="num" id="cc-drv-init">0</div></div>
+          <div class="sw25-cc-pill"><div class="lbl">迴避基準</div><div class="num" id="cc-drv-evasion">0</div></div>
+          <div class="sw25-cc-pill"><div class="lbl">總防護點</div><div class="num" id="cc-drv-defense">0</div></div>
+          <div class="sw25-cc-pill"><div class="lbl">深智可用級</div><div class="num" id="cc-drv-wizard">-</div></div>
           <div class="sw25-cc-pill"><div class="lbl">通常移動</div><div class="num" id="cc-drv-move">0m</div></div>
           <div class="sw25-cc-pill"><div class="lbl">全力移動</div><div class="num" id="cc-drv-full">0m</div></div>
-          <div class="sw25-cc-pill"><div class="lbl">深智可用級</div><div class="num" id="cc-drv-wizard">0</div></div>
+          <div class="sw25-cc-pill"><div class="lbl">限制移動</div><div class="num">10m</div></div>
         </div>
       </div>
 
@@ -858,6 +1229,8 @@ const CONSOLE_TEMPLATE = `
           <input type="text" id="cc-buff-name" placeholder="名稱 (如: 祝福/防護)" style="flex:1; min-width:110px;" />
           <select id="cc-buff-stat">
             <option value="magicPower">魔力</option>
+            <option value="evasion">迴避力</option>
+            <option value="defense">防護點</option>
             <option value="maxHp">HP上限</option>
             <option value="maxMp">MP上限</option>
             <option value="lifeResist">生命抵抗</option>
@@ -897,7 +1270,7 @@ const CONSOLE_TEMPLATE = `
         <div class="sw25-cc-tabs">
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-skills">技能等級與魔力</button>
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-feats">戰鬥特技與魔法筆記</button>
-          <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-equip">武器防具與裝飾品</button>
+          <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-equip">裝備欄位（武器／防具／飾品）</button>
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-runner">跑團檢定與冒險日誌</button>
         </div>
 
@@ -908,6 +1281,7 @@ const CONSOLE_TEMPLATE = `
               <optgroup label="戰士系 (經驗表 A/B)">
                 <option value="戰士|A">戰士 (表A)</option>
                 <option value="拳鬥士|A">拳鬥士 (表A)</option>
+                <option value="舞鬥士|A">舞鬥士 (表A / 特技+1)</option>
                 <option value="輕戰士|B">輕戰士 (表B)</option>
                 <option value="射手|B">射手 (表B)</option>
                 <option value="生命工匠|A">生命工匠 (表A)</option>
@@ -960,20 +1334,43 @@ const CONSOLE_TEMPLATE = `
         </div>
 
         <div class="sw25-cc-pane" id="cc-pane-tab-feats">
+          <div class="sw25-cc-feat-box">
+            <h3>
+              <span>⚔️ 戰鬥特技欄位（選擇習得＋技能自動習得）</span>
+              <span class="sw25-cc-badge" id="cc-feat-slot-badge">已學 0 / 上限 1 格</span>
+            </h3>
+
+            <div id="cc-auto-feats-wrap" style="margin-bottom:12px;"></div>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px; margin-bottom:8px;">
+              <input type="text" id="cc-feat-name" placeholder="特技名稱 (如: 魔法擴大/數)" />
+              <input type="text" id="cc-feat-req" placeholder="學習限制/條件 (如: 冒險者Lv.3 / 舞鬥士Lv.1)" />
+              <input type="text" id="cc-feat-cost" placeholder="消耗/宣言 (如: 宣言 / MP 5)" />
+              <input type="text" id="cc-feat-range" placeholder="對象/限制備註 (如: 不可與○○並用)" />
+            </div>
+            <div style="display:flex; gap:8px; margin-bottom:10px; align-items:stretch;">
+              <input type="text" id="cc-feat-desc" placeholder="特技效果說明..." style="flex:1;" />
+              <button type="button" class="primary sm" id="cc-btn-add-feat">＋ 加入戰鬥特技</button>
+              <button type="button" class="primary sm" id="cc-btn-save-feat" style="display:none;">儲存特技</button>
+              <button type="button" class="sm" id="cc-btn-cancel-feat" style="display:none;">取消</button>
+            </div>
+            <div id="cc-feats-list"></div>
+          </div>
+
+          <h3><span>📖 魔法／咒歌／練技筆記</span></h3>
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:8px; margin-bottom:10px;">
             <select id="cc-ability-kind">
-              <option value="feats">戰鬥特技</option>
               <option value="spells">魔法 / 咒詛 / 深智</option>
               <option value="songs">咒歌 / 鼓咆 / 闘理</option>
               <option value="enhancements">練技 / 賦術 / 騎藝</option>
             </select>
-            <input type="text" id="cc-ability-name" placeholder="名稱 (如: 魔法擴大/數)" />
+            <input type="text" id="cc-ability-name" placeholder="名稱 (如: 詛咒箭 / 生命之歌)" />
             <input type="text" id="cc-ability-cost" placeholder="消耗/條件 (如: MP 5 / 宣言)" />
             <input type="text" id="cc-ability-range" placeholder="射程/對象 (如: 2(20m)/1體)" />
           </div>
           <div style="display:flex; gap:8px; margin-bottom:12px; align-items:stretch;">
             <textarea id="cc-ability-desc" rows="2" placeholder="效果說明或威力表..." style="flex:1;"></textarea>
-            <button type="button" class="primary" id="cc-btn-add-ability">加入卡片</button>
+            <button type="button" class="primary" id="cc-btn-add-ability">加入筆記</button>
             <button type="button" class="primary" id="cc-btn-save-ability" style="display:none;">儲存修改</button>
             <button type="button" id="cc-btn-cancel-ability" style="display:none;">取消</button>
           </div>
@@ -981,44 +1378,89 @@ const CONSOLE_TEMPLATE = `
         </div>
 
         <div class="sw25-cc-pane" id="cc-pane-tab-equip">
-          <h3>防具與盾牌</h3>
-          <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap:8px; margin-bottom:12px; align-items:end;">
-            <div class="sw25-cc-field"><label>鎧甲名稱</label><input type="text" id="cc-eq-armor-name" /></div>
-            <div class="sw25-cc-field"><label>必筋</label><input type="number" id="cc-eq-armor-req" /></div>
-            <div class="sw25-cc-field"><label>迴避修正</label><input type="number" id="cc-eq-armor-eva" /></div>
-            <div class="sw25-cc-field"><label>防護點</label><input type="number" id="cc-eq-armor-def" /></div>
+          <h3>
+            <span>防具與盾牌欄位</span>
+            <span class="sw25-cc-badge good" id="cc-eq-defense-summary">防護點：0 ｜ 迴避修正：+0</span>
+          </h3>
 
-            <div class="sw25-cc-field"><label>盾牌名稱</label><input type="text" id="cc-eq-shield-name" /></div>
-            <div class="sw25-cc-field"><label>必筋</label><input type="number" id="cc-eq-shield-req" /></div>
-            <div class="sw25-cc-field"><label>迴避修正</label><input type="number" id="cc-eq-shield-eva" /></div>
-            <div class="sw25-cc-field"><label>防護點</label><input type="number" id="cc-eq-shield-def" /></div>
+          <div class="sw25-cc-equip-box" id="cc-armor-box">
+            <div class="sw25-cc-equip-grid">
+              <div class="sw25-cc-field">
+                <label>鎧甲狀態</label>
+                <label style="display:flex; align-items:center; gap:6px; color:var(--cc-text); font-size:0.84rem; padding:6px 0; cursor:pointer;">
+                  <input type="checkbox" id="cc-eq-armor-equipped" /> 裝備中
+                </label>
+              </div>
+              <div class="sw25-cc-field"><label>鎧甲名稱</label><input type="text" id="cc-eq-armor-name" placeholder="例：鎖子甲 / 軟皮甲" /></div>
+              <div class="sw25-cc-field"><label>必筋</label><input type="number" id="cc-eq-armor-req" /></div>
+              <div class="sw25-cc-field"><label>迴避修正</label><input type="number" id="cc-eq-armor-eva" /></div>
+              <div class="sw25-cc-field"><label>防護點</label><input type="number" id="cc-eq-armor-def" /></div>
+            </div>
           </div>
 
-          <h3>武器列表</h3>
+          <div class="sw25-cc-equip-box" id="cc-shield-box">
+            <div class="sw25-cc-equip-grid">
+              <div class="sw25-cc-field">
+                <label>盾牌狀態</label>
+                <label style="display:flex; align-items:center; gap:6px; color:var(--cc-text); font-size:0.84rem; padding:6px 0; cursor:pointer;">
+                  <input type="checkbox" id="cc-eq-shield-equipped" /> 裝備中
+                </label>
+              </div>
+              <div class="sw25-cc-field"><label>盾牌名稱</label><input type="text" id="cc-eq-shield-name" placeholder="例：小圓盾 / 塔盾" /></div>
+              <div class="sw25-cc-field"><label>必筋</label><input type="number" id="cc-eq-shield-req" /></div>
+              <div class="sw25-cc-field"><label>迴避修正</label><input type="number" id="cc-eq-shield-eva" /></div>
+              <div class="sw25-cc-field"><label>防護點</label><input type="number" id="cc-eq-shield-def" /></div>
+            </div>
+          </div>
+
+          <h3>武器欄位（右手／左手／雙手武裝）</h3>
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
-            <input type="text" id="cc-wp-name" placeholder="武器名稱" style="flex:1; min-width:120px;" />
-            <input type="number" id="cc-wp-req" placeholder="必筋" style="width:70px;" />
-            <input type="number" id="cc-wp-hit" placeholder="命中修正" style="width:82px;" />
-            <input type="number" id="cc-wp-pow" placeholder="威力" style="width:70px;" />
-            <input type="number" id="cc-wp-crit" placeholder="C值" value="10" style="width:65px;" />
-            <input type="number" id="cc-wp-dmg" placeholder="追加傷害" style="width:82px;" />
-            <button type="button" class="primary sm" id="cc-btn-add-wp">新增武器</button>
+            <select id="cc-wp-usage" style="width:76px;" title="用法">
+              <option value="1H">1H</option>
+              <option value="2H">2H</option>
+              <option value="1H/2H">1H/2H</option>
+              <option value="投擲">投擲</option>
+            </select>
+            <input type="text" id="cc-wp-name" placeholder="武器名稱 (如: 長劍)" style="flex:1; min-width:120px;" />
+            <input type="number" id="cc-wp-req" placeholder="必筋" style="width:68px;" />
+            <input type="number" id="cc-wp-hit" placeholder="命中修正" style="width:80px;" />
+            <input type="number" id="cc-wp-pow" placeholder="威力" style="width:68px;" />
+            <input type="number" id="cc-wp-crit" placeholder="C值" value="10" style="width:62px;" />
+            <input type="number" id="cc-wp-dmg" placeholder="追加傷害" style="width:80px;" />
+            <button type="button" class="primary sm" id="cc-btn-add-wp">＋ 新增武器</button>
           </div>
-          <table style="margin-bottom:14px;">
-            <thead>
-              <tr><th class="left">武器</th><th>必筋</th><th>命中修正</th><th>威力</th><th>C值</th><th>追加傷害</th><th>操作</th></tr>
-            </thead>
-            <tbody id="cc-weapons-tbody"></tbody>
-          </table>
+          <div style="overflow-x:auto; margin-bottom:14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>裝備</th>
+                  <th>用法</th>
+                  <th class="left">武器名稱</th>
+                  <th>必筋</th>
+                  <th>命中修正</th>
+                  <th>威力</th>
+                  <th>C值</th>
+                  <th>追加傷害</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="cc-weapons-tbody"></tbody>
+            </table>
+          </div>
 
-          <h3>裝飾品與隨身道具</h3>
-          <div style="display:flex; gap:6px; margin-bottom:8px;">
-            <input type="text" id="cc-acc-slot" placeholder="部位 (如: 耳/頭/手)" style="width:120px;" />
-            <input type="text" id="cc-acc-name" placeholder="名稱 (如: 蝙蝠耳環)" style="flex:1;" />
-            <input type="text" id="cc-acc-note" placeholder="效果備註" style="flex:2;" />
-            <button type="button" class="primary sm" id="cc-btn-add-acc">新增</button>
+          <h3>
+            <span>裝飾品欄位（頭／臉／耳／首／背／右手／左手／腰／足／其他）</span>
+            <span class="sw25-cc-badge" id="cc-acc-count-badge">已裝備：0 項</span>
+          </h3>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+            <select id="cc-acc-slot" style="width:92px;">
+              ${ACCESSORY_SLOTS.map(s => `<option value="${s}">${s}</option>`).join('')}
+            </select>
+            <input type="text" id="cc-acc-name" placeholder="飾品名稱 (如: 蝙蝠耳環 / 智慧指環)" style="flex:1; min-width:140px;" />
+            <input type="text" id="cc-acc-note" placeholder="效果備註 (如: 知力+1 / 聽覺判定+1)" style="flex:2; min-width:160px;" />
+            <button type="button" class="primary sm" id="cc-btn-add-acc">＋ 加入飾品欄</button>
           </div>
-          <div id="cc-acc-list"></div>
+          <div class="sw25-cc-slot-grid" id="cc-acc-list"></div>
         </div>
 
         <div class="sw25-cc-pane" id="cc-pane-tab-runner">
@@ -1027,6 +1469,7 @@ const CONSOLE_TEMPLATE = `
             <button type="button" class="primary sm" data-cc-roll="2d">🎲 2D 擲骰</button>
             <button type="button" class="sm" data-cc-roll="life">🛡️ 生命抵抗力</button>
             <button type="button" class="sm" data-cc-roll="mind">🧠 精神抵抗力</button>
+            <button type="button" class="sm" data-cc-roll="evasion">💨 迴避力判定</button>
             <button type="button" class="sm" data-cc-roll="init">⚡ 先制判定</button>
             <button type="button" class="sm" data-cc-roll="magic">✨ 最高魔力行使</button>
             <div style="display:flex; gap:4px; align-items:center;">
@@ -1089,6 +1532,23 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (box) box.innerHTML = logHistoryHtml.join('');
   };
 
+  let editingFeatIdx = null;
+
+  const resetFeatForm = () => {
+    editingFeatIdx = null;
+    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-range', 'cc-feat-desc'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    const addBtn = document.getElementById('cc-btn-add-feat');
+    const saveBtn = document.getElementById('cc-btn-save-feat');
+    const cancelBtn = document.getElementById('cc-btn-cancel-feat');
+    if (addBtn) addBtn.style.display = '';
+    if (saveBtn) saveBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    renderFeatsSection();
+  };
+
   const resetAbilityForm = () => {
     editingCard = null;
     ['cc-ability-name', 'cc-ability-cost', 'cc-ability-range', 'cc-ability-desc'].forEach(id => {
@@ -1111,11 +1571,91 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     updateUI();
   };
 
+  const renderFeatsSection = () => {
+    const listEl = document.getElementById('cc-feats-list');
+    const autoWrapEl = document.getElementById('cc-auto-feats-wrap');
+    const badgeEl = document.getElementById('cc-feat-slot-badge');
+    if (!listEl || !badgeEl) return;
+
+    const feats = (currentChar.feats || []).map(normalizeAbilityCardItem);
+    const autoFeats = currentChar.computed?.autoFeats || [];
+    const dancerBonus = currentChar.computed?.dancerBonusSlot || 0;
+    const maxSlots = currentChar.computed?.featMaxSlots ?? getMaxFeatSlots(currentChar.computed?.adventurerLevel ?? 0, currentChar.skills);
+    const isOverLimit = feats.length > maxSlots;
+
+    const dancerHint = dancerBonus > 0 ? '（含舞鬥士+1）' : '';
+    const autoHint = autoFeats.length > 0 ? `＋自動 ${autoFeats.length}` : '';
+    badgeEl.textContent = `自選 ${feats.length} / 上限 ${maxSlots} 格${dancerHint} ${autoHint}`;
+    badgeEl.className = `sw25-cc-badge ${isOverLimit ? 'danger' : (feats.length === maxSlots ? 'warn' : 'good')}`;
+
+    if (autoWrapEl) {
+      if (autoFeats.length === 0) {
+        autoWrapEl.innerHTML = '';
+      } else {
+        autoWrapEl.innerHTML = `
+          <div style="font-size:0.8rem; color:var(--cc-cyan); font-weight:700; margin-bottom:6px;">
+            ✨ 技能等級達標自動習得特技（不占用自選格數）
+          </div>
+          ${autoFeats.map(af => `
+            <div class="sw25-cc-auto-feat-card">
+              <div class="sw25-cc-ability-top">
+                <div>
+                  <span class="sw25-cc-badge">自動：${escapeHtml(af.autoSource)}</span>
+                  <strong style="margin-left:6px;">${escapeHtml(af.name)}</strong>
+                </div>
+                <span style="font-size:0.75rem; color:var(--cc-muted);">${escapeHtml(af.cost)}</span>
+              </div>
+              <div class="sw25-cc-ability-meta">條件：${escapeHtml(af.req)} ${af.range ? `｜ 範圍：${escapeHtml(af.range)}` : ''}</div>
+              <div class="sw25-cc-ability-desc">${escapeHtml(af.desc)}</div>
+            </div>
+          `).join('')}
+        `;
+      }
+    }
+
+    if (feats.length === 0) {
+      listEl.innerHTML = `<div style="color:var(--cc-muted); font-size:0.83rem;">尚未登錄自選戰鬥特技（冒險者 Lv.${currentChar.computed.adventurerLevel}${dancerHint} 可自選 ${maxSlots} 個戰鬥特技）。</div>`;
+      return;
+    }
+
+    listEl.innerHTML = feats.map((ft, idx) => {
+      const isEditing = editingFeatIdx === idx;
+      const check = evaluateFeatRequirement(ft.req, currentChar);
+      let reqBadge = '';
+      if (check.status === 'unmet') {
+        reqBadge = `<span class="sw25-cc-badge danger" style="margin-left:6px;">限制未符：${escapeHtml(check.text)}</span>`;
+      } else if (check.status === 'met') {
+        reqBadge = `<span class="sw25-cc-badge good" style="margin-left:6px;">${escapeHtml(check.text)}</span>`;
+      }
+      return `
+        <div class="sw25-cc-ability-card ${isEditing ? 'editing' : ''}">
+          <div class="sw25-cc-ability-top">
+            <div>
+              <span class="sw25-cc-badge warn">#${idx + 1}</span>
+              <strong style="margin-left:6px;">${escapeHtml(ft.name)}</strong>
+              ${reqBadge}
+              ${isEditing ? '<span class="sw25-cc-badge" style="margin-left:6px;">編輯中</span>' : ''}
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="sm" data-cc-edit-feat="${idx}">編輯</button>
+              <button type="button" class="danger sm" data-cc-del-feat="${idx}">移除</button>
+            </div>
+          </div>
+          <div class="sw25-cc-ability-meta">
+            ${ft.req ? `<strong>學習限制：</strong>${escapeHtml(ft.req)}` : '<strong>學習限制：</strong>無'}
+            ${ft.cost ? ` ｜ 消耗/宣言：${escapeHtml(ft.cost)}` : ''}
+            ${ft.range ? ` ｜ 對象/備註：${escapeHtml(ft.range)}` : ''}
+          </div>
+          ${ft.desc ? `<div class="sw25-cc-ability-desc">${escapeHtml(ft.desc)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  };
+
   const renderAbilityCards = () => {
     const listEl = document.getElementById('cc-ability-cards-list');
     if (!listEl) return;
     const items = [];
-    (currentChar.feats || []).forEach((f, idx) => items.push({ kind: 'feats', kindLabel: '戰鬥特技', idx, ...normalizeAbilityCardItem(f) }));
     ['spells', 'songs', 'enhancements'].forEach(k => {
       const labelMap = { spells: '魔法', songs: '咒歌/鼓咆/闘理', enhancements: '練技/賦術/騎藝' };
       (currentChar.learnedAbilities?.[k] || []).forEach((item, idx) => {
@@ -1124,7 +1664,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     });
 
     if (items.length === 0) {
-      listEl.innerHTML = `<div style="color:var(--cc-muted); font-size:0.84rem;">尚未加入任何戰鬥特技或習得技能卡（也可在「技能檢索」卡片按「角色卡」一鍵加入）。</div>`;
+      listEl.innerHTML = `<div style="color:var(--cc-muted); font-size:0.84rem;">尚未加入任何魔法／咒歌／練技筆記（也可在「技能檢索」卡片按「角色卡」一鍵加入）。</div>`;
       return;
     }
 
@@ -1173,7 +1713,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     expBadge.textContent = `剩餘 EXP: ${rem}`;
     expBadge.className = `sw25-cc-badge ${rem < 0 ? 'warn' : 'good'}`;
 
-    const { currentHp, maxHp, currentMp, maxMp, lifeResist, mindResist, initiative, moveNormal, moveFull } = currentChar.derived;
+    const { currentHp, maxHp, currentMp, maxMp, lifeResist, mindResist, initiative, moveNormal, moveFull, evasionBase, totalDefense } = currentChar.derived;
     document.getElementById('cc-hp-display').textContent = `${currentHp} / ${maxHp}`;
     document.getElementById('cc-hp-bar').style.width = `${maxHp > 0 ? Math.min(100, (currentHp / maxHp) * 100) : 0}%`;
     document.getElementById('cc-mp-display').textContent = `${currentMp} / ${maxMp}`;
@@ -1182,6 +1722,8 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     document.getElementById('cc-drv-life').textContent = lifeResist;
     document.getElementById('cc-drv-mind').textContent = mindResist;
     document.getElementById('cc-drv-init').textContent = initiative;
+    document.getElementById('cc-drv-evasion').textContent = evasionBase;
+    document.getElementById('cc-drv-defense').textContent = totalDefense;
     document.getElementById('cc-drv-move').textContent = `${moveNormal}m`;
     document.getElementById('cc-drv-full').textContent = `${moveFull}m`;
     document.getElementById('cc-drv-wizard').textContent = currentChar.computed.wizardLevel > 0
@@ -1235,9 +1777,14 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     document.getElementById('cc-skills-tbody').innerHTML = currentChar.skills.map((sk, idx) => {
       const cost = getExpCost(sk.expTable, sk.level);
       const isMagic = MAGIC_SKILLS.has(sk.name);
+      const isDancer = (sk.name === '舞鬥士' || sk.name === '舞踏家') && sk.level >= 1;
       return `
         <tr>
-          <td class="left"><strong>${escapeHtml(sk.name)}</strong> ${isMagic ? '<span class="sw25-cc-badge">魔法</span>' : ''}</td>
+          <td class="left">
+            <strong>${escapeHtml(sk.name)}</strong>
+            ${isMagic ? '<span class="sw25-cc-badge">魔法</span>' : ''}
+            ${isDancer ? '<span class="sw25-cc-badge warn">特技+1</span>' : ''}
+          </td>
           <td>
             <select data-cc-sk-idx="${idx}" data-cc-sk-field="expTable">
               <option value="A" ${sk.expTable === 'A' ? 'selected' : ''}>A</option>
@@ -1252,20 +1799,32 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       `;
     }).join('');
 
+    renderFeatsSection();
     renderAbilityCards();
 
-    document.getElementById('cc-eq-armor-name').value = currentChar.equipment.armor?.name || '';
-    document.getElementById('cc-eq-armor-req').value = currentChar.equipment.armor?.reqStr ?? 0;
-    document.getElementById('cc-eq-armor-eva').value = currentChar.equipment.armor?.evasionMod ?? 0;
-    document.getElementById('cc-eq-armor-def').value = currentChar.equipment.armor?.defense ?? 0;
+    const armor = currentChar.equipment.armor;
+    const shield = currentChar.equipment.shield;
+    document.getElementById('cc-eq-armor-equipped').checked = armor.equipped !== false;
+    document.getElementById('cc-eq-armor-name').value = armor.name || '';
+    document.getElementById('cc-eq-armor-req').value = armor.reqStr ?? 0;
+    document.getElementById('cc-eq-armor-eva').value = armor.evasionMod ?? 0;
+    document.getElementById('cc-eq-armor-def').value = armor.defense ?? 0;
+    document.getElementById('cc-armor-box').classList.toggle('equipped', armor.equipped !== false && Boolean(armor.name));
 
-    document.getElementById('cc-eq-shield-name').value = currentChar.equipment.shield?.name || '';
-    document.getElementById('cc-eq-shield-req').value = currentChar.equipment.shield?.reqStr ?? 0;
-    document.getElementById('cc-eq-shield-eva').value = currentChar.equipment.shield?.evasionMod ?? 0;
-    document.getElementById('cc-eq-shield-def').value = currentChar.equipment.shield?.defense ?? 0;
+    document.getElementById('cc-eq-shield-equipped').checked = shield.equipped !== false;
+    document.getElementById('cc-eq-shield-name').value = shield.name || '';
+    document.getElementById('cc-eq-shield-req').value = shield.reqStr ?? 0;
+    document.getElementById('cc-eq-shield-eva').value = shield.evasionMod ?? 0;
+    document.getElementById('cc-eq-shield-def').value = shield.defense ?? 0;
+    document.getElementById('cc-shield-box').classList.toggle('equipped', shield.equipped !== false && Boolean(shield.name));
+
+    const totalEvaMod = (armor.equipped ? toSafeNumber(armor.evasionMod, 0) : 0) + (shield.equipped ? toSafeNumber(shield.evasionMod, 0) : 0);
+    document.getElementById('cc-eq-defense-summary').textContent = `防護點：${totalDefense} ｜ 裝備迴避修正：${totalEvaMod >= 0 ? '+' + totalEvaMod : totalEvaMod}`;
 
     document.getElementById('cc-weapons-tbody').innerHTML = (currentChar.equipment.weapons || []).map((w, idx) => `
       <tr>
+        <td><input type="checkbox" data-cc-wp-eq="${idx}" ${w.equipped !== false ? 'checked' : ''} /></td>
+        <td><span class="sw25-cc-badge">${escapeHtml(w.usage || '1H')}</span></td>
         <td class="left"><strong>${escapeHtml(w.name)}</strong></td>
         <td>${w.reqStr}</td>
         <td>${w.hitMod >= 0 ? '+' + w.hitMod : w.hitMod}</td>
@@ -1276,12 +1835,27 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       </tr>
     `).join('');
 
-    document.getElementById('cc-acc-list').innerHTML = (currentChar.equipment.accessories || []).map((a, idx) => `
-      <div class="sw25-cc-buff-item">
-        <span><span class="sw25-cc-badge">${escapeHtml(a.slot || '裝飾')}</span> <strong>${escapeHtml(a.name)}</strong> — ${escapeHtml(a.note || '')}</span>
-        <button type="button" class="danger sm" data-cc-del-acc="${idx}">刪除</button>
-      </div>
-    `).join('');
+    const accessories = currentChar.equipment.accessories || [];
+    const equippedAccCount = accessories.filter(a => a.equipped !== false).length;
+    document.getElementById('cc-acc-count-badge').textContent = `已裝備：${equippedAccCount} / ${accessories.length} 項`;
+
+    document.getElementById('cc-acc-list').innerHTML = accessories.length === 0
+      ? `<div style="color:var(--cc-muted); font-size:0.83rem; grid-column:1/-1;">尚未裝備任何裝飾品，可從上方新增或於「道具檢索」一鍵加入。</div>`
+      : accessories.map((a, idx) => `
+        <div class="sw25-cc-slot-card ${a.equipped !== false ? 'equipped' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <input type="checkbox" data-cc-acc-eq="${idx}" ${a.equipped !== false ? 'checked' : ''} title="切換裝備狀態" />
+              <select data-cc-acc-slot-edit="${idx}" style="padding:2px 6px; font-size:0.76rem;">
+                ${ACCESSORY_SLOTS.map(s => `<option value="${s}" ${a.slot === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+              <strong style="font-size:0.86rem;">${escapeHtml(a.name)}</strong>
+            </div>
+            <button type="button" class="danger sm" data-cc-del-acc="${idx}">移除</button>
+          </div>
+          ${a.note ? `<div style="font-size:0.78rem; color:var(--cc-muted); padding-left:22px;">${escapeHtml(a.note)}</div>` : ''}
+        </div>
+      `).join('');
 
     const logBox = document.getElementById('cc-dice-log');
     if (logBox) logBox.innerHTML = logHistoryHtml.join('');
@@ -1294,6 +1868,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
   document.getElementById('cc-char-select').addEventListener('change', e => {
     localStorage.setItem(ACTIVE_ID_KEY, e.target.value);
     currentChar = getActiveCharacter();
+    resetFeatForm();
     resetAbilityForm();
     updateUI();
   });
@@ -1303,6 +1878,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     const created = createDefaultCharacter({ meta: { name: name.trim() } });
     currentChar = saveCharacter(created, { resetCurrentPools: true });
+    resetFeatForm();
     resetAbilityForm();
     updateUI();
   });
@@ -1312,6 +1888,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     delete copy.id;
     copy.meta.name = `${currentChar.meta.name} (複製)`;
     currentChar = saveCharacter(createDefaultCharacter(copy), { resetCurrentPools: true });
+    resetFeatForm();
     resetAbilityForm();
     updateUI();
   });
@@ -1323,6 +1900,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     saveAllCharacters(list);
     localStorage.setItem(ACTIVE_ID_KEY, list[0].id);
     currentChar = getActiveCharacter();
+    resetFeatForm();
     resetAbilityForm();
     updateUI();
   });
@@ -1423,12 +2001,83 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     commit(c => { c.skills.splice(Number(idx), 1); }, { syncMaxDelta: true });
   });
 
+  document.getElementById('cc-btn-add-feat').addEventListener('click', () => {
+    const name = document.getElementById('cc-feat-name').value.trim();
+    if (!name) return;
+    const maxSlots = currentChar.computed?.featMaxSlots ?? getMaxFeatSlots(currentChar.computed?.adventurerLevel ?? 0, currentChar.skills);
+    const curCount = (currentChar.feats || []).length;
+    if (curCount >= maxSlots) {
+      if (!confirm(`目前已學 ${curCount} 個自選戰鬥特技，已達目前上限（${maxSlots} 格）。仍要強制加入嗎？`)) return;
+    }
+    const entry = {
+      name,
+      req: document.getElementById('cc-feat-req').value.trim(),
+      cost: document.getElementById('cc-feat-cost').value.trim(),
+      range: document.getElementById('cc-feat-range').value.trim(),
+      desc: document.getElementById('cc-feat-desc').value.trim()
+    };
+    commit(c => {
+      c.feats.push(entry);
+    }, {});
+    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-range', 'cc-feat-desc'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  });
+
+  document.getElementById('cc-btn-save-feat').addEventListener('click', () => {
+    if (editingFeatIdx === null) return;
+    const name = document.getElementById('cc-feat-name').value.trim();
+    if (!name) return;
+    const updatedFeat = {
+      name,
+      req: document.getElementById('cc-feat-req').value.trim(),
+      cost: document.getElementById('cc-feat-cost').value.trim(),
+      range: document.getElementById('cc-feat-range').value.trim(),
+      desc: document.getElementById('cc-feat-desc').value.trim()
+    };
+    const idxToSave = editingFeatIdx;
+    resetFeatForm();
+    commit(c => {
+      c.feats[idxToSave] = updatedFeat;
+    }, {});
+  });
+
+  document.getElementById('cc-btn-cancel-feat').addEventListener('click', resetFeatForm);
+
+  document.getElementById('cc-feats-list').addEventListener('click', e => {
+    const editIdx = e.target.dataset.ccEditFeat;
+    if (editIdx !== undefined) {
+      const idx = Number(editIdx);
+      const target = normalizeAbilityCardItem(currentChar.feats?.[idx]);
+      editingFeatIdx = idx;
+      document.getElementById('cc-feat-name').value = target.name || '';
+      document.getElementById('cc-feat-req').value = target.req || '';
+      document.getElementById('cc-feat-cost').value = target.cost || '';
+      document.getElementById('cc-feat-range').value = target.range || '';
+      document.getElementById('cc-feat-desc').value = target.desc || '';
+      document.getElementById('cc-btn-add-feat').style.display = 'none';
+      document.getElementById('cc-btn-save-feat').style.display = '';
+      document.getElementById('cc-btn-cancel-feat').style.display = '';
+      renderFeatsSection();
+      document.getElementById('cc-feat-name').focus();
+      return;
+    }
+
+    const delIdx = e.target.dataset.ccDelFeat;
+    if (delIdx !== undefined) {
+      const idx = Number(delIdx);
+      if (editingFeatIdx === idx) resetFeatForm();
+      commit(c => { c.feats.splice(idx, 1); }, {});
+    }
+  });
+
   document.getElementById('cc-btn-add-ability').addEventListener('click', () => {
     const kind = document.getElementById('cc-ability-kind').value;
     const name = document.getElementById('cc-ability-name').value.trim();
     if (!name) return;
     const entry = {
       name,
+      req: '',
       cost: document.getElementById('cc-ability-cost').value.trim(),
       range: document.getElementById('cc-ability-range').value.trim(),
       desc: document.getElementById('cc-ability-desc').value.trim()
@@ -1448,6 +2097,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     const updatedEntry = {
       name,
+      req: '',
       cost: document.getElementById('cc-ability-cost').value.trim(),
       range: document.getElementById('cc-ability-range').value.trim(),
       desc: document.getElementById('cc-ability-desc').value.trim()
@@ -1470,7 +2120,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     const editKind = e.target.dataset.ccEditKind;
     const editIdx = e.target.dataset.ccEditIdx;
     if (editKind !== undefined && editIdx !== undefined) {
-      const arr = editKind === 'feats' ? currentChar.feats : currentChar.learnedAbilities[editKind];
+      const arr = currentChar.learnedAbilities[editKind];
       const target = normalizeAbilityCardItem(arr?.[Number(editIdx)]);
       editingCard = { kind: editKind, idx: Number(editIdx) };
       document.getElementById('cc-ability-kind').value = editKind;
@@ -1498,6 +2148,9 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
   });
 
   ['armor', 'shield'].forEach(part => {
+    document.getElementById(`cc-eq-${part}-equipped`).addEventListener('change', e => {
+      commit(c => { c.equipment[part].equipped = e.target.checked; }, {});
+    });
     document.getElementById(`cc-eq-${part}-name`).addEventListener('change', e => {
       commit(c => { c.equipment[part].name = e.target.value; }, {});
     });
@@ -1518,14 +2171,24 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     commit(c => {
       c.equipment.weapons.push({
         name,
+        usage: document.getElementById('cc-wp-usage').value || '1H',
         reqStr: toSafeNumber(document.getElementById('cc-wp-req').value, 0),
         hitMod: toSafeNumber(document.getElementById('cc-wp-hit').value, 0),
         power: toSafeNumber(document.getElementById('cc-wp-pow').value, 10),
         crit: toSafeNumber(document.getElementById('cc-wp-crit').value, 10),
-        extraDmg: toSafeNumber(document.getElementById('cc-wp-dmg').value, 0)
+        extraDmg: toSafeNumber(document.getElementById('cc-wp-dmg').value, 0),
+        equipped: true
       });
     }, {});
     document.getElementById('cc-wp-name').value = '';
+  });
+
+  document.getElementById('cc-weapons-tbody').addEventListener('change', e => {
+    const eqIdx = e.target.dataset.ccWpEq;
+    if (eqIdx === undefined) return;
+    commit(c => {
+      c.equipment.weapons[Number(eqIdx)].equipped = e.target.checked;
+    }, {});
   });
 
   document.getElementById('cc-weapons-tbody').addEventListener('click', e => {
@@ -1539,12 +2202,30 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     commit(c => {
       c.equipment.accessories.push({
-        slot: document.getElementById('cc-acc-slot').value.trim() || '裝飾',
+        slot: document.getElementById('cc-acc-slot').value || '其他',
         name,
-        note: document.getElementById('cc-acc-note').value.trim()
+        note: document.getElementById('cc-acc-note').value.trim(),
+        equipped: true
       });
     }, {});
-    ['cc-acc-slot', 'cc-acc-name', 'cc-acc-note'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('cc-acc-name').value = '';
+    document.getElementById('cc-acc-note').value = '';
+  });
+
+  document.getElementById('cc-acc-list').addEventListener('change', e => {
+    const eqIdx = e.target.dataset.ccAccEq;
+    if (eqIdx !== undefined) {
+      commit(c => {
+        c.equipment.accessories[Number(eqIdx)].equipped = e.target.checked;
+      }, {});
+      return;
+    }
+    const slotIdx = e.target.dataset.ccAccSlotEdit;
+    if (slotIdx !== undefined) {
+      commit(c => {
+        c.equipment.accessories[Number(slotIdx)].slot = e.target.value;
+      }, {});
+    }
   });
 
   document.getElementById('cc-acc-list').addEventListener('click', e => {
@@ -1570,6 +2251,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       if (mode === '2d') roll2D(0, '2D 擲骰');
       if (mode === 'life') roll2D(currentChar.derived.lifeResist, '生命抵抗力判定');
       if (mode === 'mind') roll2D(currentChar.derived.mindResist, '精神抵抗力判定');
+      if (mode === 'evasion') roll2D(currentChar.derived.evasionBase, '迴避力判定');
       if (mode === 'init') roll2D(currentChar.derived.initiative, '先制判定');
       if (mode === 'magic') {
         const maxMag = currentChar.skills.filter(s => MAGIC_SKILLS.has(s.name)).reduce((m, s) => Math.max(m, s.magicPower), 0);
@@ -1621,6 +2303,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     saveAllCharacters(Array.from(map.values()));
     localStorage.setItem(ACTIVE_ID_KEY, lastId);
     currentChar = getActiveCharacter();
+    resetFeatForm();
     resetAbilityForm();
     updateUI();
     return importedCount;
