@@ -2497,7 +2497,7 @@ export const ruleSections = [
               <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">特技裁定規則</span>
             </div>
             <p class="text-xs text-zinc-400 leading-relaxed">
-              官方關於《庇護》、《魔法擴大/全》、《多重動作》以及複數同時攻擊特技組合的詳細裁定與限制。
+              官方關於習得格限制、替換型特技、特技分類與風險（Risk）、《庇護》、《魔法擴大/全》、《多重動作》以及複數同時攻擊特技組合的詳細裁定與限制。
             </p>
           </div>
   
@@ -2556,6 +2556,34 @@ export const ruleSections = [
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+            <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+              <i class="fa-solid fa-layer-group mr-2 text-amber-500"></i>3. 習得格、替換型（Ⅰ/Ⅱ/Ⅲ）、特技類別與風險（Risk）細則
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-amber-400 text-sm">【選擇習得 vs. 自動習得與習得格】</div>
+                <p>冒險者等級每逢奇數上升獲得 1 個「習得格」（Lv.1→1、Lv.3→2、Lv.5→3…），<strong>不可保留</strong>，須於獲得當下選滿且同一特技不可重複習得。特定技能達標自動獲得的「自動習得戰鬥特技」不占習得格，也不可用習得格選擇習得。</p>
+                <p class="text-zinc-400">前提判定在所有技能與等級成長完成後進行；技能前提若以「or」並列，滿足其中 1 項即可；同時具備等級與其他特技前提時須全部滿足。</p>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-amber-400 text-sm">【替換型特技（Ⅰ / Ⅱ / Ⅲ）規則】</div>
+                <p>先以習得格學《～Ⅰ》，後續《～Ⅱ》《～Ⅲ》改以<strong>原地替換</strong>取得，不額外消耗新習得格。替換僅在<strong>獲得新習得格（奇數冒險者等級）</strong>且符合條件時發生，<strong>新學當下不會立刻替換</strong>，且每次僅能逐階替換 1 級。</p>
+                <p class="text-zinc-400">說明文省略羅馬數字時多指系列整體；出現在「前提」中代表任一階段皆可滿足；若明確寫出《○○Ⅰ》則僅限該階段。</p>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-amber-400 text-sm">【常時／主動作／宣言特技分類】</div>
+                <p><strong>常時特技</strong>持續生效（替換型常時特技必要時可套用較低階效果）；<strong>主動作特技</strong>消耗主動作（原則每手番 1 次，除非有額外主動作）。</p>
+                <p class="text-zinc-400"><strong>宣言特技</strong>原則每手番限宣告 1 次：隨動作宣告者須於判定擲骰<strong>前</strong>宣告；持續 10 秒（1 輪）者持續至下次自己手番開始；標示「△」者可於戰鬥準備宣告，效果於自身首個手番開始時消滅。</p>
+              </div>
+              <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                <div class="font-bold text-amber-400 text-sm">【風險（Risk）、多重宣告與同名限制】</div>
+                <p>標示「風險」的減值持續 <strong>10 秒（1 輪，至下次自己手番開始）</strong>，即使效果僅限單次攻擊亦同；寫在「效果」中的減值則僅限該次判定。高階替換型特技可主動降階宣告。</p>
+                <p class="text-zinc-400">多重宣告能力（如《變幻自在》《符文大師》《戰鬥大師》）每回合手番開始時只能擇一生效。同名特技（含不同羅馬數字的替換型）於同一機會不疊加，不同機會可各自宣告；異名特技可疊加，且多次宣告時<strong>風險會累積</strong>。</p>
+              </div>
             </div>
           </div>
         </div>

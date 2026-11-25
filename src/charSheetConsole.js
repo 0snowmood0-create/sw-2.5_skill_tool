@@ -39,31 +39,57 @@ const SKILL_EXP_TABLE_MAP = {
   '天地使': 'B'
 };
 
-// 技能等級達標自動習得戰鬥特技規則
+// 技能等級達標自動習得能力／特技規則（不占用自選格數）
 const AUTO_FEATS_BY_SKILL = [
-  { skill: '拳鬥士', minLv: 1, name: '追加攻撃', req: '拳鬥士Lv.1 / 1H〈格闘〉', cost: '常時', range: '1H〈格闘〉近接', desc: '以 1H〈格闘〉武器近接攻撃時，可對同一目標再進行一次 1H〈格闘〉近接攻撃。' },
-  { skill: '拳鬥士', minLv: 7, name: '反擊', req: '拳鬥士Lv.7', cost: '宣言/特殊', range: '近接攻撃受擊時', desc: '受到近接攻撃時，可改以裝備武器的命中力判定與對方比拼達成值進行反擊。' },
-  { skill: '拳鬥士', minLv: 13, name: '戰鬥大師', req: '拳鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
-  { skill: '戰士', minLv: 7, name: '強韌', req: '戰士Lv.7', cost: '常時', range: '自身', desc: '最大 HP +15。' },
-  { skill: '戰士', minLv: 13, name: '戰鬥大師', req: '戰士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
-  { skill: '舞鬥士', minLv: 7, name: '舞流', req: '舞鬥士Lv.7', cost: '常時', range: '自身', desc: '擴大可進行迴避力判定對應的攻撃範圍（射撃1體、貫通、突破等依規則判定）。' },
-  { skill: '舞鬥士', minLv: 13, name: '戰鬥大師', req: '舞鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
-  { skill: '斥候', minLv: 5, name: '尋寶獵人', req: '斥候Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1。' },
-  { skill: '斥候', minLv: 7, name: '迅捷動作', req: '斥候Lv.7', cost: '常時', range: '先制奪取時', desc: '先制判定勝出時，第 1 回合可額外進行 1 次主動作。' },
-  { skill: '斥候', minLv: 9, name: '影步', req: '斥候Lv.9', cost: '常時', range: '自身移動', desc: '移動不受移動妨害影響，且可不經脫離準備直接脫離亂戰區。' },
-  { skill: '斥候', minLv: 12, name: '尋寶大師', req: '斥候Lv.12', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面再 +1。' },
-  { skill: '斥候', minLv: 15, name: '匠技', req: '斥候Lv.15', cost: '1次/判定', range: '斥候基準判定', desc: '使用斥候技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' },
-  { skill: '遊俠', minLv: 5, name: '生存本能', req: '遊俠Lv.5', cost: '1次/日', range: '自然環境抵抗', desc: '於自然環境進行生命／精神抵抗力判定前宣告，可不擲骰直接自動成功。' },
-  { skill: '遊俠', minLv: 7, name: '不屈', req: '遊俠Lv.7', cost: '常時', range: 'HP 歸 0 時', desc: 'HP 降至 0 時若生死判定成功，可不陷入昏迷繼續行動；失敗則死亡。' },
-  { skill: '遊俠', minLv: 9, name: '魔藥大師', req: '遊俠Lv.9', cost: '戰鬥準備/1次/R', range: '自身〈藥水〉', desc: '對自身使用〈藥水〉分類道具時，可改以戰鬥準備或補助動作使用。' },
-  { skill: '遊俠', minLv: 12, name: '縮地', req: '遊俠Lv.12', cost: '常時', range: '全力移動回合', desc: '進行全力移動的回合也可執行通常移動可做的動作（移動類別與迴避 -4 不變）。' },
-  { skill: '遊俠', minLv: 15, name: '跑射', req: '遊俠Lv.15', cost: '常時', range: '通常移動回合', desc: '進行通常移動的回合也可執行限制移動可做的動作（移動類別不變）。' },
-  { skill: '賢者', minLv: 5, name: '銳眼', req: '賢者Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1。' },
-  { skill: '賢者', minLv: 7, name: '弱點看破', req: '賢者Lv.7', cost: '常時', range: '魔物知識判定', desc: '以賢者技能進行魔物知識判定並達弱點值時，自身適用的弱點效果／增傷加倍。' },
-  { skill: '賢者', minLv: 9, name: '魔力節約', req: '賢者Lv.9', cost: '常時', range: '消耗 MP 時', desc: '魔法或能力消耗 MP 時可減免 1 點（最低消耗 1 點，於倍加前計算）。' },
-  { skill: '賢者', minLv: 12, name: '魔力耐性', req: '賢者Lv.12', cost: '常時', range: '受魔法傷害時', desc: '自身受到的所有魔法傷害常時 -5。' },
-  { skill: '賢者', minLv: 15, name: '賢者智慧', req: '賢者Lv.15', cost: '1次/判定', range: '賢者基準判定', desc: '使用賢者技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' }
+  { skill: '拳鬥士', minLv: 1, name: '追加攻撃', aliases: ['追加攻擊'], req: '拳鬥士Lv.1 / 1H〈格闘〉', cost: '常時', range: '1H〈格闘〉近接', desc: '以 1H〈格闘〉武器近接攻撃時，可對同一目標再進行一次 1H〈格闘〉近接攻撃。' },
+  { skill: '拳鬥士', minLv: 7, name: '反擊', aliases: [], req: '拳鬥士Lv.7', cost: '宣言/特殊', range: '近接攻撃受擊時', desc: '受到近接攻撃時，可改以裝備武器的命中力判定與對方比拼達成值進行反擊。' },
+  { skill: '拳鬥士', minLv: 13, name: '戰鬥大師', aliases: [], req: '拳鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '戰士', minLv: 7, name: '強韌', aliases: [], req: '戰士Lv.7', cost: '常時', range: '自身', desc: '最大 HP +15。' },
+  { skill: '戰士', minLv: 13, name: '戰鬥大師', aliases: [], req: '戰士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '舞鬥士', minLv: 7, name: '舞流', aliases: [], req: '舞鬥士Lv.7', cost: '常時', range: '自身', desc: '擴大可進行迴避力判定對應的攻撃範圍（射撃1體、貫通、突破等依規則判定）。' },
+  { skill: '舞鬥士', minLv: 13, name: '戰鬥大師', aliases: [], req: '舞鬥士Lv.13', cost: '常時', range: '自身', desc: '每回合可宣告 2 次宣言特技（同一動作不可重複宣告同一宣言特技）。' },
+  { skill: '斥候', minLv: 5, name: '尋寶獵人', aliases: [], req: '斥候Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1。' },
+  { skill: '斥候', minLv: 7, name: '迅捷動作', aliases: [], req: '斥候Lv.7', cost: '常時', range: '先制奪取時', desc: '先制判定勝出時，第 1 回合可額外進行 1 次主動作。' },
+  { skill: '斥候', minLv: 9, name: '影步', aliases: [], req: '斥候Lv.9', cost: '常時', range: '自身移動', desc: '移動不受移動妨害影響，且可不經脫離準備直接脫離亂戰區。' },
+  { skill: '斥候', minLv: 12, name: '尋寶大師', aliases: [], req: '斥候Lv.12', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面再 +1。' },
+  { skill: '斥候', minLv: 15, name: '匠技', aliases: [], req: '斥候Lv.15', cost: '1次/判定', range: '斥候基準判定', desc: '使用斥候技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' },
+  { skill: '遊俠', minLv: 5, name: '生存本能', aliases: [], req: '遊俠Lv.5', cost: '1次/日', range: '自然環境抵抗', desc: '於自然環境進行生命／精神抵抗力判定前宣告，可不擲骰直接自動成功。' },
+  { skill: '遊俠', minLv: 7, name: '不屈', aliases: [], req: '遊俠Lv.7', cost: '常時', range: 'HP 歸 0 時', desc: 'HP 降至 0 時若生死判定成功，可不陷入昏迷繼續行動；失敗則死亡。' },
+  { skill: '遊俠', minLv: 9, name: '魔藥大師', aliases: [], req: '遊俠Lv.9', cost: '戰鬥準備/1次/R', range: '自身〈藥水〉', desc: '對自身使用〈藥水〉分類道具時，可改以戰鬥準備或補助動作使用。' },
+  { skill: '遊俠', minLv: 12, name: '縮地', aliases: [], req: '遊俠Lv.12', cost: '常時', range: '全力移動回合', desc: '進行全力移動的回合也可執行通常移動可做的動作（移動類別與迴避 -4 不變）。' },
+  { skill: '遊俠', minLv: 15, name: '跑射', aliases: [], req: '遊俠Lv.15', cost: '常時', range: '通常移動回合', desc: '進行通常移動的回合也可執行限制移動可做的動作（移動類別不變）。' },
+  { skill: '賢者', minLv: 5, name: '銳眼', aliases: [], req: '賢者Lv.5', cost: '常時', range: '戰利品決定', desc: '決定戰利品時的骰面 +1（戰利品決定數值+1）。' },
+  { skill: '賢者', minLv: 7, name: '弱點看破', aliases: ['弱點識破'], req: '賢者Lv.7', cost: '常時', range: '魔物知識判定', desc: '以賢者技能進行魔物知識判定並達弱點值時，自身適用的弱點效果／增傷加倍（弱點效果2倍）。' },
+  { skill: '賢者', minLv: 9, name: '魔力節約', aliases: [], req: '賢者Lv.9', cost: '常時', range: '消耗 MP 時', desc: '魔法或能力消耗 MP 時可減免 1 點（最低消耗 1 點，於倍加前計算）。' },
+  { skill: '賢者', minLv: 12, name: '魔力耐性', aliases: [], req: '賢者Lv.12', cost: '常時', range: '受魔法傷害時', desc: '自身受到的所有魔法傷害常時 -5。' },
+  { skill: '賢者', minLv: 15, name: '賢者智慧', aliases: [], req: '賢者Lv.15', cost: '1次/判定', range: '賢者基準判定', desc: '使用賢者技能基準值進行行為判定時，確認 2D 骰面後可選擇重骰 1 次。' }
 ];
+
+// 僅用於「不占用自選格數」計算（允許使用者自由新增或保留這些卡片）
+const NON_SLOT_FEAT_NAMES = new Set(['銳眼', '弱點看破', '弱點識破']);
+
+function doesNotConsumeFeatSlot(name) {
+  return NON_SLOT_FEAT_NAMES.has(String(name || '').trim());
+}
+
+// 解析替換型（Ⅰ、Ⅱ、Ⅲ / I、II、III）特技名稱與階級
+const ROMAN_RANK_MAP = {
+  'Ⅰ': 1, 'I': 1, '１': 1, '1': 1,
+  'Ⅱ': 2, 'II': 2, '２': 2, '2': 2,
+  'Ⅲ': 3, 'III': 3, '３': 3, '3': 3
+};
+
+function parseReplacementFeat(name) {
+  const raw = String(name || '').trim();
+  const match = raw.match(/^(.*?)\s*[《〈(（]?\s*(Ⅲ|III|３|3|Ⅱ|II|２|2|Ⅰ|I|１|1)\s*[》〉)）]?$/i);
+  if (!match) {
+    return { baseName: raw, rank: 0, isReplacement: false };
+  }
+  const baseName = match[1].trim();
+  const token = match[2].toUpperCase();
+  const rank = ROMAN_RANK_MAP[token] ?? ROMAN_RANK_MAP[match[2]] ?? 0;
+  return { baseName, rank, isReplacement: rank > 0 };
+}
 
 const EVASION_SKILLS = new Set(['戰士', '輕戰士', '拳鬥士', '舞鬥士']);
 
@@ -390,6 +416,15 @@ const SCOPED_CSS = `
   padding: 10px 12px;
   margin-bottom: 14px;
 }
+.sw25-cc-rule-note {
+  background: rgba(15, 23, 42, 0.75);
+  border-left: 3px solid var(--cc-accent);
+  border-radius: 6px;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+  font-size: 0.79rem;
+  color: #d4d4d8;
+}
 .sw25-cc-auto-feat-card {
   background: rgba(56, 189, 248, 0.06);
   border: 1px solid rgba(56, 189, 248, 0.3);
@@ -476,18 +511,20 @@ function normalizeAbilityInput(ab) {
 
 function normalizeAbilityCardItem(item) {
   if (typeof item === 'string') {
-    return { name: item, req: '', cost: '', range: '', desc: '' };
+    return { name: item, featType: '', req: '', cost: '', range: '', riskNote: '', desc: '' };
   }
   if (item && typeof item === 'object') {
     return {
       name: String(item.name || ''),
+      featType: String(item.featType || ''),
       req: String(item.req || item.restriction || item.condition || ''),
       cost: String(item.cost || ''),
       range: String(item.range || ''),
+      riskNote: String(item.riskNote || ''),
       desc: String(item.desc || '')
     };
   }
-  return { name: '', req: '', cost: '', range: '', desc: '' };
+  return { name: '', featType: '', req: '', cost: '', range: '', riskNote: '', desc: '' };
 }
 
 function getDancerSkillLevel(skills = []) {
@@ -503,7 +540,14 @@ function getMaxFeatSlots(adventurerLv, skills = []) {
   return baseSlots + dancerBonus;
 }
 
-// 依技能等級計算自動習得戰鬥特技（不占用一般選擇特技格數）
+// 計算實際占用自選特技格數的數量（排除銳眼、弱點看破、弱點識破）
+function countSlotConsumingFeats(feats = []) {
+  return (feats || [])
+    .map(normalizeAbilityCardItem)
+    .filter(f => !doesNotConsumeFeatSlot(f.name)).length;
+}
+
+// 依技能等級計算自動習得戰鬥特技（不占用自選特技格數，亦不能用習得格選擇習得）
 function getAutoFeatsForSkills(skills = []) {
   const skillLvMap = new Map();
   let casterSum = 0;
@@ -513,18 +557,22 @@ function getAutoFeatsForSkills(skills = []) {
     if (MAGIC_SKILLS.has(sk.name)) casterSum += lv;
   });
 
-  const list = AUTO_FEATS_BY_SKILL.filter(rule => (skillLvMap.get(rule.skill) || 0) >= rule.minLv).map(r => ({
-    name: r.name,
-    req: r.req,
-    cost: r.cost,
-    range: r.range,
-    desc: r.desc,
-    autoSource: `${r.skill}Lv.${r.minLv}`
-  }));
+  const list = AUTO_FEATS_BY_SKILL
+    .filter(rule => (skillLvMap.get(rule.skill) || 0) >= rule.minLv)
+    .map(r => ({
+      name: r.name,
+      aliases: r.aliases || [],
+      req: r.req,
+      cost: r.cost,
+      range: r.range,
+      desc: r.desc,
+      autoSource: `${r.skill}Lv.${r.minLv}`
+    }));
 
   if (casterSum >= 11) {
     list.push({
       name: '符文大師',
+      aliases: [],
       req: '魔法系技能合計Lv.11',
       cost: '常時',
       range: '自身',
@@ -748,7 +796,9 @@ export function recalculateCharacter(rawChar, options = {}) {
     int: normalizeAbilityInput(char.abilities?.int),
     mnd: normalizeAbilityInput(char.abilities?.mnd)
   };
+
   char.feats = (Array.isArray(char.feats) ? char.feats : []).map(normalizeAbilityCardItem);
+
   char.learnedAbilities = {
     spells: [], songs: [], tactics: [], alchemy: [], enhancements: [], riding: [], items: [],
     ...(char.learnedAbilities || {})
@@ -813,6 +863,7 @@ export function recalculateCharacter(rawChar, options = {}) {
   const maxSkillLevel = skills.reduce((maxLv, sk) => Math.max(maxLv, sk.level), 0);
   const adventurerLv = maxSkillLevel;
   const featMaxSlots = getMaxFeatSlots(adventurerLv, skills);
+  const featSlotUsed = countSlotConsumingFeats(char.feats);
   const autoFeats = getAutoFeatsForSkills(skills);
   const hasToughness = autoFeats.some(f => f.name === '強韌');
 
@@ -875,6 +926,7 @@ export function recalculateCharacter(rawChar, options = {}) {
     expRemaining: toSafeNumber(char.meta.expTotal, 0) - expUsed,
     adventurerLevel: adventurerLv,
     featMaxSlots,
+    featSlotUsed,
     autoFeats,
     dancerBonusSlot: getDancerSkillLevel(skills) >= 1 ? 1 : 0,
     casterLevelsSum,
@@ -991,6 +1043,42 @@ function classifyCardPayload(payload) {
   return { bucket: 'spells', label: name };
 }
 
+// 處理戰鬥特技新增／替換型（Ⅰ/Ⅱ/Ⅲ）原地替換邏輯
+function applyFeatEntry(featsArray, entry, ignoreIdx = -1) {
+  const normEntry = normalizeAbilityCardItem(entry);
+  const parsedNew = parseReplacementFeat(normEntry.name);
+
+  if (parsedNew.isReplacement) {
+    const matchIdx = featsArray.findIndex((f, idx) => {
+      if (idx === ignoreIdx) return false;
+      const pOld = parseReplacementFeat(normalizeAbilityCardItem(f).name);
+      return pOld.isReplacement && pOld.baseName === parsedNew.baseName;
+    });
+
+    if (matchIdx >= 0) {
+      const oldParsed = parseReplacementFeat(normalizeAbilityCardItem(featsArray[matchIdx]).name);
+      if (parsedNew.rank > oldParsed.rank) {
+        featsArray[matchIdx] = normEntry;
+        return { action: 'replaced', replacedFrom: featsArray[matchIdx]?.name || oldParsed.baseName };
+      }
+      if (parsedNew.rank === oldParsed.rank) {
+        return { action: 'duplicate_rank' };
+      }
+      return { action: 'lower_rank', currentRank: oldParsed.rank };
+    }
+  } else {
+    const exactDup = featsArray.some((f, idx) => idx !== ignoreIdx && normalizeAbilityCardItem(f).name === normEntry.name);
+    if (exactDup) return { action: 'duplicate' };
+  }
+
+  if (ignoreIdx >= 0 && ignoreIdx < featsArray.length) {
+    featsArray[ignoreIdx] = normEntry;
+    return { action: 'updated' };
+  }
+  featsArray.push(normEntry);
+  return { action: 'added' };
+}
+
 export function addCardToActiveCharacter(encodedPayload) {
   let payload;
   try {
@@ -1010,9 +1098,11 @@ export function addCardToActiveCharacter(encodedPayload) {
 
   const cardObj = {
     name,
+    featType: data.featType || data.timing || '',
     req: data.req || data.requirement || data.restriction || '',
     cost: data.cost || data.mp || data.timing || '',
     range: data.range || data.target || '',
+    riskNote: data.risk || data.riskNote || '',
     desc: data.effect || data.summary || data.description || ''
   };
 
@@ -1070,7 +1160,7 @@ export function addCardToActiveCharacter(encodedPayload) {
       });
     }
   } else if (info.bucket === 'feats') {
-    if (!char.feats.some(f => f.name === cardObj.name)) char.feats.push(cardObj);
+    applyFeatEntry(char.feats, cardObj);
   } else {
     const arr = char.learnedAbilities[info.bucket] || (char.learnedAbilities[info.bucket] = []);
     if (!arr.some(x => x.name === cardObj.name)) arr.push(cardObj);
@@ -1226,7 +1316,7 @@ const CONSOLE_TEMPLATE = `
       <div class="sw25-cc-card">
         <h2><span>狀態與 Buff 修正</span></h2>
         <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
-          <input type="text" id="cc-buff-name" placeholder="名稱 (如: 祝福/防護)" style="flex:1; min-width:110px;" />
+          <input type="text" id="cc-buff-name" placeholder="名稱 (如: 祝福/全力攻擊風險)" style="flex:1; min-width:110px;" />
           <select id="cc-buff-stat">
             <option value="magicPower">魔力</option>
             <option value="evasion">迴避力</option>
@@ -1336,21 +1426,31 @@ const CONSOLE_TEMPLATE = `
         <div class="sw25-cc-pane" id="cc-pane-tab-feats">
           <div class="sw25-cc-feat-box">
             <h3>
-              <span>⚔️ 戰鬥特技欄位（選擇習得＋技能自動習得）</span>
-              <span class="sw25-cc-badge" id="cc-feat-slot-badge">已學 0 / 上限 1 格</span>
+              <span>⚔️ 戰鬥特技欄位（選擇習得＋替換型Ⅰ/Ⅱ/Ⅲ＋技能自動習得）</span>
+              <span class="sw25-cc-badge" id="cc-feat-slot-badge">自選 0 / 上限 1 格</span>
             </h3>
+
+            <div class="sw25-cc-rule-note">
+              <strong>特技規則提示：</strong>奇數冒險者等級獲得 1 個自選格且須當下選滿（不可保留）；含 Ⅰ/Ⅱ/Ⅲ 的<strong>替換型特技</strong>於獲得新格且滿足條件時逐階原地替換，不占新格；<strong>自動習得特技</strong>依技能等級自動獲得，不占自選格。宣言特技原則每手番 1 次，多次宣告時附帶「風險（Risk）」會累積（持續 1 輪至下次手番開始）。
+            </div>
 
             <div id="cc-auto-feats-wrap" style="margin-bottom:12px;"></div>
 
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px; margin-bottom:8px;">
-              <input type="text" id="cc-feat-name" placeholder="特技名稱 (如: 魔法擴大/數)" />
-              <input type="text" id="cc-feat-req" placeholder="學習限制/條件 (如: 冒險者Lv.3 / 舞鬥士Lv.1)" />
-              <input type="text" id="cc-feat-cost" placeholder="消耗/宣言 (如: 宣言 / MP 5)" />
-              <input type="text" id="cc-feat-range" placeholder="對象/限制備註 (如: 不可與○○並用)" />
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:8px; margin-bottom:8px;">
+              <input type="text" id="cc-feat-name" placeholder="特技名稱 (如: 全力攻擊Ⅱ / 銳眼)" />
+              <select id="cc-feat-type" title="特技發動類別">
+                <option value="">類別（未指定）</option>
+                <option value="常時特技">常時特技</option>
+                <option value="主動作特技">主動作特技</option>
+                <option value="宣言特技">宣言特技</option>
+              </select>
+              <input type="text" id="cc-feat-req" placeholder="前提/替換條件 (如: 冒險者Lv.7)" />
+              <input type="text" id="cc-feat-cost" placeholder="適用時機 (如: 1次近接 / 10秒1輪 / △戰鬥準備)" />
+              <input type="text" id="cc-feat-risk" placeholder="風險/限制備註 (如: 風險:迴避-2/1R)" />
             </div>
             <div style="display:flex; gap:8px; margin-bottom:10px; align-items:stretch;">
               <input type="text" id="cc-feat-desc" placeholder="特技效果說明..." style="flex:1;" />
-              <button type="button" class="primary sm" id="cc-btn-add-feat">＋ 加入戰鬥特技</button>
+              <button type="button" class="primary sm" id="cc-btn-add-feat">＋ 加入/替換特技</button>
               <button type="button" class="primary sm" id="cc-btn-save-feat" style="display:none;">儲存特技</button>
               <button type="button" class="sm" id="cc-btn-cancel-feat" style="display:none;">取消</button>
             </div>
@@ -1536,10 +1636,12 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
 
   const resetFeatForm = () => {
     editingFeatIdx = null;
-    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-range', 'cc-feat-desc'].forEach(id => {
+    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-risk', 'cc-feat-desc'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.value = '';
     });
+    const typeEl = document.getElementById('cc-feat-type');
+    if (typeEl) typeEl.value = '';
     const addBtn = document.getElementById('cc-btn-add-feat');
     const saveBtn = document.getElementById('cc-btn-save-feat');
     const cancelBtn = document.getElementById('cc-btn-cancel-feat');
@@ -1578,15 +1680,16 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!listEl || !badgeEl) return;
 
     const feats = (currentChar.feats || []).map(normalizeAbilityCardItem);
+    const slotUsed = countSlotConsumingFeats(feats);
     const autoFeats = currentChar.computed?.autoFeats || [];
     const dancerBonus = currentChar.computed?.dancerBonusSlot || 0;
     const maxSlots = currentChar.computed?.featMaxSlots ?? getMaxFeatSlots(currentChar.computed?.adventurerLevel ?? 0, currentChar.skills);
-    const isOverLimit = feats.length > maxSlots;
+    const isOverLimit = slotUsed > maxSlots;
 
     const dancerHint = dancerBonus > 0 ? '（含舞鬥士+1）' : '';
     const autoHint = autoFeats.length > 0 ? `＋自動 ${autoFeats.length}` : '';
-    badgeEl.textContent = `自選 ${feats.length} / 上限 ${maxSlots} 格${dancerHint} ${autoHint}`;
-    badgeEl.className = `sw25-cc-badge ${isOverLimit ? 'danger' : (feats.length === maxSlots ? 'warn' : 'good')}`;
+    badgeEl.textContent = `自選 ${slotUsed} / 上限 ${maxSlots} 格${dancerHint} ${autoHint}`;
+    badgeEl.className = `sw25-cc-badge ${isOverLimit ? 'danger' : (slotUsed === maxSlots ? 'warn' : 'good')}`;
 
     if (autoWrapEl) {
       if (autoFeats.length === 0) {
@@ -1594,7 +1697,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       } else {
         autoWrapEl.innerHTML = `
           <div style="font-size:0.8rem; color:var(--cc-cyan); font-weight:700; margin-bottom:6px;">
-            ✨ 技能等級達標自動習得特技（不占用自選格數）
+            ✨ 技能等級達標自動習得特技（不占用自選格數，亦不消耗習得格）
           </div>
           ${autoFeats.map(af => `
             <div class="sw25-cc-auto-feat-card">
@@ -1614,25 +1717,48 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     }
 
     if (feats.length === 0) {
-      listEl.innerHTML = `<div style="color:var(--cc-muted); font-size:0.83rem;">尚未登錄自選戰鬥特技（冒險者 Lv.${currentChar.computed.adventurerLevel}${dancerHint} 可自選 ${maxSlots} 個戰鬥特技）。</div>`;
+      listEl.innerHTML = `<div style="color:var(--cc-muted); font-size:0.83rem;">尚未登錄戰鬥特技（冒險者 Lv.${currentChar.computed.adventurerLevel}${dancerHint} 可自選 ${maxSlots} 個戰鬥特技；奇數等級獲得新格時請當下選滿，不可保留）。</div>`;
       return;
     }
 
+    let slotCounter = 0;
     listEl.innerHTML = feats.map((ft, idx) => {
+      const noSlot = doesNotConsumeFeatSlot(ft.name);
+      const parsedRep = parseReplacementFeat(ft.name);
+      const displayNo = noSlot ? '自動/不占格' : `#${++slotCounter}`;
       const isEditing = editingFeatIdx === idx;
       const check = evaluateFeatRequirement(ft.req, currentChar);
+
       let reqBadge = '';
       if (check.status === 'unmet') {
         reqBadge = `<span class="sw25-cc-badge danger" style="margin-left:6px;">限制未符：${escapeHtml(check.text)}</span>`;
       } else if (check.status === 'met') {
         reqBadge = `<span class="sw25-cc-badge good" style="margin-left:6px;">${escapeHtml(check.text)}</span>`;
       }
+
+      const typeBadge = ft.featType
+        ? `<span class="sw25-cc-badge" style="margin-left:6px;">${escapeHtml(ft.featType)}</span>`
+        : '';
+      const repBadge = parsedRep.isReplacement
+        ? `<span class="sw25-cc-badge warn" style="margin-left:6px;">替換型 Rank ${parsedRep.rank}</span>`
+        : '';
+      const noSlotBadge = noSlot
+        ? `<span class="sw25-cc-badge" style="margin-left:6px;">不占自選格</span>`
+        : '';
+      const riskBadge = ft.riskNote
+        ? `<span class="sw25-cc-badge danger" style="margin-left:6px;">${escapeHtml(ft.riskNote)}</span>`
+        : '';
+
       return `
         <div class="sw25-cc-ability-card ${isEditing ? 'editing' : ''}">
           <div class="sw25-cc-ability-top">
             <div>
-              <span class="sw25-cc-badge warn">#${idx + 1}</span>
+              <span class="sw25-cc-badge ${noSlot ? '' : 'warn'}">${escapeHtml(displayNo)}</span>
               <strong style="margin-left:6px;">${escapeHtml(ft.name)}</strong>
+              ${typeBadge}
+              ${repBadge}
+              ${noSlotBadge}
+              ${riskBadge}
               ${reqBadge}
               ${isEditing ? '<span class="sw25-cc-badge" style="margin-left:6px;">編輯中</span>' : ''}
             </div>
@@ -1642,8 +1768,8 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
             </div>
           </div>
           <div class="sw25-cc-ability-meta">
-            ${ft.req ? `<strong>學習限制：</strong>${escapeHtml(ft.req)}` : '<strong>學習限制：</strong>無'}
-            ${ft.cost ? ` ｜ 消耗/宣言：${escapeHtml(ft.cost)}` : ''}
+            ${ft.req ? `<strong>前提/替換條件：</strong>${escapeHtml(ft.req)}` : '<strong>前提/替換條件：</strong>無'}
+            ${ft.cost ? ` ｜ 適用時機：${escapeHtml(ft.cost)}` : ''}
             ${ft.range ? ` ｜ 對象/備註：${escapeHtml(ft.range)}` : ''}
           </div>
           ${ft.desc ? `<div class="sw25-cc-ability-desc">${escapeHtml(ft.desc)}</div>` : ''}
@@ -1748,7 +1874,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
 
     const buffs = currentChar.combatSync.activeBuffs || [];
     document.getElementById('cc-buff-list').innerHTML = buffs.length === 0
-      ? `<div style="color:var(--cc-muted); font-size:0.82rem;">目前無生效中的 Buff / 減值修正</div>`
+      ? `<div style="color:var(--cc-muted); font-size:0.82rem;">目前無生效中的 Buff / 風險減值修正</div>`
       : buffs.map((b, idx) => `
         <div class="sw25-cc-buff-item">
           <span><strong>${escapeHtml(b.name || '修正')}</strong> (${escapeHtml(b.stat)}: ${b.value >= 0 ? '+' + b.value : b.value})</span>
@@ -2004,24 +2130,49 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
   document.getElementById('cc-btn-add-feat').addEventListener('click', () => {
     const name = document.getElementById('cc-feat-name').value.trim();
     if (!name) return;
-    const maxSlots = currentChar.computed?.featMaxSlots ?? getMaxFeatSlots(currentChar.computed?.adventurerLevel ?? 0, currentChar.skills);
-    const curCount = (currentChar.feats || []).length;
-    if (curCount >= maxSlots) {
-      if (!confirm(`目前已學 ${curCount} 個自選戰鬥特技，已達目前上限（${maxSlots} 格）。仍要強制加入嗎？`)) return;
-    }
+
     const entry = {
       name,
+      featType: document.getElementById('cc-feat-type').value || '',
       req: document.getElementById('cc-feat-req').value.trim(),
       cost: document.getElementById('cc-feat-cost').value.trim(),
-      range: document.getElementById('cc-feat-range').value.trim(),
+      range: '',
+      riskNote: document.getElementById('cc-feat-risk').value.trim(),
       desc: document.getElementById('cc-feat-desc').value.trim()
     };
+
+    const parsedNew = parseReplacementFeat(name);
+    const hasExistingReplacement = parsedNew.isReplacement && currentChar.feats.some(f => {
+      const pOld = parseReplacementFeat(normalizeAbilityCardItem(f).name);
+      return pOld.isReplacement && pOld.baseName === parsedNew.baseName && parsedNew.rank > pOld.rank;
+    });
+
+    const maxSlots = currentChar.computed?.featMaxSlots ?? getMaxFeatSlots(currentChar.computed?.adventurerLevel ?? 0, currentChar.skills);
+    const curSlotUsed = countSlotConsumingFeats(currentChar.feats);
+
+    if (!doesNotConsumeFeatSlot(name) && !hasExistingReplacement && curSlotUsed >= maxSlots) {
+      if (!confirm(`目前已學 ${curSlotUsed} 個自選戰鬥特技，已達目前上限（${maxSlots} 格）。仍要強制加入嗎？`)) return;
+    }
+
+    let resultMsg = '';
     commit(c => {
-      c.feats.push(entry);
+      const res = applyFeatEntry(c.feats, entry, -1);
+      if (res.action === 'replaced') {
+        resultMsg = `🔄 已將「${res.replacedFrom}」原地替換為「${name}」（不占新自選格）。`;
+      } else if (res.action === 'duplicate') {
+        resultMsg = `⚠️ 角色卡已有「${name}」，同一特技不可重複習得。`;
+      } else if (res.action === 'duplicate_rank') {
+        resultMsg = `⚠️ 角色卡已有同階「${name}」，無法重複習得。`;
+      } else if (res.action === 'lower_rank') {
+        resultMsg = `⚠️ 目前已擁有較高階（Rank ${res.currentRank}），替換型特技僅能逐階替換。`;
+      }
     }, {});
-    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-range', 'cc-feat-desc'].forEach(id => {
+
+    if (resultMsg) appendLog(resultMsg);
+    ['cc-feat-name', 'cc-feat-req', 'cc-feat-cost', 'cc-feat-risk', 'cc-feat-desc'].forEach(id => {
       document.getElementById(id).value = '';
     });
+    document.getElementById('cc-feat-type').value = '';
   });
 
   document.getElementById('cc-btn-save-feat').addEventListener('click', () => {
@@ -2030,15 +2181,17 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     const updatedFeat = {
       name,
+      featType: document.getElementById('cc-feat-type').value || '',
       req: document.getElementById('cc-feat-req').value.trim(),
       cost: document.getElementById('cc-feat-cost').value.trim(),
-      range: document.getElementById('cc-feat-range').value.trim(),
+      range: '',
+      riskNote: document.getElementById('cc-feat-risk').value.trim(),
       desc: document.getElementById('cc-feat-desc').value.trim()
     };
     const idxToSave = editingFeatIdx;
     resetFeatForm();
     commit(c => {
-      c.feats[idxToSave] = updatedFeat;
+      applyFeatEntry(c.feats, updatedFeat, idxToSave);
     }, {});
   });
 
@@ -2051,9 +2204,10 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       const target = normalizeAbilityCardItem(currentChar.feats?.[idx]);
       editingFeatIdx = idx;
       document.getElementById('cc-feat-name').value = target.name || '';
+      document.getElementById('cc-feat-type').value = target.featType || '';
       document.getElementById('cc-feat-req').value = target.req || '';
       document.getElementById('cc-feat-cost').value = target.cost || '';
-      document.getElementById('cc-feat-range').value = target.range || '';
+      document.getElementById('cc-feat-risk').value = target.riskNote || '';
       document.getElementById('cc-feat-desc').value = target.desc || '';
       document.getElementById('cc-btn-add-feat').style.display = 'none';
       document.getElementById('cc-btn-save-feat').style.display = '';
@@ -2077,9 +2231,11 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     const entry = {
       name,
+      featType: '',
       req: '',
       cost: document.getElementById('cc-ability-cost').value.trim(),
       range: document.getElementById('cc-ability-range').value.trim(),
+      riskNote: '',
       desc: document.getElementById('cc-ability-desc').value.trim()
     };
     commit(c => {
@@ -2097,9 +2253,11 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     if (!name) return;
     const updatedEntry = {
       name,
+      featType: '',
       req: '',
       cost: document.getElementById('cc-ability-cost').value.trim(),
       range: document.getElementById('cc-ability-range').value.trim(),
+      riskNote: '',
       desc: document.getElementById('cc-ability-desc').value.trim()
     };
     const { kind: oldKind, idx: oldIdx } = editingCard;
