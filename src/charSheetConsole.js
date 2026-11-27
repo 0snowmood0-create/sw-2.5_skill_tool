@@ -305,6 +305,59 @@ const SCOPED_CSS = `
 .sw25-cc-root td.left, .sw25-cc-root th.left { text-align: left; }
 .sw25-cc-root input.num-in { width: 52px; text-align: center; padding: 4px; }
 
+.sw25-cc-profile-layout {
+  display: grid;
+  grid-template-columns: 164px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 768px) {
+  .sw25-cc-profile-layout { grid-template-columns: 1fr; }
+}
+.sw25-cc-portrait-box {
+  background: #09090b;
+  border: 1px solid var(--cc-border);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sw25-cc-portrait-frame {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #121216;
+  border: 1px dashed rgba(161, 161, 170, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+.sw25-cc-portrait-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.sw25-cc-portrait-placeholder {
+  padding: 10px;
+  font-size: 0.78rem;
+  color: var(--cc-muted);
+  line-height: 1.4;
+}
+.sw25-cc-portrait-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.sw25-cc-portrait-actions button {
+  flex: 1;
+  min-width: 0;
+}
+
 .sw25-cc-meta-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -514,6 +567,14 @@ function parseModifierFromDisplay(rawVal) {
   if (!str || str === '-') return { mod: 0, raw: str };
   const match = str.match(/[+-]?\d+/);
   return { mod: match ? Number(match[0]) : 0, raw: str };
+}
+function isSafePortraitSrc(src) {
+  const s = String(src || '').trim();
+  if (!s) return false;
+  if (/^data:image\/(png|jpe?g|gif|webp|avif|bmp);base64,/i.test(s)) return true;
+  if (/^https?:\/\//i.test(s)) return true;
+  if (/^(\.\/|\.\.\/|\/)/.test(s)) return true;
+  return false;
 }
 function escapeHtml(str) {
   return String(str ?? '')
@@ -726,6 +787,7 @@ export function createDefaultCharacter(overrides = {}) {
       race: '人類',
       gender: '',
       age: '',
+      portrait: '',
       expTotal: 3000,
       expUsed: 0,
       honorPoints: 0,
@@ -826,10 +888,11 @@ function getBuffSum(activeBuffs, statKey) {
 export function recalculateCharacter(rawChar, options = {}) {
   const char = JSON.parse(JSON.stringify(rawChar || {}));
   char.meta = {
-    name: '未命名冒險者', race: '人類', gender: '', age: '',
+    name: '未命名冒險者', race: '人類', gender: '', age: '', portrait: '',
     expTotal: 3000, expUsed: 0, honorPoints: 0, honorRank: '無名', moneyG: 1200, notes: '',
     ...(char.meta || {})
   };
+  char.meta.portrait = String(char.meta.portrait || '').trim();
   char.abilities = {
     dex: normalizeAbilityInput(char.abilities?.dex),
     agi: normalizeAbilityInput(char.abilities?.agi),
@@ -1032,7 +1095,12 @@ export function saveCharacter(updatedChar, options = {}) {
   const idx = list.findIndex(c => c.id === normalized.id);
   if (idx >= 0) list[idx] = normalized;
   else list.push(normalized);
-  saveAllCharacters(list);
+  try {
+    saveAllCharacters(list);
+  } catch (err) {
+    alert('儲存失敗：瀏覽器儲存空間可能已滿（若上傳了較大的圖片檔，建議改用較小圖片或圖片網址）。');
+    return normalized;
+  }
   localStorage.setItem(ACTIVE_ID_KEY, normalized.id);
   return normalized;
 }
@@ -1414,16 +1482,30 @@ const CONSOLE_TEMPLATE = `
 
     <div>
       <div class="sw25-cc-card">
-        <h2>冒險者基本資料</h2>
-        <div class="sw25-cc-meta-grid">
-          <div class="sw25-cc-field"><label>角色名稱</label><input type="text" id="cc-meta-name" /></div>
-          <div class="sw25-cc-field"><label>種族</label><input type="text" id="cc-meta-race" /></div>
-          <div class="sw25-cc-field"><label>性別</label><input type="text" id="cc-meta-gender" /></div>
-          <div class="sw25-cc-field"><label>年齡</label><input type="text" id="cc-meta-age" /></div>
-          <div class="sw25-cc-field"><label>總經驗值 (EXP)</label><input type="number" id="cc-meta-expTotal" step="500" /></div>
-          <div class="sw25-cc-field"><label>已消耗 EXP</label><input type="number" id="cc-meta-expUsed" readonly /></div>
-          <div class="sw25-cc-field"><label>所持金 (G)</label><input type="number" id="cc-meta-moneyG" step="100" /></div>
-          <div class="sw25-cc-field"><label>名譽點 / 稱號</label><input type="number" id="cc-meta-honorPoints" /></div>
+        <h2>冒險者基本資料與立繪</h2>
+        <div class="sw25-cc-profile-layout">
+          <div class="sw25-cc-portrait-box">
+            <div class="sw25-cc-portrait-frame" id="cc-portrait-frame">
+              <div class="sw25-cc-portrait-placeholder" id="cc-portrait-placeholder">尚未設定角色立繪</div>
+            </div>
+            <div class="sw25-cc-portrait-actions">
+              <button type="button" class="primary sm" id="cc-btn-upload-portrait">🖼️ 上傳圖檔</button>
+              <button type="button" class="danger sm" id="cc-btn-clear-portrait">清除</button>
+            </div>
+            <input type="file" id="cc-portrait-file-input" accept="image/*" style="display:none;" />
+            <input type="text" id="cc-meta-portrait-url" placeholder="或貼上圖片網址 (https://...)" style="font-size:0.76rem; padding:5px 7px;" />
+          </div>
+
+          <div class="sw25-cc-meta-grid">
+            <div class="sw25-cc-field"><label>角色名稱</label><input type="text" id="cc-meta-name" /></div>
+            <div class="sw25-cc-field"><label>種族</label><input type="text" id="cc-meta-race" /></div>
+            <div class="sw25-cc-field"><label>性別</label><input type="text" id="cc-meta-gender" /></div>
+            <div class="sw25-cc-field"><label>年齡</label><input type="text" id="cc-meta-age" /></div>
+            <div class="sw25-cc-field"><label>總經驗值 (EXP)</label><input type="number" id="cc-meta-expTotal" step="500" /></div>
+            <div class="sw25-cc-field"><label>已消耗 EXP</label><input type="number" id="cc-meta-expUsed" readonly /></div>
+            <div class="sw25-cc-field"><label>所持金 (G)</label><input type="number" id="cc-meta-moneyG" step="100" /></div>
+            <div class="sw25-cc-field"><label>名譽點 / 稱號</label><input type="number" id="cc-meta-honorPoints" /></div>
+          </div>
         </div>
       </div>
 
@@ -1760,6 +1842,31 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     updateUI();
   };
 
+  const renderPortraitPreview = () => {
+    const frameEl = document.getElementById('cc-portrait-frame');
+    const urlInputEl = document.getElementById('cc-meta-portrait-url');
+    if (!frameEl) return;
+
+    const rawSrc = String(currentChar.meta?.portrait || '').trim();
+    if (urlInputEl && document.activeElement !== urlInputEl) {
+      urlInputEl.value = rawSrc.startsWith('data:image/') ? '' : rawSrc;
+    }
+
+    if (!rawSrc || !isSafePortraitSrc(rawSrc)) {
+      frameEl.innerHTML = `<div class="sw25-cc-portrait-placeholder" id="cc-portrait-placeholder">尚未設定角色立繪<br><span style="font-size:0.7rem;">可上傳圖檔或填網址</span></div>`;
+      return;
+    }
+
+    frameEl.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = rawSrc;
+    img.alt = `${currentChar.meta?.name || '角色'} 立繪`;
+    img.addEventListener('error', () => {
+      frameEl.innerHTML = `<div class="sw25-cc-portrait-placeholder" id="cc-portrait-placeholder">圖片無法載入<br><span style="font-size:0.7rem;">請確認網址或重新上傳</span></div>`;
+    });
+    frameEl.appendChild(img);
+  };
+
   const renderFeatsSection = () => {
     const listEl = document.getElementById('cc-feats-list');
     const autoWrapEl = document.getElementById('cc-auto-feats-wrap');
@@ -1970,6 +2077,8 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
         </div>
       `).join('');
 
+    renderPortraitPreview();
+
     document.getElementById('cc-meta-name').value = currentChar.meta.name || '';
     document.getElementById('cc-meta-race').value = currentChar.meta.race || '';
     document.getElementById('cc-meta-gender').value = currentChar.meta.gender || '';
@@ -2109,6 +2218,61 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
   container.innerHTML = CONSOLE_TEMPLATE;
 
   // 事件綁定
+  const portraitFileInput = document.getElementById('cc-portrait-file-input');
+  document.getElementById('cc-btn-upload-portrait').addEventListener('click', () => {
+    portraitFileInput.value = '';
+    portraitFileInput.click();
+  });
+
+  portraitFileInput.addEventListener('change', async e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('請選擇圖片檔案（PNG、JPG、WEBP 等）。');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      if (!confirm('圖片檔案大於 2MB，轉存為本機角色卡資料可能佔用較多儲存空間，確定要繼續嗎？')) return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = String(reader.result || '');
+      if (!isSafePortraitSrc(dataUrl)) {
+        alert('無法讀取此圖片格式。');
+        return;
+      }
+      commit(c => { c.meta.portrait = dataUrl; }, {});
+      appendLog(`🖼️ 已更新「${escapeHtml(currentChar.meta.name || '角色')}」的立繪（本機圖檔）。`);
+    };
+    reader.onerror = () => {
+      alert('讀取圖片檔案時發生錯誤。');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('cc-meta-portrait-url').addEventListener('change', e => {
+    const val = e.target.value.trim();
+    if (!val) {
+      if (!String(currentChar.meta.portrait || '').startsWith('data:image/')) {
+        commit(c => { c.meta.portrait = ''; }, {});
+      }
+      return;
+    }
+    if (!isSafePortraitSrc(val)) {
+      alert('請輸入有效的 http:// 或 https:// 圖片網址。');
+      e.target.value = '';
+      return;
+    }
+    commit(c => { c.meta.portrait = val; }, {});
+    appendLog(`🖼️ 已更新「${escapeHtml(currentChar.meta.name || '角色')}」的立繪網址。`);
+  });
+
+  document.getElementById('cc-btn-clear-portrait').addEventListener('click', () => {
+    if (!currentChar.meta.portrait) return;
+    commit(c => { c.meta.portrait = ''; }, {});
+    appendLog(`🗑️ 已清除「${escapeHtml(currentChar.meta.name || '角色')}」的立繪。`);
+  });
+
   document.getElementById('cc-char-select').addEventListener('change', e => {
     localStorage.setItem(ACTIVE_ID_KEY, e.target.value);
     currentChar = getActiveCharacter();
