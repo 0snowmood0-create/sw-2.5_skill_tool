@@ -8,7 +8,7 @@ export const EXP_TABLE_B = [0, 500, 1500, 2500, 4000, 5500, 7500, 10000, 13000, 
 
 const MAGIC_SKILLS = new Set([
   '真語魔法', '操靈魔法', '神聖魔法', '魔動機術', '妖精魔法',
-  '深智魔法', '奈落魔法', '祕奧魔法', '咒詛魔法','召異魔法',
+  '深智魔法', '奈落魔法', '祕奧魔法', '咒詛魔法', '召異魔法',
   '魔術師', '操靈術師', '神官', '魔動機師', '妖精使',
   '深智魔導師', '奈落魔導師', '咒法師'
 ]);
@@ -273,6 +273,23 @@ const SCOPED_CSS = `
 }
 .sw25-cc-pill .lbl { font-size: 0.74rem; color: var(--cc-muted); }
 .sw25-cc-pill .num { font-size: 1.08rem; font-weight: 700; margin-top: 2px; color: var(--cc-cyan); }
+.sw25-cc-pill-input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 2px 4px !important;
+  font-size: 0.92rem !important;
+  font-weight: 700;
+  text-align: center;
+  color: var(--cc-cyan) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+}
+.sw25-cc-pill-input:hover,
+.sw25-cc-pill-input:focus {
+  border-color: var(--cc-border) !important;
+  background: #18181b !important;
+}
 
 .sw25-cc-root table {
   width: 100%;
@@ -492,6 +509,12 @@ function toSafeNumber(val, fallback = 0) {
   const num = Number(val);
   return Number.isFinite(num) ? num : fallback;
 }
+function parseModifierFromDisplay(rawVal) {
+  const str = String(rawVal ?? '').trim();
+  if (!str || str === '-') return { mod: 0, raw: str };
+  const match = str.match(/[+-]?\d+/);
+  return { mod: match ? Number(match[0]) : 0, raw: str };
+}
 function escapeHtml(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;')
@@ -661,6 +684,21 @@ function normalizeAccessoryItem(item) {
   };
 }
 
+function normalizeMiscItem(item) {
+  if (!item || typeof item !== 'object') {
+    return { name: '', qty: 1, note: '', equipped: false, slot: '其他' };
+  }
+  const rawSlot = String(item.slot || '其他').trim();
+  const normalizedSlot = ACCESSORY_SLOTS.includes(rawSlot) ? rawSlot : (rawSlot || '其他');
+  return {
+    name: String(item.name || ''),
+    qty: Math.max(0, toSafeNumber(item.qty, 1)),
+    note: String(item.note || ''),
+    equipped: Boolean(item.equipped),
+    slot: normalizedSlot
+  };
+}
+
 function normalizeWeaponItem(w) {
   if (!w || typeof w !== 'object') {
     return { name: '', usage: '1H', reqStr: 0, hitMod: 0, power: 10, crit: 10, extraDmg: 0, equipped: true };
@@ -707,7 +745,8 @@ export function createDefaultCharacter(overrides = {}) {
       maxHp: 0, currentHp: 0, maxMp: 0, currentMp: 0,
       moveNormal: 0, moveLimit: 10, moveFull: 0,
       initiative: 0, lifeResist: 0, mindResist: 0,
-      evasionBase: 0, totalDefense: 0
+      evasionBase: 0, totalDefense: 0,
+      monsterKnowledge: '-'
     },
     skills: [
       { name: '戰士', expTable: 'A', level: 1, magicPower: 0 },
@@ -721,7 +760,8 @@ export function createDefaultCharacter(overrides = {}) {
       weapons: [],
       armor: { name: '', category: '防具-金屬鎧甲', reqStr: 0, evasionMod: 0, defense: 0, equipped: true },
       shield: { name: '', category: '防具-盾牌', reqStr: 0, evasionMod: 0, defense: 0, equipped: true },
-      accessories: []
+      accessories: [],
+      miscItems: []
     },
     combatSync: { sizeParts: 1, meleeZone: true, activeBuffs: [] }
   };
@@ -746,7 +786,8 @@ export function createDefaultCharacter(overrides = {}) {
       armor: { ...baseChar.equipment.armor, ...(overrides.equipment?.armor || {}) },
       shield: { ...baseChar.equipment.shield, ...(overrides.equipment?.shield || {}) },
       weapons: Array.isArray(overrides.equipment?.weapons) ? overrides.equipment.weapons.map(normalizeWeaponItem) : [],
-      accessories: Array.isArray(overrides.equipment?.accessories) ? overrides.equipment.accessories.map(normalizeAccessoryItem) : []
+      accessories: Array.isArray(overrides.equipment?.accessories) ? overrides.equipment.accessories.map(normalizeAccessoryItem) : [],
+      miscItems: Array.isArray(overrides.equipment?.miscItems) ? overrides.equipment.miscItems.map(normalizeMiscItem) : []
     },
     combatSync: {
       ...baseChar.combatSync,
@@ -828,7 +869,8 @@ export function recalculateCharacter(rawChar, options = {}) {
       defense: toSafeNumber(rawShield.defense, 0),
       equipped: rawShield.equipped !== false
     },
-    accessories: (Array.isArray(char.equipment?.accessories) ? char.equipment.accessories : []).map(normalizeAccessoryItem)
+    accessories: (Array.isArray(char.equipment?.accessories) ? char.equipment.accessories : []).map(normalizeAccessoryItem),
+    miscItems: (Array.isArray(char.equipment?.miscItems) ? char.equipment.miscItems : []).map(normalizeMiscItem)
   };
   char.combatSync = {
     sizeParts: toSafeNumber(char.combatSync?.sizeParts, 1),
@@ -838,6 +880,7 @@ export function recalculateCharacter(rawChar, options = {}) {
 
   const prevMaxHp = toSafeNumber(char.derived?.maxHp, 0);
   const prevMaxMp = toSafeNumber(char.derived?.maxMp, 0);
+  const monsterKnowledge = String(char.derived?.monsterKnowledge ?? '-');
   const buffs = char.combatSync.activeBuffs;
 
   const abilityTotals = {};
@@ -941,7 +984,8 @@ export function recalculateCharacter(rawChar, options = {}) {
     maxHp, currentHp, maxMp, currentMp,
     moveNormal, moveLimit, moveFull,
     initiative, lifeResist, mindResist,
-    evasionBase, totalDefense
+    evasionBase, totalDefense,
+    monsterKnowledge
   };
   char.updatedAt = nowIso();
   return char;
@@ -1008,7 +1052,7 @@ function parseCardPayload(encodedOrObj) {
 }
 
 function inferAccessorySlotFromData(data) {
-  const raw = `${data.subCategory || ''} ${data.type || ''} ${data.name || ''}`;
+  const raw = `${data.subCategory || ''} ${data.type || ''} ${data.usage || ''} ${data.name || ''}`;
   for (const s of ['頭', '臉', '耳', '首', '背', '右手', '左手', '腰', '足']) {
     if (raw.includes(s)) return s;
   }
@@ -1021,23 +1065,27 @@ function classifyCardPayload(payload) {
   const itemType = payload?.itemType || payload?.type || data.itemType || data.type || '';
   const name = String(data.name || payload?.name || '').trim();
   const cat = String(data.category || data.subCategory || '').trim();
+  const subCat = String(data.subCategory || '').trim();
 
   if (itemType === 'feat' || cat.includes('戰鬥特技')) {
     return { bucket: 'feats', label: name };
   }
   if (
+    itemType === 'item' ||
+    cat.includes('道具') ||
+    subCat.includes('道具')
+  ) {
+    const isWeapon = cat.includes('武器') || ['劍', '槍', '斧', '打擊', '拋射', '格鬥', '扔擲', '魔動機槍'].includes(cat);
+    return { bucket: isWeapon ? 'weapon' : 'item', label: name };
+  }
+  if (
     itemType === 'skill' ||
     itemType === 'class' ||
     cat === '技能' ||
-    cat.includes('技能') ||
     Object.prototype.hasOwnProperty.call(SKILL_EXP_TABLE_MAP, name) ||
     MAGIC_SKILLS.has(name)
   ) {
     return { bucket: 'skill', label: name };
-  }
-  if (itemType === 'item') {
-    const isWeapon = cat.includes('武器') || ['劍', '槍', '斧', '打擊', '拋射', '格鬥', '扔擲', '魔動機槍'].includes(cat);
-    return { bucket: isWeapon ? 'weapon' : 'item', label: name };
   }
   if (['咒歌', '終律', '鼓咆', '陣率', '軍師', '闘理'].includes(cat)) return { bucket: 'songs', label: name };
   if (['賦術', '練技', '練體士', '騎藝', '騎手'].includes(cat)) return { bucket: 'enhancements', label: name };
@@ -1149,16 +1197,37 @@ export function addCardToActiveCharacter(encodedPayload) {
         defense: parseInt(data.defense, 10) || 0,
         equipped: true
       };
-    } else {
-      const slot = (cat === '裝飾品' || cat === '飾品裝備')
-        ? inferAccessorySlotFromData(data)
-        : (cat || '其他');
+    } else if (cat === '裝飾品' || cat === '飾品裝備') {
+      const slot = inferAccessorySlotFromData(data);
       char.equipment.accessories.push({
         slot,
         name,
         note: data.effect || data.summary || '',
         equipped: true
       });
+    } else {
+      const usageStr = String(data.usage || '').trim();
+      const defaultSlot = inferAccessorySlotFromData(data);
+      const combinedNote = [
+        data.effect || data.summary || '',
+        usageStr ? `可用部位: ${usageStr}` : ''
+      ].filter(Boolean).join(' ｜ ');
+
+      char.equipment.miscItems = char.equipment.miscItems || [];
+      const existingMisc = char.equipment.miscItems.find(m => m.name === name);
+      if (existingMisc) {
+        existingMisc.qty = toSafeNumber(existingMisc.qty, 0) + 1;
+        if (!existingMisc.note && combinedNote) existingMisc.note = combinedNote;
+        if (!existingMisc.slot && defaultSlot) existingMisc.slot = defaultSlot;
+      } else {
+        char.equipment.miscItems.push({
+          name,
+          qty: 1,
+          note: combinedNote,
+          equipped: false,
+          slot: defaultSlot
+        });
+      }
     }
   } else if (info.bucket === 'feats') {
     applyFeatEntry(char.feats, cardObj);
@@ -1294,6 +1363,7 @@ const CONSOLE_TEMPLATE = `
           <div class="sw25-cc-pill"><div class="lbl">通常移動</div><div class="num" id="cc-drv-move">0m</div></div>
           <div class="sw25-cc-pill"><div class="lbl">全力移動</div><div class="num" id="cc-drv-full">0m</div></div>
           <div class="sw25-cc-pill"><div class="lbl">限制移動</div><div class="num">10m</div></div>
+          <div class="sw25-cc-pill"><div class="lbl">魔物知識判定</div><input class="sw25-cc-pill-input" type="text" id="cc-drv-monster-knowledge" placeholder="-" /></div>
         </div>
       </div>
 
@@ -1361,7 +1431,7 @@ const CONSOLE_TEMPLATE = `
         <div class="sw25-cc-tabs">
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-skills">技能等級與魔力</button>
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-feats">戰鬥特技與魔法筆記</button>
-          <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-equip">裝備欄位（武器／防具／飾品）</button>
+          <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-equip">裝備與物品（武器／防具／飾品／其他）</button>
           <button type="button" class="sw25-cc-tab-btn" data-cc-tab="tab-runner">跑團檢定與冒險日誌</button>
         </div>
 
@@ -1562,6 +1632,21 @@ const CONSOLE_TEMPLATE = `
             <button type="button" class="primary sm" id="cc-btn-add-acc">＋ 加入飾品欄</button>
           </div>
           <div class="sw25-cc-slot-grid" id="cc-acc-list"></div>
+
+          <h3 style="margin-top:14px;">
+            <span>🎒 其他物品與消耗品（藥水／魔晶石／魔符／戰利品／可裝備道具）</span>
+            <span class="sw25-cc-badge" id="cc-misc-count-badge">0 種 / 總數 0</span>
+          </h3>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+            <select id="cc-misc-slot" style="width:92px;" title="預設部位">
+              ${ACCESSORY_SLOTS.map(s => `<option value="${s}">${s}</option>`).join('')}
+            </select>
+            <input type="text" id="cc-misc-name" placeholder="物品名稱 (如: 鍊金術套件 / 治癒藥水)" style="flex:1.4; min-width:150px;" />
+            <input type="number" id="cc-misc-qty" value="1" min="0" placeholder="數量" style="width:74px;" />
+            <input type="text" id="cc-misc-note" placeholder="用途/備註 (如: 可用部位: 右手、左手、腰、其他)" style="flex:2; min-width:160px;" />
+            <button type="button" class="primary sm" id="cc-btn-add-misc">＋ 加入物品欄</button>
+          </div>
+          <div class="sw25-cc-slot-grid" id="cc-misc-list"></div>
         </div>
 
         <div class="sw25-cc-pane" id="cc-pane-tab-runner">
@@ -1572,6 +1657,7 @@ const CONSOLE_TEMPLATE = `
             <button type="button" class="sm" data-cc-roll="mind">🧠 精神抵抗力</button>
             <button type="button" class="sm" data-cc-roll="evasion">💨 迴避力判定</button>
             <button type="button" class="sm" data-cc-roll="init">⚡ 先制判定</button>
+            <button type="button" class="sm" data-cc-roll="monster">🔬 魔物知識判定</button>
             <button type="button" class="sm" data-cc-roll="magic">✨ 最高魔力行使</button>
             <div style="display:flex; gap:4px; align-items:center;">
               <input type="text" id="cc-custom-roll-label" placeholder="檢定名稱" style="width:100px;" />
@@ -1840,7 +1926,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     expBadge.textContent = `剩餘 EXP: ${rem}`;
     expBadge.className = `sw25-cc-badge ${rem < 0 ? 'warn' : 'good'}`;
 
-    const { currentHp, maxHp, currentMp, maxMp, lifeResist, mindResist, initiative, moveNormal, moveFull, evasionBase, totalDefense } = currentChar.derived;
+    const { currentHp, maxHp, currentMp, maxMp, lifeResist, mindResist, initiative, moveNormal, moveFull, evasionBase, totalDefense, monsterKnowledge } = currentChar.derived;
     document.getElementById('cc-hp-display').textContent = `${currentHp} / ${maxHp}`;
     document.getElementById('cc-hp-bar').style.width = `${maxHp > 0 ? Math.min(100, (currentHp / maxHp) * 100) : 0}%`;
     document.getElementById('cc-mp-display').textContent = `${currentMp} / ${maxMp}`;
@@ -1856,6 +1942,7 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     document.getElementById('cc-drv-wizard').textContent = currentChar.computed.wizardLevel > 0
       ? `Lv.${currentChar.computed.wizardLevel} (${currentChar.computed.wizardPower})`
       : '-';
+    document.getElementById('cc-drv-monster-knowledge').value = monsterKnowledge || '-';
 
     document.getElementById('cc-abilities-tbody').innerHTML = ABILITY_LABELS.map(([key, label]) => {
       const ab = currentChar.abilities[key];
@@ -1984,6 +2071,36 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
         </div>
       `).join('');
 
+    const miscItems = currentChar.equipment.miscItems || [];
+    const equippedMiscCount = miscItems.filter(m => m.equipped).length;
+    const totalMiscQty = miscItems.reduce((sum, m) => sum + toSafeNumber(m.qty, 0), 0);
+    document.getElementById('cc-misc-count-badge').textContent =
+      `${miscItems.length} 種 / 總數 ${totalMiscQty}（已裝備 ${equippedMiscCount}）`;
+
+    document.getElementById('cc-misc-list').innerHTML = miscItems.length === 0
+      ? `<div style="color:var(--cc-muted); font-size:0.83rem; grid-column:1/-1;">尚未記錄其他物品或消耗品，可從上方新增或於「道具檢索」一鍵加入。</div>`
+      : miscItems.map((m, idx) => `
+        <div class="sw25-cc-slot-card ${m.equipped ? 'equipped' : ''}">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:6px; min-width:0;">
+              <input type="checkbox" data-cc-misc-eq="${idx}" ${m.equipped ? 'checked' : ''} title="切換裝備狀態" />
+              <select data-cc-misc-slot="${idx}" style="padding:2px 6px; font-size:0.76rem;" title="裝備部位">
+                ${ACCESSORY_SLOTS.map(s => `<option value="${s}" ${(m.slot || '其他') === s ? 'selected' : ''}>${s}</option>`).join('')}
+              </select>
+              <strong style="font-size:0.86rem;">${escapeHtml(m.name)}</strong>
+            </div>
+            <div style="display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+              <button type="button" class="sm" data-cc-misc-delta="-1" data-cc-misc-idx="${idx}">-1</button>
+              <span class="sw25-cc-badge">x${toSafeNumber(m.qty, 0)}</span>
+              <button type="button" class="sm" data-cc-misc-delta="1" data-cc-misc-idx="${idx}">+1</button>
+              <button type="button" class="sm" data-cc-misc-to-acc="${idx}" title="移至上方裝飾品欄位">轉飾品</button>
+              <button type="button" class="danger sm" data-cc-del-misc="${idx}">移除</button>
+            </div>
+          </div>
+          ${m.note ? `<div style="font-size:0.78rem; color:var(--cc-muted); padding-left:22px;">${escapeHtml(m.note)}</div>` : ''}
+        </div>
+      `).join('');
+
     const logBox = document.getElementById('cc-dice-log');
     if (logBox) logBox.innerHTML = logHistoryHtml.join('');
     syncSubTabs();
@@ -2049,6 +2166,11 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       c.derived.currentMp = c.derived.maxMp;
     }, { resetCurrentPools: true });
     appendLog('🏕️ 執行全滿休息，HP 與 MP 已完全回復。');
+  });
+
+  document.getElementById('cc-drv-monster-knowledge').addEventListener('change', e => {
+    const val = e.target.value.trim() || '-';
+    commit(c => { c.derived.monsterKnowledge = val; }, {});
   });
 
   document.getElementById('cc-abilities-tbody').addEventListener('change', e => {
@@ -2393,6 +2515,81 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
     commit(c => { c.equipment.accessories.splice(Number(idx), 1); }, {});
   });
 
+  document.getElementById('cc-btn-add-misc').addEventListener('click', () => {
+    const name = document.getElementById('cc-misc-name').value.trim();
+    if (!name) return;
+    const qty = Math.max(0, toSafeNumber(document.getElementById('cc-misc-qty').value, 1));
+    const note = document.getElementById('cc-misc-note').value.trim();
+    const slot = document.getElementById('cc-misc-slot')?.value || '其他';
+    commit(c => {
+      c.equipment.miscItems.push({ name, qty, note, equipped: false, slot });
+    }, {});
+    document.getElementById('cc-misc-name').value = '';
+    document.getElementById('cc-misc-qty').value = '1';
+    document.getElementById('cc-misc-note').value = '';
+  });
+
+  document.getElementById('cc-misc-list').addEventListener('change', e => {
+    const eqIdx = e.target.dataset.ccMiscEq;
+    if (eqIdx !== undefined) {
+      commit(c => {
+        const target = c.equipment.miscItems[Number(eqIdx)];
+        if (target) target.equipped = e.target.checked;
+      }, {});
+      return;
+    }
+
+    const slotIdx = e.target.dataset.ccMiscSlot;
+    if (slotIdx !== undefined) {
+      commit(c => {
+        const target = c.equipment.miscItems[Number(slotIdx)];
+        if (target) target.slot = e.target.value;
+      }, {});
+    }
+  });
+
+  document.getElementById('cc-misc-list').addEventListener('click', e => {
+    const toAccIdx = e.target.dataset.ccMiscToAcc;
+    if (toAccIdx !== undefined) {
+      const idx = Number(toAccIdx);
+      commit(c => {
+        const target = c.equipment.miscItems[idx];
+        if (!target) return;
+        c.equipment.accessories.push({
+          slot: target.slot || '其他',
+          name: target.name,
+          note: target.note || '',
+          equipped: true
+        });
+        const curQty = toSafeNumber(target.qty, 1);
+        if (curQty > 1) {
+          target.qty = curQty - 1;
+          target.equipped = false;
+        } else {
+          c.equipment.miscItems.splice(idx, 1);
+        }
+      }, {});
+      return;
+    }
+
+    const deltaAttr = e.target.dataset.ccMiscDelta;
+    const idxAttr = e.target.dataset.ccMiscIdx;
+    if (deltaAttr !== undefined && idxAttr !== undefined) {
+      const idx = Number(idxAttr);
+      const delta = Number(deltaAttr);
+      commit(c => {
+        const target = c.equipment.miscItems[idx];
+        if (target) target.qty = Math.max(0, toSafeNumber(target.qty, 0) + delta);
+      }, {});
+      return;
+    }
+
+    const delIdx = e.target.dataset.ccDelMisc;
+    if (delIdx !== undefined) {
+      commit(c => { c.equipment.miscItems.splice(Number(delIdx), 1); }, {});
+    }
+  });
+
   const roll2D = (base = 0, label = '2D 擲骰') => {
     const d1 = Math.floor(Math.random() * 6) + 1;
     const d2 = Math.floor(Math.random() * 6) + 1;
@@ -2412,6 +2609,11 @@ export function renderCharSheetConsole(targetContainerId = 'rules-container') {
       if (mode === 'mind') roll2D(currentChar.derived.mindResist, '精神抵抗力判定');
       if (mode === 'evasion') roll2D(currentChar.derived.evasionBase, '迴避力判定');
       if (mode === 'init') roll2D(currentChar.derived.initiative, '先制判定');
+      if (mode === 'monster') {
+        const parsed = parseModifierFromDisplay(currentChar.derived.monsterKnowledge);
+        const labelSuffix = parsed.raw && parsed.raw !== '-' ? ` [${parsed.raw}]` : '';
+        roll2D(parsed.mod, `魔物知識判定${labelSuffix}`);
+      }
       if (mode === 'magic') {
         const maxMag = currentChar.skills.filter(s => MAGIC_SKILLS.has(s.name)).reduce((m, s) => Math.max(m, s.magicPower), 0);
         const best = Math.max(maxMag, currentChar.computed.wizardPower || 0);
