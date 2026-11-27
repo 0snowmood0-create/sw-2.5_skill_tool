@@ -260,7 +260,7 @@ export const warLeaderData = [
       "kiCost": "消耗：無",
       "kiGain": "累積：1",
       "bonusLabel": "修正項目",
-      "bonusVal": "防護点"
+      "bonusVal": "防護點"
     }
   },
   {
@@ -829,7 +829,7 @@ export const warLeaderData = [
     "resistance": "－",
     "element": "－",
     "summary": "消耗 MP 減少 5 點（最少 1）",
-    "effect": "以宛如唱歌般的美聲穩定心靈，使其能以較少的瑪那來發揮效果。範圍內所有任意目標，消耗MP 減 少 5 點（最 少 1）。此 效 果，能 與 其 他 減 少MP 的效果重複。",
+    "effect": "以宛如唱歌般的美聲穩定心靈，使其能以較少的瑪那來發揮效果。範圍內所有任意目標，消耗 MP 減少 5 點（最少 1）。此效果能與其他減少 MP 的效果重複。",
     "extra": {
       "system": "抵抗系",
       "rankOrPre": "階級 5",
@@ -925,7 +925,7 @@ export const warLeaderData = [
     "resistance": "－",
     "element": "－",
     "summary": "擊敗敵人時獲得 1 點陣氣",
-    "effect": "藉由擊退強敵振奮自身士氣。軍師在主動作將 enemy 擊至戰鬥不能時發動，立即獲得 1 點陣氣。",
+    "effect": "藉由擊退強敵振奮自身士氣。軍師在主動作將敵人擊至戰鬥不能時發動，立即獲得 1 點陣氣。",
     "extra": {
       "system": "陣律",
       "rankOrPre": "無前提",
@@ -973,7 +973,7 @@ export const warLeaderData = [
     "resistance": "－",
     "element": "－",
     "summary": "消耗 4 點陣氣，本回合可額外宣告第二次鼓咆",
-    "effect": "以閃電般迅速的決斷發出二次指揮。消耗 4 點陣氣，使軍師在當向前回合可以額外進行第二次鼓咆宣告。",
+    "effect": "以閃電般迅速的決斷發出二次指揮。消耗 4 點陣氣，使軍師在當前回合可以額外進行第二次鼓咆宣告。",
     "extra": {
       "system": "陣律",
       "rankOrPre": "無前提",

@@ -206,14 +206,36 @@ function attachRulePinButton(ruleId, fallbackTitle, htmlContent) {
     const pinned = isItemPinned(uid);
     const encodedHtml = encodeURIComponent(htmlContent);
 
-    const bar = document.createElement('div');
-    bar.className = 'flex justify-end mb-3';
-    bar.innerHTML = `
-        <button id="btn-pin-current-rule" onclick="pinCurrentRuleSection('${ruleId}', '${extractedTitle.replace(/'/g, "\\'")}', decodeURIComponent('${encodedHtml}'))"
-            class="text-xs px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 transition-all shadow">
+    const buttonHtml = `
+        <button id="btn-pin-current-rule" type="button"
+            onclick="pinCurrentRuleSection('${ruleId}', '${extractedTitle.replace(/'/g, "\\'")}', decodeURIComponent('${encodedHtml}'))"
+            class="shrink-0 text-xs px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 transition-all shadow">
             <i class="${pinned ? 'fa-solid' : 'fa-regular'} fa-star text-amber-400 mr-1"></i>${pinned ? '已加入自定義頁面' : '將此規則加入自定義頁面'}
         </button>
     `;
+
+    // 尋找「SW2.5 種族資料」標題卡片，將按鈕併入同一列並排
+    const h2El = rulesContainer.querySelector('h2');
+    const titleCard = h2El ? h2El.closest('.bg-zinc-900\\/90, .rounded-xl') : null;
+
+    if (titleCard) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-wrap sm:flex-nowrap items-center justify-between gap-3';
+
+        titleCard.classList.add('flex-1', 'min-w-0');
+        titleCard.parentNode.insertBefore(wrapper, titleCard);
+        wrapper.appendChild(titleCard);
+
+        const btnBox = document.createElement('div');
+        btnBox.innerHTML = buttonHtml.trim();
+        wrapper.appendChild(btnBox.firstElementChild);
+        return;
+    }
+
+    // 備援：若頁面沒有符合的標題卡片，維持原本置右列但縮緊間距
+    const bar = document.createElement('div');
+    bar.className = 'flex justify-end mb-2';
+    bar.innerHTML = buttonHtml;
     rulesContainer.prepend(bar);
 }
 
@@ -2653,3 +2675,16 @@ export function initDemonActionSimulator(tableData) {
     renderCard();
     renderLogs();
 }
+window.jumpToRaceAnchor = function(anchorId) {
+    const target = document.getElementById(anchorId);
+    if (!target) return;
+
+    const header = document.querySelector('header');
+    const offset = header ? header.offsetHeight + 12 : 90;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+
+    window.scrollTo({
+        top: Math.max(0, top),
+        behavior: 'smooth'
+    });
+};

@@ -1,20 +1,53 @@
+window.jumpToRaceAnchor = function(anchorId) {
+    const target = document.getElementById(anchorId);
+    if (!target) return;
+
+    target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+    });
+};
 export const racesContent = `
-<div class="space-y-6">
-    <!-- 頁頭標題卡片 -->
-    <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg">
-        <div class="flex items-center gap-3 mb-2">
-            <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
-                <i class="fa-solid fa-users text-2xl"></i>
-            </div>
-            <div>
-                <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 種族資料 (Race Information)</h2>
-                <p class="text-xs text-zinc-400">提供拉克希雅世界各種族的初期能力、出身表、種族特徵與語言說明。</p>
-            </div>
+<div class="space-y-4 pt-1">
+<!-- 頁頭標題卡片 -->
+<div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg">
+    <div class="flex items-center gap-3 mb-2">
+        <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+            <i class="fa-solid fa-users text-2xl"></i>
+        </div>
+        <div>
+            <h2 class="text-xl font-bold text-amber-400 tracking-wider">SW2.5 種族資料 (Race Information)</h2>
+            <p class="text-xs text-zinc-400">提供拉克希雅世界各種族的初期能力、出身表、種族特徵與語言說明。</p>
         </div>
     </div>
+</div>
+    <!-- 種族快捷跳轉按鈕列（僅顯示種族名稱） -->
+    <div class="flex flex-wrap gap-1.5 bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 shadow-md">
+        <button type="button" onclick="jumpToRaceAnchor('race-human')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">人類</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-elf')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">精靈</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-dwarf')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">矮人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-tabbit')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">塔彼特</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-runefolk')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">符民</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-nightmare')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">夢魘</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-lycanth')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">獸化人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-dragon-kin')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">龍人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-grassrunner')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">草原妖精</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-dryad-kin')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">樹精靈</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-demon-hybrid')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">半魔人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-leprechaun')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">矮精靈</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-arv')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">血族</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-spriggan')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">守護者</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-abyss-born')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">深淵之子</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-highman')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">慧人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-fluorite')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">螢石人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-sasquatch')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">霜晶人</button>
+        <button type="button" onclick="jumpToRaceAnchor('race-lune')" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-amber-500/20 text-zinc-200 hover:text-amber-300 border border-zinc-700 hover:border-amber-500/50 transition-all">月雪民</button>
+    </div>
+
+
 
     <!-- 人類 (Human) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-human" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
@@ -324,7 +357,7 @@ export const racesContent = `
     </div>
 
     <!-- 精靈 (Elf) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-elf" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
@@ -589,8 +622,9 @@ export const racesContent = `
             </div>
         </div>
     </div>
+
     <!-- 矮人 (Dwarf) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-dwarf" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
@@ -855,8 +889,9 @@ export const racesContent = `
             </div>
         </div>
     </div>
+
     <!-- 塔彼特 (Tabbit) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-tabbit" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <!-- 種族標題與基本資訊 -->
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
@@ -1085,8 +1120,9 @@ export const racesContent = `
             </div>
         </div>
     </div>
+
     <!-- 符民 (Runefolk) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-runefolk" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1156,7 +1192,7 @@ export const racesContent = `
     </div>
 
     <!-- 夢魘 (Nightmare) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-nightmare" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1201,7 +1237,7 @@ export const racesContent = `
     </div>
 
     <!-- 獸化人 (Lycanth) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-lycanth" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1242,7 +1278,7 @@ export const racesContent = `
     </div>
 
     <!-- 龍人 (Drake-kin / Dragon-kin) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-dragon-kin" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1287,7 +1323,7 @@ export const racesContent = `
     </div>
 
     <!-- 草原妖精 (Grassrunner) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-grassrunner" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1328,7 +1364,7 @@ export const racesContent = `
     </div>
 
     <!-- 樹精靈 (Dryad-kin) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-dryad-kin" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1369,7 +1405,7 @@ export const racesContent = `
     </div>
 
     <!-- 半魔人 (Soleil / Abyss-born variant) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-demon-hybrid" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1410,7 +1446,7 @@ export const racesContent = `
     </div>
 
     <!-- 矮精靈 (Leprechaun) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-leprechaun" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1451,7 +1487,7 @@ export const racesContent = `
     </div>
 
     <!-- 血族 (Arv) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-arv" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1492,7 +1528,7 @@ export const racesContent = `
     </div>
 
     <!-- 守護者 (Spriggan) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-spriggan" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1533,7 +1569,7 @@ export const racesContent = `
     </div>
 
     <!-- 深淵之子 (Abyss-born) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-abyss-born" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1565,16 +1601,16 @@ export const racesContent = `
             <div class="space-y-1">
                 <h4 class="font-bold text-violet-300 text-sm flex items-center"><i class="fa-solid fa-dna mr-1.5"></i>種族特徵分支 (三選一)</h4>
                 <p class="text-zinc-300 leading-relaxed">
-                    • <strong>深淵之臂：</strong> 單臂紫化，近戰武器追加傷害 +2 (LV6+1 / LV11+1)。<br>
-                    • <strong>深淵之身：</strong> 軀幹紫化，防護點 +1 (LV6+1 / LV11+1)。<br>
-                    • <strong>深淵之眼：</strong> 單眼紫化，睜眼（每日限 6 輪）時命中判定 +1 (LV6+1 / LV11無時限)。
+- <strong>深淵之臂：</strong> 單臂紫化，近戰武器追加傷害 +2 (LV6+1 / LV11+1)。<br>
+- <strong>深淵之身：</strong> 軀幹紫化，防護點 +1 (LV6+1 / LV11+1)。<br>
+- <strong>深淵之眼：</strong> 單眼紫化，睜眼（每日限 6 輪）時命中判定 +1 (LV6+1 / LV11無時限)。
                 </p>
             </div>
         </div>
     </div>
 
     <!-- 慧人 (Highman) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-highman" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1611,7 +1647,7 @@ export const racesContent = `
     </div>
 
     <!-- 螢石人 (Fluorite) 卡片 -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
+    <div id="race-fluorite" class="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-5 shadow-md">
         <div class="flex flex-wrap justify-between items-center border-b border-zinc-800 pb-3 gap-2">
             <div class="flex items-center gap-2">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1652,7 +1688,7 @@ export const racesContent = `
     </div>
 
     <!-- ==================== 新增種族：霜晶人（サスカッチ） ==================== -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
+    <div id="race-sasquatch" class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
         <div class="p-4 bg-zinc-950/70 border-b border-zinc-800 flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-2.5">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
@@ -1756,7 +1792,7 @@ export const racesContent = `
     </div>
 
     <!-- ==================== 新增種族：月雪民（リューン） ==================== -->
-    <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
+    <div id="race-lune" class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-amber-500/40 transition-all">
         <div class="p-4 bg-zinc-950/70 border-b border-zinc-800 flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-2.5">
                 <span class="text-xs px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 font-bold">人族</span>
