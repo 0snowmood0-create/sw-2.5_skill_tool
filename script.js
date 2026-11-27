@@ -5,7 +5,11 @@ import { otherRulesContent } from './src/otherRulesData.js';
 import { equipmentEnhancementContent } from './src/equipmentEnhancementData.js';
 import { reputationRankContent } from './src/reputationRankData.js';
 import { renderCharSheetConsole, initCharSheetQuickAddObserver } from './src/charSheetConsole.js';
-
+import { DEMON_ACTION_TABLES } from './src/data-demon_act.js';
+import { demonActionSimSection } from './src/data-demonSimSection.js'; // 依實際檔名與路徑調整
+if (demonActionSimSection && Array.isArray(ruleSections) && !ruleSections.some(s => s.id === demonActionSimSection.id)) {
+    ruleSections.push(demonActionSimSection);
+}
 // 頁面載入時啟用「技能檢索 / 道具檢索」卡片上的「+ 角色卡」快捷按鈕
 initCharSheetQuickAddObserver();
 
@@ -304,6 +308,9 @@ window.switchMainTab = function(tabName) {
                     if (typeof window.calcPowerResult === 'function') window.calcPowerResult();
                 }, 50);
             }
+            if (tabName.includes('demon_action_sim')) {
+                setTimeout(() => initDemonActionSimulator(DEMON_ACTION_TABLES), 50);
+            }
         }
     }
 };
@@ -351,6 +358,9 @@ window.switchRuleSubTab = function(ruleKey) {
             if (typeof window.renderPowerTableRows === 'function') window.renderPowerTableRows();
             if (typeof window.calcPowerResult === 'function') window.calcPowerResult();
         }, 50);
+    }
+    if (ruleKey.includes('demon_action_sim')) {
+        setTimeout(() => initDemonActionSimulator(DEMON_ACTION_TABLES), 50);
     }
 };
 
@@ -796,7 +806,7 @@ function createSkillCardHTML(b) {
     else if (isDruid) { badgeColor = "bg-lime-950 text-lime-300 border-lime-800"; icon = "fa-leaf"; }
     else if (isAbyssgazer) { badgeColor = "bg-zinc-950 text-amber-500 border-amber-900/80"; icon = "fa-eye-low-vision"; }
     else if (isCurse) { badgeColor = "bg-purple-950 text-fuchsia-300 border-fuchsia-800"; icon = "fa-skull"; }
-    else if (isSummoner) { badgeColor = "bg-pink-950 text-pink-300 border-pink-800"; icon = "fa-pentagram"; }
+    else if (isSummoner) { badgeColor = "bg-pink-950 text-pink-300 border-pink-800"; icon = "fa-fire-flame-curved"; }
     else if (isTori) { badgeColor = "bg-orange-950 text-amber-300 border-orange-700"; icon = "fa-hand-fist"; }
     else if (isRider) { badgeColor = "bg-emerald-950 text-emerald-400 border-emerald-700"; icon = "fa-horse"; }
     else if (isGeomancer) { badgeColor = "bg-sky-950 text-sky-300 border-sky-800"; icon = "fa-compass"; }
@@ -805,17 +815,25 @@ function createSkillCardHTML(b) {
     const pinned = isItemPinned(uid);
     const payload = encodeURIComponent(JSON.stringify({ id: uid, itemType: 'skill', data: b }));
 
-    const categoryBadgeHTML = b.category ? `<span class="text-xs px-2 py-0.5 rounded border ${badgeColor}">${b.category}</span>` : '';
+    const categoryBadgeHTML = b.category ? `<span class="text-xs px-2 py-0.5 rounded border shrink-0 ${badgeColor}">${b.category}</span>` : '';
     const typeBadgeHTML = (subType && subType !== b.category && !isDivine)
-        ? `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 font-medium">${subType}</span>`
+        ? `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 font-medium shrink-0">${subType}</span>`
         : '';
     const godName = b.god || (isDivine && subType ? subType : '');
     const godBadgeHTML = godName
-        ? `<span class="text-xs bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded border border-amber-700/80 font-medium"><i class="fa-solid fa-ankh mr-1 text-[10px]"></i>${godName}</span>`
+        ? `<span class="text-xs bg-amber-950/80 text-amber-300 px-2 py-0.5 rounded border border-amber-700/80 font-medium shrink-0"><i class="fa-solid fa-ankh mr-1 text-[10px]"></i>${godName}</span>`
         : '';
     const reqLevelHTML = (reqLv !== undefined && reqLv > 0)
-        ? `<span class="text-xs bg-zinc-800/80 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700/60">Req: Lv ${reqLv}</span>`
+        ? `<span class="text-xs bg-zinc-800/80 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700/60 shrink-0">Req: Lv ${reqLv}</span>`
         : '';
+
+    const rawTags = Array.isArray(extra.tags) ? extra.tags : (Array.isArray(b.tags) ? b.tags : []);
+    const tagsHTML = rawTags.map(tag => {
+        if (tag === "輔助動作" || tag === "補助動作" || tag === "隨動作") {
+            return `<span class="text-xs bg-emerald-950/90 text-emerald-300 px-2 py-0.5 rounded border border-emerald-700/80 font-bold shrink-0" title="輔助動作"><i class="fa-solid fa-forward mr-1 text-[10px]"></i>${tag}</span>`;
+        }
+        return `<span class="text-xs bg-zinc-800 text-zinc-300 px-2 py-0.5 rounded border border-zinc-700 shrink-0">${tag}</span>`;
+    }).join('');
 
     const costVal = b.cost || b.row1_val1 || '－';
     const targetVal = b.target || b.row1_val3 || '－';
@@ -824,10 +842,44 @@ function createSkillCardHTML(b) {
     const resistVal = b.resistance || b.resist || '－';
     const elementVal = b.element || '－';
 
+    const EXTRA_LABELS = {
+        prerequisite: '前提條件',
+        risk: '風險',
+        usage: '適用／用法',
+        stone: '魔動機石',
+        expansion: '擴張效果',
+        system: '系統',
+        rankOrPre: '階級／前提',
+        kiCost: '陣氣消耗',
+        kiGain: '陣氣累積',
+        veinType: '命脈類型',
+        limit: '上限／限制',
+        singing: '歌唱／條件',
+        pet: '寵物',
+        condition: '條件／對象',
+        targetValue: '目標值',
+        bonusCost: '追加消耗'
+    };
+
+    function renderExtraGrid(entries, colorClass = 'text-emerald-300') {
+        const valid = entries.filter(([, v]) => v !== undefined && v !== null && String(v).trim() !== '');
+        if (!valid.length) return '';
+        return `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 py-1.5 px-3 bg-zinc-950/60 border-t border-zinc-800/60 text-xs">
+                ${valid.map(([k, v]) => `
+                    <div class="flex justify-between items-center gap-2">
+                        <span class="text-zinc-500 font-medium shrink-0">${k}</span>
+                        <span class="${colorClass} font-medium text-right break-words">${v}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
     let middleTableHTML = '';
+    const renderedExtraKeys = new Set(['tags', 'expansion']);
 
     if (b.row3_label) {
-        // 向下相容舊格式三列資料
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
                 <span class="text-zinc-500 font-medium">${b.row1_label}</span>
@@ -856,6 +908,9 @@ function createSkillCardHTML(b) {
         const targetMonsters = extra.targetMonsters || b.target_monsters || b.target || '全種類';
         const applicableParts = extra.applicableParts || b.applicable_parts || b.range || '無';
         const prereq = extra.prerequisite || b.prerequisite || '無';
+        renderedExtraKeys.add('targetMonsters');
+        renderedExtraKeys.add('applicableParts');
+        renderedExtraKeys.add('prerequisite');
 
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
@@ -880,6 +935,9 @@ function createSkillCardHTML(b) {
             riskText = parts[1] || '無';
         }
         const prereq = extra.prerequisite || b.prerequisite || '無';
+        renderedExtraKeys.add('usage');
+        renderedExtraKeys.add('risk');
+        renderedExtraKeys.add('prerequisite');
 
         middleTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
@@ -893,7 +951,45 @@ function createSkillCardHTML(b) {
                 <span class="col-span-5 text-right text-cyan-300 font-medium">${prereq}</span>
             </div>
         `;
+    } else if (isAlchemist) {
+        const prereq = extra.prerequisite || b.prerequisite || '無';
+        const risk = extra.risk || '無';
+        const usage = extra.usage || b.usage || '－';
+        renderedExtraKeys.add('prerequisite');
+        renderedExtraKeys.add('risk');
+        renderedExtraKeys.add('usage');
+
+        middleTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
+                <span class="text-zinc-500 font-medium">消耗</span>
+                <span class="col-span-2 text-cyan-300 font-bold">${costVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">對象</span>
+                <span class="col-span-2 text-right text-zinc-300">${targetVal}</span>
+            </div>
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 bg-zinc-900/40">
+                <span class="text-zinc-500 font-medium">射程</span>
+                <span class="col-span-2 text-zinc-300 whitespace-nowrap">${rangeVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">時間</span>
+                <span class="col-span-2 text-right text-zinc-300">${durationVal}</span>
+            </div>
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3">
+                <span class="text-zinc-500 font-medium">抵抗</span>
+                <span class="col-span-2 text-amber-300 font-medium">${resistVal}</span>
+                <span class="text-zinc-500 font-medium text-right pr-2">風險</span>
+                <span class="col-span-2 text-right ${risk === '無' ? 'text-zinc-300' : 'text-rose-400 font-bold'}">${risk}</span>
+            </div>
+            ${renderExtraGrid([
+                ['前提條件', prereq],
+                ['適用／用法', usage]
+            ], 'text-cyan-300')}
+        `;
     } else if (isSong || isFinale) {
+        renderedExtraKeys.add('singing');
+        renderedExtraKeys.add('pet');
+        renderedExtraKeys.add('condition');
+        renderedExtraKeys.add('targetValue');
+        renderedExtraKeys.add('bonusCost');
+
         const extraRows = [
             extra.singing ? ['歌唱／條件', extra.singing] : null,
             extra.pet ? ['寵物', extra.pet] : null,
@@ -915,22 +1011,23 @@ function createSkillCardHTML(b) {
                 <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
                 <span class="col-span-2 text-right text-purple-300 font-medium">${elementVal}</span>
             </div>
-            ${extraRows.length > 0 ? `
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 py-1.5 px-3 text-xs">
-                    ${extraRows.map(([k, v]) => `
-                        <div class="flex justify-between gap-2">
-                            <span class="text-zinc-500 font-medium">${k}</span>
-                            <span class="text-emerald-300 font-medium text-right">${v}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : ''}
+            ${renderExtraGrid(extraRows, 'text-emerald-300')}
         `;
     } else if (isCommand || isTactics || isGeomancer) {
+        renderedExtraKeys.add('system');
+        renderedExtraKeys.add('rankOrPre');
+        renderedExtraKeys.add('kiCost');
+        renderedExtraKeys.add('kiGain');
+        renderedExtraKeys.add('veinType');
+        renderedExtraKeys.add('limit');
+        renderedExtraKeys.add('bonusLabel');
+        renderedExtraKeys.add('bonusVal');
+
         const extraRows = [
             extra.system ? ['系統', extra.system] : null,
             extra.rankOrPre ? ['階級／前提', extra.rankOrPre] : null,
-            extra.kiGain ? ['氣勢獲得', extra.kiGain] : null,
+            extra.kiCost ? ['陣氣消耗', extra.kiCost] : null,
+            extra.kiGain ? ['陣氣累積', extra.kiGain] : null,
             extra.veinType ? ['命脈類型', extra.veinType] : null,
             extra.limit ? ['上限／限制', extra.limit] : null,
             (extra.bonusLabel && extra.bonusVal) ? [extra.bonusLabel, extra.bonusVal] : null,
@@ -949,16 +1046,7 @@ function createSkillCardHTML(b) {
                 <span class="text-zinc-500 font-medium text-right pr-2">屬性</span>
                 <span class="col-span-2 text-right text-purple-300 font-medium">${elementVal}</span>
             </div>
-            ${extraRows.length > 0 ? `
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 py-1.5 px-3 text-xs">
-                    ${extraRows.map(([k, v]) => `
-                        <div class="flex justify-between gap-2">
-                            <span class="text-zinc-500 font-medium">${k}</span>
-                            <span class="text-amber-300 font-medium text-right">${v}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : ''}
+            ${renderExtraGrid(extraRows, 'text-amber-300')}
         `;
     } else {
         middleTableHTML = `
@@ -983,6 +1071,12 @@ function createSkillCardHTML(b) {
         `;
     }
 
+    const remainingExtraEntries = Object.entries(extra)
+        .filter(([k, v]) => !renderedExtraKeys.has(k) && v !== undefined && v !== null && String(v).trim() !== '')
+        .map(([k, v]) => [EXTRA_LABELS[k] || k, v]);
+
+    const remainingExtraHTML = renderExtraGrid(remainingExtraEntries, 'text-cyan-300');
+
     const expansionText = extra.expansion || b.expansion || '';
     const expansionHTML = expansionText ? `
         <div class="space-y-1 pt-2 border-t border-zinc-800/60">
@@ -997,12 +1091,13 @@ function createSkillCardHTML(b) {
 
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
-                <div class="flex flex-wrap items-center gap-1.5">
+            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-3">
+                <div class="flex flex-wrap items-center gap-1.5 min-w-0">
                     ${categoryBadgeHTML}
                     ${typeBadgeHTML}
                     ${godBadgeHTML}
                     ${reqLevelHTML}
+                    ${tagsHTML}
                     <h3 class="text-base font-bold text-amber-400 ml-1">
                         <i class="fa-solid ${icon} mr-1 text-amber-500"></i>${b.name}
                         ${b.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${b.nameJp})</span>` : ''}
@@ -1017,6 +1112,7 @@ function createSkillCardHTML(b) {
             <div class="p-4 space-y-3">
                 <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
                     ${middleTableHTML}
+                    ${remainingExtraHTML}
                 </div>
 
                 <div class="space-y-2">
@@ -2139,3 +2235,421 @@ window.renderFeatTreePage = function() {
         });
     }
 };
+
+// ==================== 13. 魔神行動表／骰 1d 模擬器 ====================
+const DEMON_ZH_NAMES = {
+    "メングル": "曼格爾",
+    "インプ": "小惡魔",
+    "エルビレア": "艾爾比蕾亞",
+    "ヌズマル": "努茲馬爾",
+    "アザービースト": "異界獸",
+    "アビスミニオンズ": "深淵隨從",
+    "ケッククバック": "凱克庫巴克",
+    "アガル": "阿加爾",
+    "ナズラック": "納茲拉克",
+    "モヴキラ": "莫ヴ綺拉",
+    "ザルバード": "薩爾巴德",
+    "ゼヌン": "澤努恩",
+    "ダブラブルグ": "達布拉布魯格",
+    "アルガギス": "阿爾加吉斯",
+    "グルネル": "古魯涅爾",
+    "ジヌゥネ": "吉努烏涅",
+    "シハルス": "希哈爾斯",
+    "ダルグブーリー": "達爾古布利",
+    "テラービースト": "恐懼獸",
+    "ゴードベル": "高德貝爾",
+    "シャバライ": "夏巴萊",
+    "ラグナカング": "拉格納康格",
+    "セラッサルーイ": "塞菈薩魯伊",
+    "マハティガ": "馬哈堤加",
+    "メルビズ": "梅爾比茲",
+    "エゼルヴ": "艾澤爾ヴ",
+    "ケルベロス": "地獄犬",
+    "サリティガーン": "薩利堤岡",
+    "ホルグラド": "霍爾格拉德",
+    "ルンゼマーゼ": "倫澤瑪澤",
+    "フォルゴーン": "佛爾貢",
+    "リゴーガン": "利戈岡",
+    "ヴァンギガ": "梵吉加",
+    "ドレッドパール": "恐懼珍珠",
+    "ドッペルゲンガー": "分身魔",
+    "バルーサビヨーネ": "巴魯薩比約涅",
+    "ラグアドログ": "拉古阿多洛格",
+};
+
+function getDemonDisplayName(demon) {
+    if (!demon) return '';
+    const zh = demon.name || DEMON_ZH_NAMES[demon.nameJp];
+    if (zh && demon.nameJp && zh !== demon.nameJp) {
+        return `${zh}（${demon.nameJp}）`;
+    }
+    return zh || demon.nameJp || '';
+}
+
+export function initDemonActionSimulator(tableData) {
+    const app = document.getElementById('demon-sim-app');
+    if (!app || !tableData || !Array.isArray(tableData.demons)) return;
+    if (app.dataset.initialized === '1') return;
+    app.dataset.initialized = '1';
+
+    const state = {
+        selectedDemon: tableData.demons[0] || null,
+        lastRoll: null,
+        rerollUsed: false,
+        summonPenaltyStack: 0, // 累積送還判定減值（上限 -8）
+        logs: [],
+    };
+
+    const el = {
+        advLv: document.getElementById('sim-adventurer-lv'),
+        demonLv: document.getElementById('sim-demon-lv'),
+        intBonus: document.getElementById('sim-int-bonus'),
+        currentMp: document.getElementById('sim-current-mp'),
+        lvFilter: document.getElementById('sim-lv-filter'),
+        excludeIllegal: document.getElementById('sim-exclude-illegal'),
+        select: document.getElementById('sim-demon-select'),
+        modLarge: document.getElementById('mod-large-container'),
+        modContract: document.getElementById('mod-evil-contract'),
+        modPotential: document.getElementById('mod-potential'),
+        modExtra: document.getElementById('mod-extra'),
+        cardContainer: document.getElementById('sim-demon-card-container'),
+        logList: document.getElementById('sim-log-list'),
+        clearLogBtn: document.getElementById('btn-clear-sim-log'),
+    };
+
+    const roll1d = () => Math.floor(Math.random() * 6) + 1;
+    const roll2d = () => roll1d() + roll1d();
+
+    function addLog(text, tone = 'zinc') {
+        const time = new Date().toLocaleTimeString('zh-TW', { hour12: false });
+        state.logs.unshift({ time, text, tone });
+        if (state.logs.length > 50) state.logs.pop();
+        renderLogs();
+    }
+
+    function renderLogs() {
+        if (!el.logList) return;
+        if (!state.logs.length) {
+            el.logList.innerHTML = '<div class="text-zinc-500">尚未執行召喚操作或行動擲骰。</div>';
+            return;
+        }
+        const toneMap = {
+            amber: 'text-amber-300 border-amber-800/50 bg-amber-950/20',
+            cyan: 'text-cyan-300 border-cyan-800/50 bg-cyan-950/20',
+            rose: 'text-rose-300 border-rose-800/50 bg-rose-950/20',
+            emerald: 'text-emerald-300 border-emerald-800/50 bg-emerald-950/20',
+            zinc: 'text-zinc-300 border-zinc-800 bg-zinc-950/60',
+        };
+        el.logList.innerHTML = state.logs
+            .map(l => `<div class="px-3 py-2 rounded-lg border ${toneMap[l.tone] || toneMap.zinc}"><span class="text-zinc-500 mr-2">[${l.time}]</span>${l.text}</div>`)
+            .join('');
+    }
+
+    function getFilteredDemons() {
+        const advLv = Math.max(1, parseInt(el.advLv?.value || '1', 10));
+        const filterVal = el.lvFilter?.value || 'capped';
+        const noIllegal = Boolean(el.excludeIllegal?.checked);
+
+        return tableData.demons.filter(d => {
+            if (noIllegal && d.illegal) return false;
+            if (filterVal === 'capped') return d.level <= advLv;
+            if (filterVal === 'all') return true;
+            return d.level === parseInt(filterVal, 10);
+        });
+    }
+
+    function refreshSelectOptions() {
+        if (!el.select) return;
+        const list = getFilteredDemons();
+        const pool = list.length ? list : tableData.demons;
+        el.select.innerHTML = pool
+            .map(d => `<option value="${d.nameJp}">Lv.${d.level} ${getDemonDisplayName(d)}（MP ${d.summonCostMp}）${d.illegal ? ' [非法(X)]' : ''}</option>`)
+            .join('');
+
+        if (state.selectedDemon && pool.some(d => d.nameJp === state.selectedDemon.nameJp)) {
+            el.select.value = state.selectedDemon.nameJp;
+        } else {
+            state.selectedDemon = pool[0] || null;
+            state.lastRoll = null;
+            state.rerollUsed = false;
+            if (state.selectedDemon) el.select.value = state.selectedDemon.nameJp;
+        }
+    }
+
+    function getActionModTotal() {
+        let mod = parseInt(el.modExtra?.value || '0', 10) || 0;
+        if (el.modLarge?.checked) mod += 1;
+        if (el.modContract?.checked) mod += 2;
+        mod += parseInt(el.modPotential?.value || '0', 10) || 0;
+        return mod;
+    }
+
+    function matchActionRow(demon, die) {
+        for (const row of demon.actions) {
+            if (row.roll.includes('～')) {
+                const [a, b] = row.roll.split('～').map(Number);
+                if (die >= a && die <= b) return row;
+            } else if (Number(row.roll) === die) {
+                return row;
+            }
+        }
+        return demon.actions[0];
+    }
+
+    function adjustMp(delta) {
+        if (!el.currentMp) return false;
+        const cur = parseInt(el.currentMp.value || '0', 10);
+        if (cur + delta < 0) return false;
+        el.currentMp.value = String(cur + delta);
+        return true;
+    }
+
+    function renderCard() {
+        if (!el.cardContainer) return;
+        const d = state.selectedDemon;
+        if (!d) {
+            el.cardContainer.innerHTML = '<div class="col-span-12 text-zinc-400">無符合條件的魔神。</div>';
+            return;
+        }
+
+        const displayName = getDemonDisplayName(d);
+        const advLv = Math.max(1, parseInt(el.advLv?.value || '1', 10));
+        const overAdvLv = d.level > advLv;
+        const mod = getActionModTotal();
+        const activeRow = state.lastRoll ? matchActionRow(d, state.lastRoll) : null;
+
+        const rowsHtml = d.actions
+            .map(row => {
+                const hit = activeRow && activeRow.roll === row.roll;
+                return `
+                    <tr class="${hit ? 'bg-amber-500/15 text-amber-200 font-bold' : 'hover:bg-zinc-800/40 text-zinc-300'}">
+                        <td class="py-2 px-3 text-center font-mono">${row.roll}</td>
+                        <td class="py-2 px-3">${row.target}</td>
+                        <td class="py-2 px-3">${row.action}</td>
+                        <td class="py-2 px-3 text-center font-mono text-cyan-300">${row.check}${mod !== 0 ? ` (${mod >= 0 ? '+' : ''}${mod})` : ''}</td>
+                        <td class="py-2 px-3 font-mono text-amber-300">${row.damageOrEffect}</td>
+                    </tr>
+                `;
+            })
+            .join('');
+
+        const rollBanner = state.lastRoll
+            ? `
+                <div class="bg-zinc-950 border border-amber-500/40 rounded-lg p-3.5 space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="text-xs">
+                            <span class="text-zinc-400">1d 骰點：</span>
+                            <span class="text-lg font-bold text-amber-400 font-mono">${state.lastRoll}</span>
+                            <span class="text-zinc-400 ml-2">→ 對象：</span>
+                            <span class="text-zinc-100 font-bold">${activeRow.target}</span>
+                            <span class="text-zinc-400 ml-2">動作：</span>
+                            <span class="text-cyan-300 font-bold">${activeRow.action}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-reroll-1d" ${state.rerollUsed ? 'disabled' : ''} class="px-2.5 py-1 rounded text-xs font-bold ${state.rerollUsed ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-purple-600 hover:bg-purple-500 text-white'}">
+                                【改令】重骰 1 次
+                            </button>
+                            <button id="btn-cancel-action" class="px-2.5 py-1 rounded text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white">
+                                取消行動 (耗 MP ${d.cancelCostMp})
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-xs text-zinc-300">
+                        達成值：<span class="text-cyan-300 font-bold">${activeRow.check}</span>
+                        ${mod !== 0 ? `＋ 修正 <span class="text-emerald-300 font-bold">${mod >= 0 ? '+' : ''}${mod}</span>` : ''}
+                        ／ 打擊點等：<span class="text-amber-300 font-bold">${activeRow.damageOrEffect}</span>
+                    </div>
+                </div>
+            `
+            : `<div class="text-xs text-zinc-500 bg-zinc-950/60 border border-zinc-800/80 rounded-lg p-3">點擊「擲 1d 決定行動」模擬魔神行動表。</div>`;
+
+        el.cardContainer.innerHTML = `
+            <div class="lg:col-span-5 bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg space-y-3 text-xs">
+                <div class="flex items-start justify-between gap-2 border-b border-zinc-800 pb-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 font-bold">Lv.${d.level}</span>
+                            <h3 class="text-lg font-bold text-zinc-100">${displayName}</h3>
+                        </div>
+                        <div class="text-zinc-400 mt-1">魔物資料：P.${d.monsterDataPage} ／ 精神抵抗力：<span class="text-zinc-200 font-bold">${d.mentalResist}</span></div>
+                    </div>
+                    ${d.illegal ? '<span class="px-2 py-1 rounded bg-rose-950 text-rose-300 border border-rose-700 font-bold">非法供物 (X)</span>' : ''}
+                </div>
+
+                ${overAdvLv ? `<div class="p-2.5 rounded-lg bg-rose-950/60 border border-rose-800 text-rose-200">注意：魔神 Lv.${d.level} 高於冒險者 Lv.${advLv}，一般呼叫不可超過冒險者等級。</div>` : ''}
+
+                <div class="grid grid-cols-2 gap-2 bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                    <div>召喚消耗：<span class="text-cyan-300 font-bold">MP ${d.summonCostMp}</span></div>
+                    <div>取消成本：<span class="text-rose-300 font-bold">MP ${d.cancelCostMp}</span></div>
+                    <div>送還供物：<span class="text-amber-300 font-bold">${d.returnOfferingPrice.toLocaleString()}G</span></div>
+                    <div>送還減值：<span class="text-pink-300 font-bold">${state.summonPenaltyStack}</span></div>
+                </div>
+
+                <div class="bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+                    <div class="text-zinc-400 mb-0.5">必須召喚供物</div>
+                    <div class="${d.illegal ? 'text-rose-300 font-bold' : 'text-zinc-200'}">${d.summonOffering}</div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-1">
+                    <button id="btn-pay-summon" class="flex-1 py-2 px-3 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition">
+                        支付召喚 MP (${d.summonCostMp})
+                    </button>
+                    <button id="btn-roll-banish" class="flex-1 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition">
+                        進行送還判定
+                    </button>
+                </div>
+                <div class="text-[11px] text-zinc-500">※ 若開門逾 1 小時未送還，門將固定並產生「奈落的魔域」（威脅度最低冒險者 Lv+2）與惡評魔神使稱號。</div>
+            </div>
+
+            <div class="lg:col-span-7 bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-lg space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="font-bold text-zinc-100 text-sm">魔神行動表（當前達成值修正：${mod >= 0 ? '+' : ''}${mod}）</h3>
+                    <button id="btn-roll-1d" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-dice-d6"></i>擲 1d 決定行動
+                    </button>
+                </div>
+
+                ${rollBanner}
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-zinc-950/60 text-zinc-400 border-b border-zinc-800">
+                                <th class="py-2 px-3 w-14 text-center">1d</th>
+                                <th class="py-2 px-3 w-24">對象</th>
+                                <th class="py-2 px-3">射程與動作</th>
+                                <th class="py-2 px-3 w-24 text-center">達成值</th>
+                                <th class="py-2 px-3 w-32">打擊點等</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-zinc-800/70">
+                            ${rowsHtml}
+                        </tbody>
+                    </table>
+                </div>
+
+                ${d.notes ? `<div class="bg-zinc-950/80 border border-zinc-800 rounded-lg p-3 text-xs text-zinc-300 leading-relaxed"><span class="text-amber-400 font-bold mr-1">動作解說：</span>${d.notes}</div>` : ''}
+            </div>
+        `;
+
+        bindDynamicActions();
+    }
+
+    function bindDynamicActions() {
+        const d = state.selectedDemon;
+        if (!d) return;
+
+        const displayName = getDemonDisplayName(d);
+
+        const rollBtn = document.getElementById('btn-roll-1d');
+        if (rollBtn) {
+            rollBtn.onclick = () => {
+                state.lastRoll = roll1d();
+                state.rerollUsed = false;
+                const row = matchActionRow(d, state.lastRoll);
+                addLog(`【${displayName}】擲出 1d = ${state.lastRoll} → ${row.target}「${row.action}」（達成值 ${row.check}）`, 'amber');
+                renderCard();
+            };
+        }
+
+        const rerollBtn = document.getElementById('btn-reroll-1d');
+        if (rerollBtn && !state.rerollUsed) {
+            rerollBtn.onclick = () => {
+                state.lastRoll = roll1d();
+                state.rerollUsed = true;
+                const row = matchActionRow(d, state.lastRoll);
+                addLog(`【改令】重骰 1d = ${state.lastRoll}（須依新結果且不可取消）→ ${row.target}「${row.action}」`, 'cyan');
+                renderCard();
+            };
+        }
+
+        const cancelBtn = document.getElementById('btn-cancel-action');
+        if (cancelBtn) {
+            cancelBtn.onclick = () => {
+                if (!adjustMp(-d.cancelCostMp)) {
+                    addLog(`取消行動失敗：剩餘 MP 不足 ${d.cancelCostMp} 點。`, 'rose');
+                    return;
+                }
+                addLog(`取消【${displayName}】本次行動表行動，消耗 MP ${d.cancelCostMp} 點。`, 'rose');
+                state.lastRoll = null;
+                state.rerollUsed = false;
+                renderCard();
+            };
+        }
+
+        const summonPayBtn = document.getElementById('btn-pay-summon');
+        if (summonPayBtn) {
+            summonPayBtn.onclick = () => {
+                if (!adjustMp(-d.summonCostMp)) {
+                    addLog(`召喚失敗：剩餘 MP 不足 ${d.summonCostMp} 點。`, 'rose');
+                    return;
+                }
+                addLog(`指定召喚【${displayName}】（Lv.${d.level}），消耗 MP ${d.summonCostMp} 點，必須供物：${d.summonOffering}。`, 'cyan');
+                renderCard();
+            };
+        }
+
+        const banishBtn = document.getElementById('btn-roll-banish');
+        if (banishBtn) {
+            banishBtn.onclick = () => {
+                const skillLv = Math.max(1, parseInt(el.demonLv?.value || '1', 10));
+                const intB = parseInt(el.intBonus?.value || '0', 10) || 0;
+                const contractPen = el.modContract?.checked ? -1 : 0;
+                const overBonus = d.level > skillLv ? 4 : 0;
+                const totalPen = Math.max(-8, state.summonPenaltyStack + contractPen);
+
+                const dice2d = roll2d();
+                const base = skillLv + intB + overBonus + totalPen;
+                const achieved = dice2d + base;
+                const targetVal = parseInt(d.mentalResist, 10) || 0;
+                const success = achieved > targetVal;
+
+                if (success) {
+                    adjustMp(d.summonCostMp);
+                    addLog(`送還【${displayName}】成功（2d=${dice2d} + 基準${base} = ${achieved} vs 精神抵抗 ${d.mentalResist}），返還召喚 MP ${d.summonCostMp} 點。`, 'emerald');
+                } else {
+                    const selfDmg = d.level + roll2d();
+                    addLog(`送還【${displayName}】失敗（2d=${dice2d} + 基準${base} = ${achieved} vs 精神抵抗 ${d.mentalResist}），術者受到 ${selfDmg} 點確定傷害（魔神 Lv.${d.level} + 2d）。`, 'rose');
+                }
+                renderCard();
+            };
+        }
+    }
+
+    [el.advLv, el.demonLv, el.intBonus, el.lvFilter, el.excludeIllegal].forEach(input => {
+        if (!input) return;
+        input.addEventListener('change', () => {
+            refreshSelectOptions();
+            renderCard();
+        });
+    });
+
+    [el.modLarge, el.modContract, el.modPotential, el.modExtra].forEach(input => {
+        if (!input) return;
+        input.addEventListener('change', renderCard);
+    });
+
+    if (el.select) {
+        el.select.addEventListener('change', () => {
+            const found = tableData.demons.find(x => x.nameJp === el.select.value);
+            if (found) {
+                state.selectedDemon = found;
+                state.lastRoll = null;
+                state.rerollUsed = false;
+                addLog(`已指定魔神：Lv.${found.level}【${getDemonDisplayName(found)}】`, 'zinc');
+                renderCard();
+            }
+        });
+    }
+
+    if (el.clearLogBtn) {
+        el.clearLogBtn.addEventListener('click', () => {
+            state.logs = [];
+            renderLogs();
+        });
+    }
+
+    refreshSelectOptions();
+    renderCard();
+    renderLogs();
+}

@@ -18,7 +18,7 @@ import { enhancerData } from './data-enhancer.js';
 import { combatFeatsData, passiveFeatsData, majorActionFeatsData, autoFeatsData } from './data-combatFeats.js';
 import { vitalsmithSkillsData } from './data-vitalsmith.js';
 import { witchSkillsData } from './data-witch.js';
-
+import { demonData} from './data-demon.js';
 // ==================== 道具與裝備資料匯入 (請務必確認 ./Item/ 路徑與檔名正確) ====================
 import { accessoriesData } from './Item/data-accessories.js';
 import { ammoItemsData } from './Item/data-ammo.js';
@@ -86,7 +86,7 @@ export const allSkillsData = [
   ...(typeof autoFeatsData !== 'undefined' ? autoFeatsData : []),
   ...(typeof vitalsmithSkillsData !== 'undefined' ? vitalsmithSkillsData : []),
   ...(typeof witchSkillsData !== 'undefined' ? witchSkillsData : []),
-
+  ...(typeof demonData !== 'undefined' ? demonData : []),
   // 道具與裝備陣列
   ...(typeof accessoriesData !== 'undefined' ? accessoriesData : []),
   ...(typeof ammoItemsData !== 'undefined' ? ammoItemsData : []),
