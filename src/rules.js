@@ -113,7 +113,7 @@ export const ruleSections = [
                                 <td class="py-2.5 px-4 font-bold text-yellow-400">神官 (Priest)</td>
                                 <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
                                 <td class="py-2.5 px-3 text-zinc-400">神聖魔法</td>
-                                <td class="py-2.5 px-4">隊伍核心補師，具備全體治癒、異常狀態解除與驅魔能力，並可依信仰神明習得專屬特殊神聖魔法。</td>
+                                <td class="py-2.5 px-4">隊伍核心補師，具備全體治癒、異常狀態解除與驅魔能力，並可依信仰神明習得專屬專屬特殊神聖魔法。</td>
                             </tr>
                             <tr class="hover:bg-zinc-800/40">
                                 <td class="py-2.5 px-4 font-bold text-teal-400">妖精使 (Fairy Tamer)</td>
@@ -150,6 +150,12 @@ export const ruleSections = [
                                 <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
                                 <td class="py-2.5 px-3 text-zinc-400">咒詛魔法</td>
                                 <td class="py-2.5 px-4">擅長施展、轉移與解除詛咒的「咒法師」，須手持單手生活道具製成的〈咒法具〉（禁武器／盾牌）並以魔法文明語詠唱，精通削弱敵方屬性、弱點賦予與念動操作。</td>
+                            </tr>
+                            <tr class="hover:bg-zinc-800/40">
+                                <td class="py-2.5 px-4 font-bold text-pink-400">召異魔導士 (Demon Ruler)</td>
+                                <td class="py-2.5 px-2 text-center text-amber-300 font-bold">A</td>
+                                <td class="py-2.5 px-3 text-zinc-400">召異魔法</td>
+                                <td class="py-2.5 px-4">消耗指定供物開啟異界之門召喚「魔神」使役的禁忌法師，可透過魔神行動表協助作戰，或犧牲自身生命與獻祭換取強大暗黑強化，但須承擔送還失敗與開門風險。</td>
                             </tr>
                             <tr class="hover:bg-zinc-800/40">
                                 <td class="py-2.5 px-4 font-bold text-violet-400">深智魔法 (Wizard)</td>
@@ -2872,5 +2878,297 @@ export const ruleSections = [
             </div>
         </div>
     `
-  } 
-  ];
+  } ,
+  {
+      id: 'sec-demon_ruler_rules',
+      title: '召異魔法規則一覽 (Demon Ruler Rules)',
+      icon: 'fa-solid fa-demon',
+      content: `
+          <div class="space-y-6">
+              <!-- 標題區塊 -->
+              <div class="bg-zinc-900/90 border border-amber-500/30 rounded-xl p-5 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div class="flex items-center gap-3">
+                      <div class="p-2.5 bg-amber-500/10 rounded-lg text-amber-400">
+                          <i class="fa-solid fa-demon text-2xl"></i>
+                      </div>
+                      <div>
+                          <h2 class="text-xl font-bold text-amber-400 tracking-wider">召異魔法（デーモンルーラー技能）規則一覽</h2>
+                          <p class="text-xs text-zinc-400">收錄世界觀與技能定位、施法與種族限制、「門之小魔」與〈小魔封入具〉、魔神使役與送還、〈魔神苗床〉及 Lv.1～16 召喚表。</p>
+                      </div>
+                  </div>
+                  <div class="flex flex-wrap gap-2 text-xs">
+                      <span class="px-2.5 py-1 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 font-bold">魔法使系｜經驗表 A</span>
+                      <span class="px-2.5 py-1 rounded bg-purple-950/60 text-purple-300 border border-purple-800/60 font-bold">魔神語會話 / 魔法文明語讀文</span>
+                  </div>
+              </div>
+  
+              <!-- 1. 技能基本、背景定位與行使／種族限制 -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                  <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                      <i class="fa-solid fa-scroll text-purple-400"></i>
+                      <h3 class="font-bold text-zinc-100 text-base">一、技能基本、背景定位與行使／種族限制</h3>
+                  </div>
+                  <div class="p-4 space-y-4 text-xs text-zinc-300 leading-relaxed">
+                      <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                          <div class="font-bold text-amber-400 text-sm">【背景與角色定位】</div>
+                          <p>召異魔法（デーモンルーラー技能）是從異界召喚魔神，將其力量的一部分憑依於自身體內，或是使役魔神本身的魔法使系技能（經驗表 A）。擁有者稱為「召異術師」或「魔神使」。據說於三千年前滅亡的古代魔法文明末期從操靈魔法分支確立，能行使運用魔神之力的召異魔法，並與「門之小魔（ゲートインプ）」或「契約之小魔（コントラクトインプ）」同行，開啟「異界之門（アビスゲート）」暫時召喚並使役魔神。</p>
+                          <p>在阿爾夫海姆大陸，受北端「奈落（アビス）」影響，魔神威脅為家常便飯，世人對魔神的忌諱與對召異術師的恐懼很深。召異術師多以「對魔神戰的研究機構」自居，作為魔術師公會部門受到管理與傳承；亦有不隸屬公會、暗中學習邪惡知識與儀式的魔神使。冒險者召異術師多為對抗奈落、魔神或討伐邪惡魔神使而修練，盾神伊夫神殿亦有研究傳承與特別神官；公會中雖受警戒但因其知識與技術強大而獲接納。</p>
+                      </div>
+  
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-left border-collapse text-xs">
+                              <thead>
+                                  <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                      <th class="py-2.5 px-4 w-36">項目</th>
+                                      <th class="py-2.5 px-4">規則重點與裁定</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="divide-y divide-zinc-800/70 text-zinc-300">
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2.5 px-4 font-bold text-amber-400">技能與解鎖</td>
+                                      <td class="py-2.5 px-4">魔法使系技能（經驗表 A）；習得即附帶「魔神語」會話與「魔法文明語」讀文；可進行<strong>魔法行使判定</strong>（⇒『I』116頁）與<strong>送還判定</strong>（⇒ 28頁）。Lv.1 起解鎖對應技能等級的全部召異魔法，此後每升 1 級解鎖新等級全部魔法；基本表記遵從既有魔法（⇒『I』172頁等），咒文詠唱須發聲魔神語。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2.5 px-4 font-bold text-amber-400">媒介與移動</td>
+                                      <td class="py-2.5 px-4">行使召異魔法必須使用〈小魔的封入具〉（不論內部當下是否封有門之小魔，⇒ 29頁），且不受武器裝備限制。此外，在執行「行使召異魔法」、「形成異界之門」或「呼叫魔神」的該回合，術者的移動僅限於<strong>限制移動</strong>。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2.5 px-4 font-bold text-amber-400">鎧甲減值與上限</td>
+                                      <td class="py-2.5 px-4">承襲操靈魔法脈絡宜穿輕裝：裝備／穿著〈金屬鎧〉行使召異魔法與送還判定 <strong>-4</strong>；必要筋力 10 以上〈非金屬鎧〉<strong>-2</strong>。部分召異法術（⇒ 34頁）附帶「送還判定 -X」，可累積但上限為 <strong>-8</strong>（超過則無法行使且不發揮任何效果；行使判定自動失敗時不累積）。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2.5 px-4 font-bold text-pink-400">種族特例與限制</td>
+                                      <td class="py-2.5 px-4"><strong>獸化人〔獸變貌〕</strong>無法發聲魔神語，禁止行使召異魔法與開閉異界之門；<strong>夜魘〔異貌〕</strong>可免除發聲限制、無視鎧甲減值，且開門一律為補助動作。</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+  
+              <!-- 2. 門之小魔與封入具 -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                  <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                      <i class="fa-solid fa-key text-emerald-400"></i>
+                      <h3 class="font-bold text-zinc-100 text-base">二、「門之小魔」契約、外露風險與〈小魔封入具〉</h3>
+                  </div>
+                  <div class="p-4 space-y-4 text-xs text-zinc-300 leading-relaxed">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                              <div class="font-bold text-amber-400 text-sm">【契約與封入操作】</div>
+                              <p>魔神使透過與異界魔神集團、上位魔神、魔神將甚至魔神之王締約取得力量，契約常伴隨漏洞與拉鋸。習得技能即有 1 體「門之小魔（契約的小魔）」隨行（除非術者死亡或小魔消滅不更換；成長可能變異但記憶延續）。封入／解放皆為<strong>補助動作</strong>，以魔神語下令自動成功、不可拒絕，小魔亦可自由進出；變更封入具需 <strong>1 小時儀式</strong>（無判定、無額外金錢與 MP 消耗）。</p>
+                          </div>
+                          <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                              <div class="font-bold text-amber-400 text-sm">【外露特性與承傷】</div>
+                              <p>身高約 30～50cm，外型多元（類似魔神小魔インプ者不到 2 成，另有少女、動物、特殊形狀或「像氣球」者），必然飛行／浮游（翅、耳或螺旋槳等器官多被賢者視為障眼法），具魔神語會話與魔法知覺（知覺與術者相近，賢者疑有偽裝），反應直率如孩童，運動與機敏如人類幼兒，念動力搬運上限數 kg，無需進食呼吸但常討甜食等嗜好品。疏於看管可能擅自開門（⇒ 25頁）或亂報情報。外露受損時，原扣於小魔的 HP/MP 傷害<strong>全數轉由魔神使承受</strong>；迴避基準 0、防護點 0、抵抗沿用魔神使，毒/病/精神無效；可被【センス・マジック】感知，目擊需見識判定（目標值依外貌 ⇒ 47頁，迪蒙魯勒技能者自動成功）。</p>
+                          </div>
+                          <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5">
+                              <div class="font-bold text-pink-400 text-sm">【消滅與再契約】</div>
+                              <p>未封入過久（最長數日）或開門後逾 1 小時未送還致門固定，門之小魔會消滅（⇒ 24頁），使魔神使失去契約，無法行使召異魔法或使役魔神。再契約需<strong>半日儀式</strong>與<strong>「召異技能等級 × 200G」</strong>供品。</p>
+                          </div>
+                      </div>
+  
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-left border-collapse text-xs">
+                              <thead>
+                                  <tr class="bg-zinc-950/70 text-zinc-400 border-b border-zinc-800">
+                                      <th class="py-2 px-3 w-44">封入具款式</th>
+                                      <th class="py-2 px-3 w-48">裝備／持有條件</th>
+                                      <th class="py-2 px-3">效果修正</th>
+                                      <th class="py-2 px-3 w-28">價格／備註</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="divide-y divide-zinc-800/70">
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-amber-400">〈召異的刺青〉（惡魔的印）</td>
+                                      <td class="py-2 px-3 text-zinc-400">不占欄（約 5cm 見方，衣物可遮蔽；需拜託其他召異術師）</td>
+                                      <td class="py-2 px-3 text-pink-300">魔法行使判定 -1</td>
+                                      <td class="py-2 px-3">100G（永久不可消）</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-amber-400">〈召異的徽章〉</td>
+                                      <td class="py-2 px-3 text-zinc-400">〈裝飾品：任意〉（金屬或木製小型雕刻品）</td>
+                                      <td class="py-2 px-3 text-zinc-400">無</td>
+                                      <td class="py-2 px-3">200G</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-amber-400">武器加工</td>
+                                      <td class="py-2 px-3 text-zinc-400">加工於〈武器〉（須裝備該武器）</td>
+                                      <td class="py-2 px-3 text-zinc-400">無</td>
+                                      <td class="py-2 px-3">+200G</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-cyan-400">〈魔神小型容器〉</td>
+                                      <td class="py-2 px-3 text-zinc-400">用法：1H（有蓋／口燈瓶，須手持）</td>
+                                      <td class="py-2 px-3 text-emerald-300">送還判定 +1</td>
+                                      <td class="py-2 px-3">500G</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-cyan-400">〈魔神大型容器〉</td>
+                                      <td class="py-2 px-3 text-zinc-400">用法：2H（有蓋／抽屜壺箱，雙手保持）</td>
+                                      <td class="py-2 px-3 text-emerald-300">魔神行動表各達成值 +1、送還判定 +1</td>
+                                      <td class="py-2 px-3">2,000G</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-purple-400">〈魔神苗床〉</td>
+                                      <td class="py-2 px-3 text-zinc-400">需支配（植入無穢人族，⇒ 31頁）</td>
+                                      <td class="py-2 px-3 text-emerald-300">魔法行使判定 +1、送還判定 +2</td>
+                                      <td class="py-2 px-3 text-pink-400 font-bold">不可交易</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                          <p class="text-[11px] text-zinc-400 mt-2">※ 擁有多個封入具時，施法僅能選 1 個且效果不疊加（可與封入小魔者不同，小魔移走後「變空」的封入具仍可用於行使召異魔法）；但<strong>開門、呼叫／使役魔神</strong>與<strong>取消行動表行動</strong>須使用封入該門之小魔的封入具，且須適當裝備或持有。</p>
+                      </div>
+                  </div>
+              </div>
+  
+              <!-- 3. 魔神使役五步驟、供物與送還結算 -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                  <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                      <i class="fa-solid fa-rotate text-cyan-400"></i>
+                      <h3 class="font-bold text-zinc-100 text-base">三、魔神使役流程、供物、送還判定與門固定後果</h3>
+                  </div>
+                  <div class="p-4 space-y-4 text-xs text-zinc-300">
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-left border-collapse text-xs">
+                              <thead>
+                                  <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                      <th class="py-2 px-3 w-24">階段／步驟</th>
+                                      <th class="py-2 px-3 w-36">動作與時間</th>
+                                      <th class="py-2 px-3 w-24">移動限制</th>
+                                      <th class="py-2 px-3 w-44">成本</th>
+                                      <th class="py-2 px-3">核心規則</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="divide-y divide-zinc-800/70">
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-amber-400">① 形成異界之門</td>
+                                      <td class="py-2 px-3">補助動作（無鎧或必筋&lt;10非金屬）／主動作（金屬鎧或必筋≥10非金屬）</td>
+                                      <td class="py-2 px-3 text-amber-300">限制移動</td>
+                                      <td class="py-2 px-3">無</td>
+                                      <td class="py-2 px-3">門之小魔或封入具須與術者同位置（封入中會先自動解放）；形成後至閉門前（⇒ 28頁）不可移動或被他人干涉。門為雙開黑門拱形，小魔於頂點一體化。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-amber-400">② 呼叫魔神</td>
+                                      <td class="py-2 px-3">補助動作（須魔神語，開門同一手番即可）</td>
+                                      <td class="py-2 px-3 text-amber-300">限制移動</td>
+                                      <td class="py-2 px-3 text-cyan-300">MP「魔物Lv × 2」＋ 召喚供物</td>
+                                      <td class="py-2 px-3">魔物 Lv ≤ 冒險者 Lv（可高於技能 Lv，但送還較難 ⇒ 27頁）；限自身同位置開啟之門；須有魔神行動表；同時限 1 體；召喚供物（⇒ 30頁）於呼叫時消耗。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-emerald-400">③ 使役魔神</td>
+                                      <td class="py-2 px-3">自動（呼叫當回合起，術者手番結束後立刻行動，不可插其他 PC；若有魔像／妖精可任定順序，特技《マリオネット》可獨立）</td>
+                                      <td class="py-2 px-3">任意</td>
+                                      <td class="py-2 px-3">原則無（取消行動耗 MP「魔物Lv」）</td>
+                                      <td class="py-2 px-3">擲 1d 依行動表（⇒ 40頁～）行動，原則不可什麼都不做且無作意；術者自動知悉行動表，知魔物資料需魔物知識判定；決定行動後設為任一 PC 同位置（任意由術者選、無差別由 GM 無作意決定，視為限制移動未移動）；對象依規則選滿最大數；魔神消耗代價不計入術者且不受不利干擾。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-purple-400">④ 送還魔神</td>
+                                      <td class="py-2 px-3">送還判定（10 分鐘／60 輪，不可縮短 ⇒『II』49頁）或 強制送還（HP 0）</td>
+                                      <td class="py-2 px-3">判定時不可移動</td>
+                                      <td class="py-2 px-3">視等級比較決定是否用送還供物</td>
+                                      <td class="py-2 px-3">開門後約 1 小時內須完成（最多 6 次送還判定）；正常送還成功返還術者親自消耗的召喚 MP（〈魔晶石〉代用不返還，不超過最大 MP）。</td>
+                                  </tr>
+                                  <tr class="hover:bg-zinc-800/40">
+                                      <td class="py-2 px-3 font-bold text-zinc-300">⑤ 關閉異界之門</td>
+                                      <td class="py-2 px-3">自動</td>
+                                      <td class="py-2 px-3">任意</td>
+                                      <td class="py-2 px-3">無</td>
+                                      <td class="py-2 px-3">門消滅，門之小魔自動回到封入具內（即使術者死亡，經強制送還後亦同）。</td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+  
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 leading-relaxed">
+                      <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                          <div class="font-bold text-cyan-400 text-sm">【供物、送還判定、強制送還與取消行動】</div>
+                          <p><strong>供物規則（⇒ 30、31頁）</strong>：呼叫魔神必須提供<strong>召喚供物</strong>，可花錢購買或以戰利品取得；不易隨身攜帶的供物（如活鱷魚）在規則上視為已事前完成儀式與購置，無須隨身帶著走。供物名稱標示「(X)」者為非法供物，若以犯罪手段取得且東窗事發，會立刻獲得或惡化 1 階段惡評魔神使稱號與對應不名譽點。</p>
+                          <p><strong>送還供物與等級比較</strong>：<strong>送還供物</strong>多為經儀式的肉或酒等（不能直接用金錢代替）。送還時依等級比較處理：若<strong>召異技能等級 ≧ 魔物等級</strong>，使用送還供物可<strong>直接自動成功</strong>；不使用供物則進行送還判定（失敗不消耗供物）。若<strong>魔物等級 &gt; 召異技能等級</strong>，則<strong>必須使用送還供物</strong>，且送還判定獲得 <strong>+4 獎勵修正</strong>（若判定失敗，該送還供物會退還，後續挑戰可再次使用）。</p>
+                          <p><strong>送還判定（⇒ 28頁）</strong>：以<strong>「召異技能等級 + 知力加值」</strong>對抗魔神的「精神抵抗力」（判定基準非魔力，〈マナスタッフ〉等僅加魔力的裝備無效；裝備鎧甲的減值修正仍適用）。判定耗時 <strong>10 分鐘（60 回合）</strong>，期間魔神不移動也不行動。若判定失敗，術者立刻受到<strong>「魔物等級 + 2d」確定傷害</strong>，魔神留在原地；開門後約 1 小時內，送還判定最多可嘗試 <strong>6 次</strong>，每次失敗可選擇再試一次、改用供物自動成功，或改採強制送還。</p>
+                          <p><strong>強制送還與敵性魔神使</strong>：若難以用送還判定送回或術者已死亡，可改採<strong>強制送還</strong>，即與魔神戰鬥並將其 HP 降至 0（若先留出準備時間，每 10 秒／1 回合魔神依行動表行動，且期間不受不利效果或傷害）。強制送還成功時魔神離去，但<strong>沒有戰利品，也不返還召喚時消耗的 MP</strong>；若戰鬥失敗則等同 PC 全滅且無再挑戰。此外，<strong>敵性魔神使</strong>原則上不使用魔神行動表，召喚出來的魔神直接以一般魔物資料處理。</p>
+                          <p class="text-zinc-400"><strong>取消魔神行動表行動</strong>：若要取消魔神依行動表抽出的行動，須同時滿足：① 術者意識清醒；② 持有或裝備著原本封入該門之小魔的封入具；③ <strong>在擲出 1d 決定行動的當下立刻宣告</strong>（若已決定對象等後續步驟則不可）；④ 消耗魔神<strong>「魔物等級」點 MP</strong>。</p>
+                      </div>
+                      <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+                          <div class="font-bold text-pink-400 text-sm">【門固定（逾 1 小時）與惡評稱號】</div>
+                          <p>開門後經過 1 小時仍未送還時，魔神完全解放（脫離控制自由行動或隱匿作亂）、門之小魔喪失、門固定並催生威脅度最低<strong>「冒險者 Lv + 2」</strong>的<strong>奈落的魔域</strong>（魔神接連被呼喚、成長速度超乎一般、危險度最上級；破壞〈奈落の核〉解決魔域後門與一體化小魔自動消滅），且術者獲得不名譽點（影響公會立場與服務 ⇒『II』144頁）與惡評稱號：<strong>惡意的看過者</strong>（50）→ <strong>魔域的增幅者</strong>（100）→ <strong>魔神的尖兵</strong>（150）→ <strong>惡德的擔負者</strong>（200）→ <strong>惡德的擔負者★</strong>（250，每多★每次 +50）。</p>
+                          <p class="text-zinc-400">返還方式：可以名譽點相殺現有稱號對應點數降 1 階（返還「惡意的看過者」後不再以此稱呼）；或由固定該門的魔神使本人解決該魔域，降 1 階並減 50 不名譽點。</p>
+                      </div>
+                  </div>
+                  </div>
+              </div>
+  
+              <!-- 4. 魔神苗床與召喚表 -->
+              <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg">
+                  <div class="px-4 py-3 bg-zinc-950/80 border-b border-zinc-800 flex items-center gap-2">
+                      <i class="fa-solid fa-seedling text-rose-400"></i>
+                      <h3 class="font-bold text-zinc-100 text-base">四、〈魔神的苗床〉與 Lv.1～16 魔神召喚表</h3>
+                  </div>
+                  <div class="p-4 space-y-4 text-xs text-zinc-300">
+                      <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-1.5 leading-relaxed">
+                          <div class="font-bold text-rose-400 text-sm">【〈魔神的苗床〉（《魔神之種》）完整規則（⇒ 31～33頁）】</div>
+                          <p>以【デモンズシード】（⇒ 36頁）產出的〈魔神の種〉植入對象體內製成。<strong>資格</strong>：僅限<strong>無「穢」的人族</strong>；受過蘇生者、夜魘、人工靈魂的露恩弗克皆不適格（不發芽或發芽即枯死）。<strong>使用</strong>：耗時 10 分鐘，須對象保持不動或安靜（束縛或趁熟睡），以術者「魔力」對抗目標「精神抵抗力」。<strong>違法性</strong>：屬重罪（多數國家可判極刑死刑且不可蘇生），PC 露餡立刻獲得或惡化 <strong>4 階段</strong>惡評稱號與不名譽點。</p>
+                          <p><strong>進行階段</strong>（經過日數為概算，依個人而異）：~1–2 週（1 階段：輕微友人）→ ~1–2 月（2 階段：摯友）→ ~1–2 年（3 階段：心醉、戀慕）→ ~數年（4 階段：完全忠誠，甚至聽從自殺命令）→ 更久（5 階段：<strong>人形化</strong>，肉體與精神完全被支配、自我喪失、依命令如魔像／死靈 ⇒『II』105頁行動、免食排泄睡眠，偽裝人類亦難掩異常）。</p>
+                          <p><strong>利用、解除與死亡</strong>：保有原本角色能力並可援護；可作封入具（行使 +1、送還 +2；若已人形化並封入小魔，小魔將操控肉體並直接發聲應答）；可代用送還供物（價值＝經過日數 × 50G，不足可補他物，超額不找零）。解除需【リムーブ・カース】等以達成值勝過製作者目標值，種子漸消後需靜養「經過日數」相同日數才完全康復；若死亡並蘇生，因獲得「穢」而喪失資格、種子即座枯死失效。</p>
+                      </div>
+  
+                      <div class="overflow-x-auto">
+                          <table class="w-full text-left border-collapse text-xs">
+                              <thead>
+                                  <tr class="bg-zinc-950/50 text-zinc-400 border-b border-zinc-800">
+                                      <th class="py-2 px-3 w-14 text-center">Lv</th>
+                                      <th class="py-2 px-3 w-40">魔神名稱</th>
+                                      <th class="py-2 px-3">召喚供物（價格）</th>
+                                      <th class="py-2 px-3 w-24 text-right">送還供物</th>
+                                      <th class="py-2 px-3 w-24 text-center">精神抵抗</th>
+                                      <th class="py-2 px-3 w-28 text-center">行動／資料頁</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="divide-y divide-zinc-800/70">
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">1</td><td class="py-1.5 px-3 font-bold text-amber-400">曼格爾 <span class="text-xs text-zinc-500 font-normal">(メングル)</span></td><td class="py-1.5 px-3">殭屍的眼球 (60G)</td><td class="py-1.5 px-3 text-right">50G</td><td class="py-1.5 px-3 text-center">2(9)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.194</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">2</td><td class="py-1.5 px-3 font-bold text-amber-400">小惡魔 <span class="text-xs text-zinc-500 font-normal">(インプ)</span></td><td class="py-1.5 px-3">蝙蝠的翅膀 (60G)</td><td class="py-1.5 px-3 text-right">100G</td><td class="py-1.5 px-3 text-center">4(11)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.194</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">3</td><td class="py-1.5 px-3 font-bold text-amber-400">艾爾比蕾亞 <span class="text-xs text-zinc-500 font-normal">(エルビレア)</span></td><td class="py-1.5 px-3">蝦子 (20G分)</td><td class="py-1.5 px-3 text-right">150G</td><td class="py-1.5 px-3 text-center">5(12)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.194</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">3</td><td class="py-1.5 px-3 font-bold text-amber-400">努茲馬爾 <span class="text-xs text-zinc-500 font-normal">(ヌズマル)</span></td><td class="py-1.5 px-3">活青蛙 (10G)</td><td class="py-1.5 px-3 text-right">150G</td><td class="py-1.5 px-3 text-center">5(12)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.194</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">4</td><td class="py-1.5 px-3 font-bold text-amber-400">異界獸 <span class="text-xs text-zinc-500 font-normal">(アザービースト)</span></td><td class="py-1.5 px-3">動物毛皮 (40G)</td><td class="py-1.5 px-3 text-right">250G</td><td class="py-1.5 px-3 text-center">5(12)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.195</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">4</td><td class="py-1.5 px-3 font-bold text-amber-400">深淵隨從 <span class="text-xs text-zinc-500 font-normal">(アビスミニオンズ)</span></td><td class="py-1.5 px-3">蝙蝠的翅膀×2 (120G)</td><td class="py-1.5 px-3 text-right">250G</td><td class="py-1.5 px-3 text-center">6(13)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.195</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">4</td><td class="py-1.5 px-3 font-bold text-amber-400">凱克庫巴克 <span class="text-xs text-zinc-500 font-normal">(ケッククバック)</span></td><td class="py-1.5 px-3">寶石 (150G)</td><td class="py-1.5 px-3 text-right">200G</td><td class="py-1.5 px-3 text-center">6(13)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.195</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">5</td><td class="py-1.5 px-3 font-bold text-amber-400">阿加爾 <span class="text-xs text-zinc-500 font-normal">(アガル)</span></td><td class="py-1.5 px-3">蜘蛛的腳 (50G)</td><td class="py-1.5 px-3 text-right">450G</td><td class="py-1.5 px-3 text-center">7(14)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.41 / P.196</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">5</td><td class="py-1.5 px-3 font-bold text-amber-400">納茲拉克 <span class="text-xs text-zinc-500 font-normal">(ナズラック)</span></td><td class="py-1.5 px-3">章魚的腳 (100G分)</td><td class="py-1.5 px-3 text-right">350G</td><td class="py-1.5 px-3 text-center">7(14)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.196</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">5</td><td class="py-1.5 px-3 font-bold text-amber-400">莫ヴ綺拉 <span class="text-xs text-zinc-500 font-normal">(モヴキラ)</span></td><td class="py-1.5 px-3">毒蜘蛛 (100G)</td><td class="py-1.5 px-3 text-right">450G</td><td class="py-1.5 px-3 text-center">7(14)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.196</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">6</td><td class="py-1.5 px-3 font-bold text-amber-400">薩爾巴德 <span class="text-xs text-zinc-500 font-normal">(ザルバード)</span></td><td class="py-1.5 px-3">斷角 (60G)</td><td class="py-1.5 px-3 text-right">650G</td><td class="py-1.5 px-3 text-center">9(16)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.197</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">6</td><td class="py-1.5 px-3 font-bold text-amber-400">澤努恩 <span class="text-xs text-zinc-500 font-normal">(ゼヌン)</span></td><td class="py-1.5 px-3">食蟻獸的舌頭 (100G)</td><td class="py-1.5 px-3 text-right">550G</td><td class="py-1.5 px-3 text-center">8(15)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.197</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">6</td><td class="py-1.5 px-3 font-bold text-amber-400">達布拉布魯格 <span class="text-xs text-zinc-500 font-normal">(ダブラブルグ)</span></td><td class="py-1.5 px-3">面具 (60G)</td><td class="py-1.5 px-3 text-right">550G</td><td class="py-1.5 px-3 text-center">8(15)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.197</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">7</td><td class="py-1.5 px-3 font-bold text-amber-400">阿爾加吉斯 <span class="text-xs text-zinc-500 font-normal">(アルガギス)</span></td><td class="py-1.5 px-3">穿山甲的舌頭 (100G)</td><td class="py-1.5 px-3 text-right">750G</td><td class="py-1.5 px-3 text-center">9(16)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.42 / P.198</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">7</td><td class="py-1.5 px-3 font-bold text-amber-400">古魯涅爾 <span class="text-xs text-zinc-500 font-normal">(グルネル)</span></td><td class="py-1.5 px-3">上等藤蔓 (60G)</td><td class="py-1.5 px-3 text-right">800G</td><td class="py-1.5 px-3 text-center">10(17)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.198</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">7</td><td class="py-1.5 px-3 font-bold text-amber-400">吉努烏涅 <span class="text-xs text-zinc-500 font-normal">(ジヌゥネ)</span></td><td class="py-1.5 px-3">馬尾 (50G)</td><td class="py-1.5 px-3 text-right">750G</td><td class="py-1.5 px-3 text-center">9(16)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.198</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">7</td><td class="py-1.5 px-3 font-bold text-amber-400">希哈爾斯 <span class="text-xs text-zinc-500 font-normal">(シハルス)</span></td><td class="py-1.5 px-3">透明石 (400G)</td><td class="py-1.5 px-3 text-right">450G</td><td class="py-1.5 px-3 text-center">9(16)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.199</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">8</td><td class="py-1.5 px-3 font-bold text-amber-400">達爾古布利 <span class="text-xs text-zinc-500 font-normal">(ダルグブーリー)</span></td><td class="py-1.5 px-3">黑斗篷 (50G)</td><td class="py-1.5 px-3 text-right">1,400G</td><td class="py-1.5 px-3 text-center">10(17)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.199</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">8</td><td class="py-1.5 px-3 font-bold text-amber-400">恐懼獸 <span class="text-xs text-zinc-500 font-normal">(テラービースト)</span></td><td class="py-1.5 px-3">牙 (200G)</td><td class="py-1.5 px-3 text-right">1,200G</td><td class="py-1.5 px-3 text-center">10(17)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.200</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-pink-400">9</td><td class="py-1.5 px-3 font-bold text-pink-400">高德貝爾 <span class="text-xs text-zinc-500 font-normal">(ゴードベル)</span></td><td class="py-1.5 px-3 text-pink-300">(X) 無首人族的屍體</td><td class="py-1.5 px-3 text-right">2,100G</td><td class="py-1.5 px-3 text-center">12(19)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.43 / P.200</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">9</td><td class="py-1.5 px-3 font-bold text-amber-400">夏巴萊 <span class="text-xs text-zinc-500 font-normal">(シャバライ)</span></td><td class="py-1.5 px-3">人族的血液 (200G)</td><td class="py-1.5 px-3 text-right">1,800G</td><td class="py-1.5 px-3 text-center">12(19)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.44 / P.200</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">9</td><td class="py-1.5 px-3 font-bold text-amber-400">拉格納康格 <span class="text-xs text-zinc-500 font-normal">(ラグナカング)</span></td><td class="py-1.5 px-3">亞龍鱗 (700G)</td><td class="py-1.5 px-3 text-right">1,500G</td><td class="py-1.5 px-3 text-center">11(18)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.44 / P.201</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">10</td><td class="py-1.5 px-3 font-bold text-amber-400">塞菈薩魯伊 <span class="text-xs text-zinc-500 font-normal">(セラッサルーイ)</span></td><td class="py-1.5 px-3">寶石 (500G)</td><td class="py-1.5 px-3 text-right">3,500G</td><td class="py-1.5 px-3 text-center">13(20)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.44 / P.201</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">10</td><td class="py-1.5 px-3 font-bold text-amber-400">馬哈堤加 <span class="text-xs text-zinc-500 font-normal">(マハティガ)</span></td><td class="py-1.5 px-3">象鼻 (500G)</td><td class="py-1.5 px-3 text-right">3,000G</td><td class="py-1.5 px-3 text-center">13(20)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.44 / P.202</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">10</td><td class="py-1.5 px-3 font-bold text-amber-400">梅爾比茲 <span class="text-xs text-zinc-500 font-normal">(メルビズ)</span></td><td class="py-1.5 px-3">大型魚 (500G分)</td><td class="py-1.5 px-3 text-right">2,500G</td><td class="py-1.5 px-3 text-center">12(19)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.44 / P.202</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">11</td><td class="py-1.5 px-3 font-bold text-amber-400">艾澤爾ヴ <span class="text-xs text-zinc-500 font-normal">(エゼルヴ)</span></td><td class="py-1.5 px-3">白斗篷 (200G)</td><td class="py-1.5 px-3 text-right">4,500G</td><td class="py-1.5 px-3 text-center">14(21)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.202</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">11</td><td class="py-1.5 px-3 font-bold text-amber-400">地獄犬 <span class="text-xs text-zinc-500 font-normal">(ケルベロス)</span></td><td class="py-1.5 px-3">幻獸的皮 (140G)</td><td class="py-1.5 px-3 text-right">4,000G</td><td class="py-1.5 px-3 text-center">13(20)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.203</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">11</td><td class="py-1.5 px-3 font-bold text-amber-400">薩利堤岡 <span class="text-xs text-zinc-500 font-normal">(サリティガーン)</span></td><td class="py-1.5 px-3">石灰岩 (700G分)</td><td class="py-1.5 px-3 text-right">4,500G</td><td class="py-1.5 px-3 text-center">14(21)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.204</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">12</td><td class="py-1.5 px-3 font-bold text-amber-400">霍爾格拉德 <span class="text-xs text-zinc-500 font-normal">(ホルグラド)</span></td><td class="py-1.5 px-3">魔法文明的書 (340G)</td><td class="py-1.5 px-3 text-right">6,000G</td><td class="py-1.5 px-3 text-center">15(22)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.204</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">12</td><td class="py-1.5 px-3 font-bold text-amber-400">倫澤瑪澤 <span class="text-xs text-zinc-500 font-normal">(ルンゼマーゼ)</span></td><td class="py-1.5 px-3">鳶盾 (1,000G)</td><td class="py-1.5 px-3 text-right">6,000G</td><td class="py-1.5 px-3 text-center">16(23)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.204</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">13</td><td class="py-1.5 px-3 font-bold text-amber-400">佛爾貢 <span class="text-xs text-zinc-500 font-normal">(フォルゴーン)</span></td><td class="py-1.5 px-3">山羊的屍體 (500G)</td><td class="py-1.5 px-3 text-right">9,000G</td><td class="py-1.5 px-3 text-center">17(24)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.45 / P.205</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">13</td><td class="py-1.5 px-3 font-bold text-amber-400">利戈岡 <span class="text-xs text-zinc-500 font-normal">(リゴーガン)</span></td><td class="py-1.5 px-3">迅捷弓 (1,200G)</td><td class="py-1.5 px-3 text-right">9,000G</td><td class="py-1.5 px-3 text-center">16(23)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.205</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">14</td><td class="py-1.5 px-3 font-bold text-amber-400">梵吉加 <span class="text-xs text-zinc-500 font-normal">(ヴァンギガ)</span></td><td class="py-1.5 px-3">活大猿 (2,000G)</td><td class="py-1.5 px-3 text-right">13,000G</td><td class="py-1.5 px-3 text-center">16(23)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.206</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">14</td><td class="py-1.5 px-3 font-bold text-amber-400">恐懼珍珠 <span class="text-xs text-zinc-500 font-normal">(ドレッドパール)</span></td><td class="py-1.5 px-3">活鱷魚 (1,000G)</td><td class="py-1.5 px-3 text-right">13,000G</td><td class="py-1.5 px-3 text-center">18(25)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.207</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-pink-400">15</td><td class="py-1.5 px-3 font-bold text-pink-400">分身魔 <span class="text-xs text-zinc-500 font-normal">(ドッペルゲンガー)</span></td><td class="py-1.5 px-3 text-pink-300">(X) 人族的大腦</td><td class="py-1.5 px-3 text-right">20,000G</td><td class="py-1.5 px-3 text-center">21(28)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.207</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-amber-300">15</td><td class="py-1.5 px-3 font-bold text-amber-400">巴魯薩比約涅 <span class="text-xs text-zinc-500 font-normal">(バルーサビヨーネ)</span></td><td class="py-1.5 px-3">連身甲 (2,500G)</td><td class="py-1.5 px-3 text-right">20,000G</td><td class="py-1.5 px-3 text-center">20(27)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.208</td></tr>
+                              <tr class="hover:bg-zinc-800/40"><td class="py-1.5 px-3 text-center font-bold text-pink-400">16</td><td class="py-1.5 px-3 font-bold text-pink-400">拉古阿多洛格 <span class="text-xs text-zinc-500 font-normal">(ラグアドログ)</span></td><td class="py-1.5 px-3 text-pink-300">(X) 人族的脊椎</td><td class="py-1.5 px-3 text-right">30,000G</td><td class="py-1.5 px-3 text-center">21(28)</td><td class="py-1.5 px-3 text-center text-zinc-400">P.46 / P.208</td></tr>
+                          </tbody>
+                          </table>
+                          <p class="text-[11px] text-zinc-400 mt-2">※ 標示「(X)」者為非法召喚供物，犯罪取得並揭發時會立刻獲得或惡化 1 階段惡評魔神使稱號與對應不名譽點。</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      `
+  }
+];

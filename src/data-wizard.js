@@ -234,7 +234,7 @@ export const wizardData = [
     "resistance": "任意",
     "element": "－",
     "summary": "暫時賦予防禦類的戰鬥特技",
-    "effect": "賦予對象<防具熟習A/**>/<掩護>/<防禦姿勢>/<迴避行動I>/<阻擋>任意一種戰鬥特技，此魔法可疊加不同的戰鬥特技。",
+    "effect": "賦予對象<防具熟習A/任意>/<掩護>/<防禦姿勢>/<迴避行動I>/<阻擋>任意一種戰鬥特技，此魔法可疊加不同的戰鬥特技。",
     "extra": {}
   },
   {
@@ -245,7 +245,7 @@ export const wizardData = [
     "name": "沉睡雲",
     "nameJp": "スリープ・クラウド",
     "cost": "MP 12",
-    "target": "1(半徑3m)/5",
+    "target": "1區域(半徑3m)/5",
     "range": "2(30m)/起點指定",
     "duration": "一瞬/30秒(3回合)",
     "resistance": "消滅",
@@ -277,7 +277,7 @@ export const wizardData = [
     "subCategory": "",
     "reqLevel": 7,
     "name": "遠隔遙控人偶",
-    "nameJp": "ホールド・ポータル",
+    "nameJp": "リモート・コントロール・ドール",
     "cost": "MP 10",
     "target": "1個人偶",
     "range": "2(無限)/-",
@@ -434,7 +434,7 @@ export const wizardData = [
     "cost": "MP 18",
     "target": "1名+1名",
     "range": "2(30 m)/起點指定",
-    "duration": "1分(16回合)",
+    "duration": "1分(6回合)",
     "resistance": "消滅",
     "element": "－",
     "summary": "延遲敵人的時間，加速我方的時間",
@@ -489,7 +489,7 @@ export const wizardData = [
     "resistance": "減半",
     "element": "詛咒",
     "summary": "威力 70 傷害",
-    "effect": "以詛咒的光線造成『威力 70 ＋魔力』點傷害。因為此效果而使 HP 降至 0 以下時，目標必須在隨後的生死判定受到－ 20 的減值修正。",
+    "effect": "以詛咒的光線造成『威力 70 ＋魔力』點魔法傷害。因為此效果而使 HP 降至 0 以下時，目標必須在隨後的生死判定受到－ 20 的減值修正。",
     "extra": {}
   },
   {
