@@ -2073,6 +2073,7 @@ window.renderCustomPage = function() {
 };
 
 // ==================== 12. 戰鬥特技互動習得樹／等級篩選分頁 ====================
+// ==================== 12. 戰鬥特技互動習得樹／等級篩選分頁 ====================
 const featTreeState = {
     query: '',
     type: '',
@@ -2201,7 +2202,7 @@ window.addFeatTreeItemToCharSheet = function(featName, event) {
 
 window.selectFeatTreeItem = function(name) {
     featTreeState.selectedName = featTreeState.selectedName === name ? null : name;
-    renderFeatTreePage();
+    updateFeatTreeContent();
 };
 
 window.resetFeatTreeFilters = function() {
@@ -2210,12 +2211,25 @@ window.resetFeatTreeFilters = function() {
     featTreeState.maxLevel = 15;
     featTreeState.prereqMode = '';
     featTreeState.selectedName = null;
-    renderFeatTreePage();
+
+    const searchEl = document.getElementById('ft-search-input');
+    const typeEl = document.getElementById('ft-type-select');
+    const levelEl = document.getElementById('ft-level-select');
+    const prereqEl = document.getElementById('ft-prereq-select');
+
+    if (searchEl) searchEl.value = '';
+    if (typeEl) typeEl.value = '';
+    if (levelEl) levelEl.value = '15';
+    if (prereqEl) prereqEl.value = '';
+
+    updateFeatTreeContent();
 };
 
-window.renderFeatTreePage = function() {
-    const rulesContainer = document.getElementById('rules-container');
-    if (!rulesContainer) return;
+// 只局部更新「符合數量」與「下方習得樹＋側邊詳情」，絕不重繪搜尋框
+function updateFeatTreeContent() {
+    const bodyEl = document.getElementById('ft-tree-body');
+    const countEl = document.getElementById('ft-match-count');
+    if (!bodyEl) return;
 
     const allFeats = getCombatFeatsForTree();
     const matched = allFeats.filter(f => matchesFeatTreeFilter(f, allFeats));
@@ -2225,6 +2239,10 @@ window.renderFeatTreePage = function() {
     const prereqSet = new Set(rel.prereqs.map(f => f.name));
     const nextSet = new Set(rel.nexts.map(f => f.name));
 
+    if (countEl) {
+        countEl.textContent = `符合：${matched.length} / ${allFeats.length}`;
+    }
+
     const buckets = [0, 1, 3, 5, 7, 9, 11, 13, 15];
     const borderMap = {
         '宣言': 'border-l-red-500',
@@ -2232,6 +2250,103 @@ window.renderFeatTreePage = function() {
         '主動作': 'border-l-emerald-500',
         '自動': 'border-l-purple-500'
     };
+
+    bodyEl.innerHTML = `
+        <div class="lg:col-span-9 bg-zinc-900 border border-zinc-800 rounded-xl p-3 overflow-x-auto custom-scrollbar">
+            <div class="grid grid-cols-9 gap-2.5 min-w-[1260px]">
+                ${buckets.map(bucket => {
+                    const colItems = allFeats.filter(f => getFeatLevelBucket(f.level) === bucket);
+                    const label = bucket === 0 ? '無需求 / 0' : `Lv ${bucket}`;
+                    return `
+                        <div class="flex flex-col gap-2">
+                            <div class="bg-zinc-950 border border-zinc-800 rounded-lg py-1.5 px-2 text-center text-xs font-bold text-amber-400 sticky top-0 z-10">
+                                ${label} (${colItems.length})
+                            </div>
+                            <div class="flex flex-col gap-2">
+                                ${colItems.map(feat => {
+                                    let ringClass = 'border-zinc-800 hover:border-amber-500/60';
+                                    if (featTreeState.selectedName === feat.name) ringClass = 'border-amber-400 ring-2 ring-amber-400/40';
+                                    else if (prereqSet.has(feat.name)) ringClass = 'border-sky-400 ring-2 ring-sky-400/40';
+                                    else if (nextSet.has(feat.name)) ringClass = 'border-emerald-400 ring-2 ring-emerald-400/40';
+
+                                    const dimClass = matchedSet.has(feat.name) ? '' : 'opacity-25';
+                                    const leftBorder = borderMap[feat.type] || 'border-l-blue-500';
+                                    const escapedName = feat.name.replace(/'/g, "\\'");
+
+                                    return `
+                                        <div onclick="selectFeatTreeItem('${escapedName}')"
+                                            class="bg-zinc-950/90 border border-l-4 ${leftBorder} ${ringClass} ${dimClass} rounded-lg p-2 cursor-pointer transition-all flex flex-col justify-between gap-1.5">
+                                            <div>
+                                                <div class="flex justify-between items-start gap-1 text-xs font-bold text-zinc-100">
+                                                    <span>${feat.name}</span>
+                                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 shrink-0">${feat.type}</span>
+                                                </div>
+                                                <div class="text-[11px] text-amber-300/90 mt-1 break-words">前提：${feat.prerequisite}</div>
+                                                <div class="text-[11px] text-zinc-400 mt-1 line-clamp-2">${feat.summary}</div>
+                                            </div>
+                                            <div class="flex justify-end pt-0.5">
+                                                <button type="button" onclick="addFeatTreeItemToCharSheet('${escapedName}', event)"
+                                                    class="text-[10px] px-2 py-0.5 rounded bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-700/60 transition-colors">
+                                                    <i class="fa-solid fa-user-plus mr-1"></i>角色卡
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        </div>
+
+        <aside class="lg:col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3 text-xs lg:sticky lg:top-24">
+            <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-2">特技詳情與連鎖</h3>
+            ${selectedFeat ? `
+                <div class="space-y-2">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="text-sm font-bold text-zinc-100">
+                            ${selectedFeat.name}
+                            ${selectedFeat.nameJp ? `<span class="text-xs text-zinc-500 font-mono font-normal">(${selectedFeat.nameJp})</span>` : ''}
+                        </div>
+                        <button type="button" onclick="addFeatTreeItemToCharSheet('${selectedFeat.name.replace(/'/g, "\\'")}', event)"
+                            class="text-xs px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/70 transition-colors shrink-0">
+                            <i class="fa-solid fa-user-plus mr-1"></i>+ 角色卡
+                        </button>
+                    </div>
+                    <div><span class="text-zinc-500">類型／需求：</span><span class="text-zinc-200">${selectedFeat.type} ／ ${selectedFeat.level > 0 ? 'Lv ' + selectedFeat.level : '無等級限制'}</span></div>
+                    <div><span class="text-zinc-500">習得前提：</span><span class="text-amber-300 font-medium">${selectedFeat.prerequisite}</span></div>
+                    <div><span class="text-zinc-500">使用限制：</span><span class="text-zinc-200">${selectedFeat.usage}</span></div>
+                    <div class="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 text-zinc-300 leading-relaxed">${selectedFeat.summary}</div>
+
+                    <div class="pt-1">
+                        <div class="text-sky-400 font-bold mb-1">前置特技（${rel.prereqs.length}）</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${rel.prereqs.length
+                                ? rel.prereqs.map(p => `<button type="button" onclick="selectFeatTreeItem('${p.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-sky-300 border border-sky-500/40">← ${p.name}</button>`).join('')
+                                : '<span class="text-zinc-500">無前置特技</span>'}
+                        </div>
+                    </div>
+
+                    <div class="pt-1">
+                        <div class="text-emerald-400 font-bold mb-1">可解鎖後續（${rel.nexts.length}）</div>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${rel.nexts.length
+                                ? rel.nexts.map(n => `<button type="button" onclick="selectFeatTreeItem('${n.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-emerald-300 border border-emerald-500/40">→ ${n.name}</button>`).join('')
+                                : '<span class="text-zinc-500">無後續特技</span>'}
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <p class="text-zinc-400 leading-relaxed">點選左側任一戰鬥特技卡片，查看完整條件與前後置特技連鎖，或直接點擊卡片上的「角色卡」按鈕加入。</p>
+            `}
+        </aside>
+    `;
+}
+
+window.renderFeatTreePage = function() {
+    const rulesContainer = document.getElementById('rules-container');
+    if (!rulesContainer) return;
 
     rulesContainer.innerHTML = `
         <div class="space-y-4">
@@ -2249,7 +2364,7 @@ window.renderFeatTreePage = function() {
                     <span><i class="fa-solid fa-square text-blue-500 mr-1"></i>被動</span>
                     <span><i class="fa-solid fa-square text-emerald-500 mr-1"></i>主動作</span>
                     <span><i class="fa-solid fa-square text-purple-500 mr-1"></i>自動</span>
-                    <span class="text-amber-300 font-mono">符合：${matched.length} / ${allFeats.length}</span>
+                    <span id="ft-match-count" class="text-amber-300 font-mono"></span>
                 </div>
             </div>
 
@@ -2283,97 +2398,7 @@ window.renderFeatTreePage = function() {
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-                <div class="lg:col-span-9 bg-zinc-900 border border-zinc-800 rounded-xl p-3 overflow-x-auto custom-scrollbar">
-                    <div class="grid grid-cols-9 gap-2.5 min-w-[1260px]">
-                        ${buckets.map(bucket => {
-                            const colItems = allFeats.filter(f => getFeatLevelBucket(f.level) === bucket);
-                            const label = bucket === 0 ? '無需求 / 0' : `Lv ${bucket}`;
-                            return `
-                                <div class="flex flex-col gap-2">
-                                    <div class="bg-zinc-950 border border-zinc-800 rounded-lg py-1.5 px-2 text-center text-xs font-bold text-amber-400 sticky top-0 z-10">
-                                        ${label} (${colItems.length})
-                                    </div>
-                                    <div class="flex flex-col gap-2">
-                                        ${colItems.map(feat => {
-                                            let ringClass = 'border-zinc-800 hover:border-amber-500/60';
-                                            if (featTreeState.selectedName === feat.name) ringClass = 'border-amber-400 ring-2 ring-amber-400/40';
-                                            else if (prereqSet.has(feat.name)) ringClass = 'border-sky-400 ring-2 ring-sky-400/40';
-                                            else if (nextSet.has(feat.name)) ringClass = 'border-emerald-400 ring-2 ring-emerald-400/40';
-
-                                            const dimClass = matchedSet.has(feat.name) ? '' : 'opacity-25';
-                                            const leftBorder = borderMap[feat.type] || 'border-l-blue-500';
-                                            const escapedName = feat.name.replace(/'/g, "\\'");
-
-                                            return `
-                                                <div onclick="selectFeatTreeItem('${escapedName}')"
-                                                    class="bg-zinc-950/90 border border-l-4 ${leftBorder} ${ringClass} ${dimClass} rounded-lg p-2 cursor-pointer transition-all flex flex-col justify-between gap-1.5">
-                                                    <div>
-                                                        <div class="flex justify-between items-start gap-1 text-xs font-bold text-zinc-100">
-                                                            <span>${feat.name}</span>
-                                                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 shrink-0">${feat.type}</span>
-                                                        </div>
-                                                        <div class="text-[11px] text-amber-300/90 mt-1 break-words">前提：${feat.prerequisite}</div>
-                                                        <div class="text-[11px] text-zinc-400 mt-1 line-clamp-2">${feat.summary}</div>
-                                                    </div>
-                                                    <div class="flex justify-end pt-0.5">
-                                                        <button type="button" onclick="addFeatTreeItemToCharSheet('${escapedName}', event)"
-                                                            class="text-[10px] px-2 py-0.5 rounded bg-emerald-950/70 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-700/60 transition-colors">
-                                                            <i class="fa-solid fa-user-plus mr-1"></i>角色卡
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-
-                <aside class="lg:col-span-3 bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3 text-xs lg:sticky lg:top-24">
-                    <h3 class="text-sm font-bold text-amber-400 border-b border-zinc-800 pb-2">特技詳情與連鎖</h3>
-                    ${selectedFeat ? `
-                        <div class="space-y-2">
-                            <div class="flex items-start justify-between gap-2">
-                                <div class="text-sm font-bold text-zinc-100">
-                                    ${selectedFeat.name}
-                                    ${selectedFeat.nameJp ? `<span class="text-xs text-zinc-500 font-mono font-normal">(${selectedFeat.nameJp})</span>` : ''}
-                                </div>
-                                <button type="button" onclick="addFeatTreeItemToCharSheet('${selectedFeat.name.replace(/'/g, "\\'")}', event)"
-                                    class="text-xs px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/70 transition-colors shrink-0">
-                                    <i class="fa-solid fa-user-plus mr-1"></i>+ 角色卡
-                                </button>
-                            </div>
-                            <div><span class="text-zinc-500">類型／需求：</span><span class="text-zinc-200">${selectedFeat.type} ／ ${selectedFeat.level > 0 ? 'Lv ' + selectedFeat.level : '無等級限制'}</span></div>
-                            <div><span class="text-zinc-500">習得前提：</span><span class="text-amber-300 font-medium">${selectedFeat.prerequisite}</span></div>
-                            <div><span class="text-zinc-500">使用限制：</span><span class="text-zinc-200">${selectedFeat.usage}</span></div>
-                            <div class="bg-zinc-950 p-2.5 rounded-lg border border-zinc-800 text-zinc-300 leading-relaxed">${selectedFeat.summary}</div>
-
-                            <div class="pt-1">
-                                <div class="text-sky-400 font-bold mb-1">前置特技（${rel.prereqs.length}）</div>
-                                <div class="flex flex-wrap gap-1.5">
-                                    ${rel.prereqs.length
-                                        ? rel.prereqs.map(p => `<button type="button" onclick="selectFeatTreeItem('${p.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-sky-300 border border-sky-500/40">← ${p.name}</button>`).join('')
-                                        : '<span class="text-zinc-500">無前置特技</span>'}
-                                </div>
-                            </div>
-
-                            <div class="pt-1">
-                                <div class="text-emerald-400 font-bold mb-1">可解鎖後續（${rel.nexts.length}）</div>
-                                <div class="flex flex-wrap gap-1.5">
-                                    ${rel.nexts.length
-                                        ? rel.nexts.map(n => `<button type="button" onclick="selectFeatTreeItem('${n.name.replace(/'/g, "\\'")}')" class="px-2 py-0.5 rounded-full bg-zinc-950 hover:bg-zinc-800 text-emerald-300 border border-emerald-500/40">→ ${n.name}</button>`).join('')
-                                        : '<span class="text-zinc-500">無後續特技</span>'}
-                                </div>
-                            </div>
-                        </div>
-                    ` : `
-                        <p class="text-zinc-400 leading-relaxed">點選左側任一戰鬥特技卡片，查看完整條件與前後置特技連鎖，或直接點擊卡片上的「角色卡」按鈕加入。</p>
-                    `}
-                </aside>
-            </div>
+            <div id="ft-tree-body" class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start"></div>
         </div>
     `;
 
@@ -2383,29 +2408,41 @@ window.renderFeatTreePage = function() {
     const prereqEl = document.getElementById('ft-prereq-select');
 
     if (searchEl) {
-        searchEl.addEventListener('input', e => {
+        let isComposing = false;
+        searchEl.addEventListener('compositionstart', () => {
+            isComposing = true;
+        });
+        searchEl.addEventListener('compositionend', e => {
+            isComposing = false;
             featTreeState.query = e.target.value;
-            renderFeatTreePage();
+            updateFeatTreeContent();
+        });
+        searchEl.addEventListener('input', e => {
+            if (e.isComposing || isComposing) return;
+            featTreeState.query = e.target.value;
+            updateFeatTreeContent();
         });
     }
     if (typeEl) {
         typeEl.addEventListener('change', e => {
             featTreeState.type = e.target.value;
-            renderFeatTreePage();
+            updateFeatTreeContent();
         });
     }
     if (levelEl) {
         levelEl.addEventListener('change', e => {
             featTreeState.maxLevel = Number(e.target.value);
-            renderFeatTreePage();
+            updateFeatTreeContent();
         });
     }
     if (prereqEl) {
         prereqEl.addEventListener('change', e => {
             featTreeState.prereqMode = e.target.value;
-            renderFeatTreePage();
+            updateFeatTreeContent();
         });
     }
+
+    updateFeatTreeContent();
 };
 
 // ==================== 13. 魔神行動表／骰 1d 模擬器 ====================

@@ -2786,7 +2786,7 @@ export const autoFeatsData = [
     "subCategory": "自動",
     "reqLevel": 0,
     "name": "先制攻擊",
-    "nameJp": "ファストフード",
+    "nameJp": "ファストアクション",
     "cost": "－",
     "target": "－",
     "range": "-",
