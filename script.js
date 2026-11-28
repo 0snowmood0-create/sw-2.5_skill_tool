@@ -506,8 +506,13 @@ function executeSkillFilter() {
     renderBardSongs(true);
 }
 
-// ==================== 4. 道具檢索 - 獨立篩選與渲染邏輯 ====================
+// ==================== 4. 道具檢索 - 獨立篩選與分批渲染邏輯 ====================
 let itemDebounceTimer = null;
+let currentFilteredItems = [];
+let currentItemPage = 1;
+const itemPageSize = 30;
+let cachedNormalizedItems = null;
+let itemCategorySynced = false;
 
 window.filterItems = function() {
     clearTimeout(itemDebounceTimer);
@@ -524,13 +529,22 @@ function executeItemFilter() {
 
     if (!container) return;
 
-    const dataset = getNormalizedItemsDataset();
-    syncItemCategorySelectOptions(dataset);
+    // 1. 快取正規化後的資料集，避免每次篩選或切頁重複計算
+    if (!cachedNormalizedItems) {
+        cachedNormalizedItems = getNormalizedItemsDataset();
+    }
+    const dataset = cachedNormalizedItems;
+
+    // 2. 分類下拉選單只需初始化同步一次
+    if (!itemCategorySynced) {
+        syncItemCategorySelectOptions(dataset);
+        itemCategorySynced = true;
+    }
 
     const rawQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const selectedCategory = categoryFilter ? categoryFilter.value : '';
 
-    const filtered = dataset.filter(item => {
+    currentFilteredItems = dataset.filter(item => {
         if (!item) return false;
 
         let matchesCategory = !selectedCategory || item.category === selectedCategory;
@@ -561,9 +575,21 @@ function executeItemFilter() {
         return matchesCategory && matchesQuery;
     });
 
-    if (countEl) countEl.textContent = filtered.length;
+    if (countEl) countEl.textContent = currentFilteredItems.length;
 
-    if (filtered.length === 0) {
+    currentItemPage = 1;
+    renderItemsPage(true);
+}
+
+function renderItemsPage(isNewSearch = false) {
+    const container = document.getElementById('item-list');
+    if (!container) return;
+
+    if (isNewSearch) {
+        container.innerHTML = '';
+    }
+
+    if (currentFilteredItems.length === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
                 <i class="fa-solid fa-box-open text-4xl text-zinc-600 mb-3"></i>
@@ -573,8 +599,29 @@ function executeItemFilter() {
         return;
     }
 
-    container.innerHTML = filtered.map(item => renderItemCard(item)).join('');
+    const startIndex = (currentItemPage - 1) * itemPageSize;
+    const endIndex = startIndex + itemPageSize;
+    const pageItems = currentFilteredItems.slice(startIndex, endIndex);
+
+    if (pageItems.length === 0) return;
+
+    const fragment = document.createElement('template');
+    fragment.innerHTML = pageItems.map(item => renderItemCard(item)).join('');
+    container.appendChild(fragment.content);
 }
+
+// 捲動到底部自動載入下一批道具（請將 'sec-items' 對應為你道具頁籤容器的實際 id）
+window.addEventListener('scroll', () => {
+    const secItems = document.getElementById('sec-items');
+    if (secItems && !secItems.classList.contains('hidden')) {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+            if (currentItemPage * itemPageSize < currentFilteredItems.length) {
+                currentItemPage++;
+                renderItemsPage(false);
+            }
+        }
+    }
+});
 
 // ==================== 5. 戰鬥特技專用卡片 HTML 生成 ====================
 export function renderCombatFeatCard(feat) {
@@ -635,9 +682,7 @@ export function renderCombatFeatCard(feat) {
                             <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${feat.summary}
                         </div>
                     ` : ''}
-                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
-                        ${feat.effect || ''}
-                    </p>
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 px-3 py-2 rounded border border-zinc-800/40">${(feat.effect || '').trim()}</p>
                 </div>
             </div>
         </div>
@@ -844,56 +889,52 @@ export function renderItemCard(item) {
 
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs px-2 py-0.5 rounded border ${badgeStyle} font-medium">
-                        ${item.category || '道具'}
+        <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs px-2 py-0.5 rounded border ${badgeStyle} font-medium">
+                    ${item.category || '道具'}
+                </span>
+                ${isMagitechWeapon && item.category !== '魔導武器' ? `
+                    <span class="text-xs px-2 py-0.5 rounded border bg-purple-950/80 text-purple-300 border-purple-700/80 font-medium">
+                        魔導武器
                     </span>
-                    ${isMagitechWeapon && item.category !== '魔導武器' ? `
-                        <span class="text-xs px-2 py-0.5 rounded border bg-purple-950/80 text-purple-300 border-purple-700/80 font-medium">
-                            魔導武器
-                        </span>
-                    ` : ''}
-                    ${isMagitechProsthesis && item.category !== '魔導義肢' ? `
-                        <span class="text-xs px-2 py-0.5 rounded border bg-cyan-950/80 text-cyan-300 border-cyan-700/80 font-medium">
-                            魔導義肢
-                        </span>
-                    ` : ''}
-                    <h3 class="text-base font-bold text-amber-400 ml-1">
-                        <i class="fa-solid ${itemIcon} mr-1.5 text-amber-500"></i>${item.name}
-                        ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
-                    </h3>
-                </div>
-                <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
-                    class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
-                    <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
-                </button>
+                ` : ''}
+                ${isMagitechProsthesis && item.category !== '魔導義肢' ? `
+                    <span class="text-xs px-2 py-0.5 rounded border bg-cyan-950/80 text-cyan-300 border-cyan-700/80 font-medium">
+                        魔導義肢
+                    </span>
+                ` : ''}
+                <h3 class="text-base font-bold text-amber-400 ml-1">
+                    <i class="fa-solid ${itemIcon} mr-1.5 text-amber-500"></i>${item.name}
+                    ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
+                </h3>
+            </div>
+            <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
+                class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
+                <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
+            </button>
+        </div>
+
+        <div class="p-4 space-y-3">
+            <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
+                ${attrTableHTML}
             </div>
 
-            <div class="p-4 space-y-3">
-                <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
-                    ${attrTableHTML}
-                </div>
-
-                <div class="space-y-2">
-                    ${item.summary ? `
-                        <div class="text-xs font-bold text-amber-500 flex items-center">
-                            <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${item.summary}
-                        </div>
-                    ` : ''}
-                    ${(item.effect || item.description) ? `
-                        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
-                            ${item.effect || item.description}
-                        </p>
-                    ` : ''}
-                    ${item.note ? `
-                        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/60 p-2.5 rounded border border-amber-900/30 font-mono">
-                            ${item.note}
-                        </p>
-                    ` : ''}
-                </div>
+            <div class="space-y-2">
+                ${item.summary ? `
+                    <div class="text-xs font-bold text-amber-500 flex items-center">
+                        <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${item.summary}
+                    </div>
+                ` : ''}
+                ${(item.effect || item.description) ? `
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 px-3 py-2 rounded border border-zinc-800/40">${String(item.effect || item.description).trim()}</p>
+                ` : ''}
+                ${item.note ? `
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/60 px-3 py-2 rounded border border-amber-900/30 font-mono">${String(item.note).trim()}</p>
+                ` : ''}
             </div>
         </div>
+    </div>
     `;
 }
 
@@ -1207,65 +1248,60 @@ function createSkillCardHTML(b) {
             </div>
         `;
     }
-
     const remainingExtraEntries = Object.entries(extra)
-        .filter(([k, v]) => !renderedExtraKeys.has(k) && v !== undefined && v !== null && String(v).trim() !== '')
-        .map(([k, v]) => [EXTRA_LABELS[k] || k, v]);
+    .filter(([k, v]) => !renderedExtraKeys.has(k) && v !== undefined && v !== null && String(v).trim() !== '')
+    .map(([k, v]) => [EXTRA_LABELS[k] || k, v]);
 
-    const remainingExtraHTML = renderExtraGrid(remainingExtraEntries, 'text-cyan-300');
+const remainingExtraHTML = renderExtraGrid(remainingExtraEntries, 'text-cyan-300');
 
-    const expansionText = extra.expansion || b.expansion || '';
-    const expansionHTML = expansionText ? `
-        <div class="space-y-1 pt-2 border-t border-zinc-800/60">
-            <div class="text-xs font-bold text-amber-400 flex items-center">
-                <i class="fa-solid fa-angles-up mr-1.5 text-xs text-amber-500"></i>擴張效果：
-            </div>
-            <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-amber-950/20 p-2.5 rounded border border-amber-900/30">
-                ${expansionText}
-            </p>
+const expansionText = (extra.expansion || b.expansion || '').trim();
+const expansionHTML = expansionText ? `
+    <div class="space-y-1 pt-2 border-t border-zinc-800/60">
+        <div class="text-xs font-bold text-amber-400 flex items-center">
+            <i class="fa-solid fa-angles-up mr-1.5 text-xs text-amber-500"></i>擴張效果：
         </div>
-    ` : '';
+        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-amber-950/20 px-3 py-2 rounded border border-amber-900/30">${expansionText}</p>
+    </div>
+` : '';
 
-    return `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
-            <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-3">
-                <div class="flex flex-wrap items-center gap-1.5 min-w-0">
-                    ${categoryBadgeHTML}
-                    ${typeBadgeHTML}
-                    ${godBadgeHTML}
-                    ${reqLevelHTML}
-                    ${tagsHTML}
-                    <h3 class="text-base font-bold text-amber-400 ml-1">
-                        <i class="fa-solid ${icon} mr-1 text-amber-500"></i>${b.name}
-                        ${b.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${b.nameJp})</span>` : ''}
-                    </h3>
-                </div>
-                <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
-                    class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
-                    <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
-                </button>
+return `
+    <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
+        <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-3">
+            <div class="flex flex-wrap items-center gap-1.5 min-w-0">
+                ${categoryBadgeHTML}
+                ${typeBadgeHTML}
+                ${godBadgeHTML}
+                ${reqLevelHTML}
+                ${tagsHTML}
+                <h3 class="text-base font-bold text-amber-400 ml-1">
+                    <i class="fa-solid ${icon} mr-1 text-amber-500"></i>${b.name}
+                    ${b.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${b.nameJp})</span>` : ''}
+                </h3>
+            </div>
+            <button data-pin-id="${uid}" onclick="togglePinDataItem('${payload}')"
+                class="text-xs px-2.5 py-1 rounded-lg ${pinned ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-amber-300 border-zinc-700'} border transition-all shrink-0">
+                <i class="${pinned ? 'fa-solid text-amber-400' : 'fa-regular'} fa-star"></i> ${pinned ? '已收藏' : '收藏'}
+            </button>
+        </div>
+
+        <div class="p-4 space-y-3">
+            <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
+                ${middleTableHTML}
+                ${remainingExtraHTML}
             </div>
 
-            <div class="p-4 space-y-3">
-                <div class="bg-zinc-950 rounded-lg border border-zinc-800/80 overflow-hidden text-xs">
-                    ${middleTableHTML}
-                    ${remainingExtraHTML}
-                </div>
-
-                <div class="space-y-2">
-                    <div class="space-y-1">
-                        <div class="text-xs font-bold text-amber-500 flex items-center">
-                            <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${b.summary || ''}
-                        </div>
-                        <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 p-2.5 rounded border border-zinc-800/40">
-                            ${b.effect || ''}
-                        </p>
+            <div class="space-y-2">
+                <div class="space-y-1">
+                    <div class="text-xs font-bold text-amber-500 flex items-center">
+                        <i class="fa-solid fa-bookmark mr-1.5 text-xs"></i>概要：${b.summary || ''}
                     </div>
-                    ${expansionHTML}
+                    <p class="text-xs text-zinc-300 leading-relaxed whitespace-pre-line bg-zinc-950/30 px-3 py-2 rounded border border-zinc-800/40">${(b.effect || '').trim()}</p>
                 </div>
+                ${expansionHTML}
             </div>
         </div>
-    `;
+    </div>
+`;
 }
 
 // ==================== 8. 技能 DOM 渲染與捲動懶載入 ====================
