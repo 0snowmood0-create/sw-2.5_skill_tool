@@ -3170,5 +3170,654 @@ export const ruleSections = [
               </div>
           </div>
       `
+  },
+  {
+    id: 'sec-magitech_weapon_rules',
+    title: '魔動機武器基本規則 (Magitech Weapon Rules)',
+    icon: 'fa-solid fa-gear',
+    content: `
+      <div class="space-y-6 text-zinc-300">
+        <!-- 標題區塊 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl shadow-md">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+            <h2 class="text-xl font-bold text-amber-400 flex items-center">
+              <i class="fa-solid fa-gear mr-2.5 text-amber-500"></i>SW2.5 魔動機武器基本規則 (Magitech Weapon Rules)
+            </h2>
+            <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">魔動機術・魔動武器</span>
+          </div>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            魔動武器的啟動與行使手順、<strong>【〜機關（ギミック）】</strong>單次生效與重複／累積規則、<strong>基本形態與第二形態</strong>，以及<strong>強化加工限制與相關書籍收錄可否</strong>完整對照。
+          </p>
+        </div>
+
+        <!-- 1. 魔動武器專用魔法與【〜機關】注釋 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-wand-sparkles mr-2 text-amber-500"></i>1. 魔動武器專用魔法與【〜機關】注釋
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-amber-400 text-sm">【魔動武器專用魔法】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>啟動前提：</strong>要使用魔動武器，需要用來啟動它的魔法。如同〈槍械〉的【～子彈】系魔法一樣，透過行使這些魔法，魔動武器才得以變成可使用狀態。</li>
+                <li><strong>行使歸屬與手順：</strong>這些魔法屬於魔動機術，由魔動機師技能的習得者行使。基本上，一般的魔動機術行使手順與限制會直接適用。</li>
+              </ul>
+            </div>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-cyan-300 text-sm">【【〜機關】魔法的注釋】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>武器化行使：</strong>要將魔動武器作為武器使用，必須對武器行使名為【〜機關】的魔動機術。</li>
+                <li><strong>原則不重複：</strong>這些魔法原則上效果不會重複，只有後行使的那一個會生效。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 重複與累積魔法：【雙重啟動／多重啟動】與【雙倍累積／三倍累積】 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-layer-group mr-2 text-amber-500"></i>2. 效果重複與同名累積規則
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-amber-400 text-sm">【【雙重啟動】與【多重啟動】】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>【雙重啟動】：</strong>8 級的【雙重啟動】能讓最多 2 種效果重複。若是處於受到此魔法效果狀態的魔動武器，就能疊加【啟動・機關】以外存在的效果。舉例來說，同時行使【暴擊・機關】與【強力・機關】，就可以變成「C值－1、追加D＋2」。</li>
+                <li><strong>【多重啟動】：</strong>【多重啟動】在重複上沒有數量的限制。</li>
+                <li><strong>同名需搭配累積魔法：</strong>單靠這些魔法，同名的【～機關】效果並不會累積。要達成這一點，還需要後述的【雙倍累積】【三倍累積】。</li>
+              </ul>
+            </div>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-emerald-400 text-sm">【【雙倍累積】【三倍累積】】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>同名累積上限：</strong>即使受到【雙重啟動】【多重啟動】的效果，光靠那樣的話，同名的【～機關】效果也不會重疊。但是，透過使用【雙倍累積】或【三倍累積】，就能讓同名的【～機關】效果也累積套用。若是【雙倍累積】則最多累積到 2 個，若是【三倍累積】則最多累積到 3 個同名魔法的效果。</li>
+                <li><strong>必須併用啟動重複魔法：</strong>要讓這些魔法發揮意義，必須搭配使用【雙重啟動】或【多重啟動】。舉例來說，會變成【雙重啟動】＋【雙倍累積】＋【強力・機關】×2 這樣的用法。在這個情況下，追加傷害會＋4。</li>
+                <li><strong>合計上限與組合需求：</strong>在【雙重啟動】中，無論如何效果的重複・累積最多就是合計 2 個。如果想做像【暴擊・機關】＋【強力・機關】×2 這樣的事，就需要【多重啟動】。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="bg-zinc-950/90 border border-amber-500/30 rounded-lg p-3.5 text-xs text-zinc-300 space-y-1">
+            <div class="font-bold text-amber-400"><i class="fa-solid fa-sparkles mr-1.5"></i>理論上最大的效果重複</div>
+            <p>
+              理論上最大的效果重複，是【多重啟動】＋【三倍累積】＋【暴擊・機關】×3＋【效果・機關】×3＋【強力・機關】×3＋【精準・機關】×3，會變成「命中力＋3＆追加D＋6＆C値－3（最低8）＆以“且”連結的屬性3種（若武器本身也有屬性，則再加上該屬性）」。
+            </p>
+          </div>
+        </div>
+
+        <!-- 3. 基本形態與第二形態、強化加工限制 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-shield-halved mr-2 text-amber-500"></i>3. 基本形態、第二形態與強化加工限制
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-amber-400 text-sm">【基本形態與第二形態】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>形態劃分：</strong>魔動武器有基本形態與第二形態。</li>
+                <li><strong>基本形態：</strong>基本形態就如其名稱所示，是發揮魔動武器基本性能的形態。</li>
+                <li><strong>第二形態：</strong>第二形態是累積了豐富經驗的魔動機師（7 級以上的魔動機師技能習得者）才能使用的該武器強化形態。會展現出更高的威力或追加效果等。</li>
+              </ul>
+            </div>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-pink-400 text-sm">【強化加工的限制】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>不可進行的強化：</strong>魔動武器無法進行「銀製武器」「魔法武器＋1」「妖精武器」的強化。</li>
+                <li><strong>可進行的加工／強化：</strong>「量身訂製」「點火石加工」「奈落強化」是可以進行的。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 相關書籍收錄的武器強化 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-book mr-2 text-amber-500"></i>4. 相關書籍收錄的武器強化
+          </h3>
+          <p class="text-xs text-zinc-300 leading-relaxed">
+            各種『劍世界 2.5』相關書籍中所收錄的武器強化・加工，其適用可否如下表所示：
+          </p>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+              <thead class="bg-zinc-950 text-amber-400 font-bold border-b border-zinc-800">
+                <tr>
+                  <th class="p-2.5 border border-zinc-800">武器強化</th>
+                  <th class="p-2.5 border border-zinc-800 text-center w-20">可否</th>
+                  <th class="p-2.5 border border-zinc-800">收錄書籍</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-800">
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">奈落技能</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-emerald-400 font-bold">○</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 奈落破壞者 ―奈落與魔界―』<br>『跑團實錄（勇者之巢）feat.資料＆指南 冒險者們的幻獸戰線』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈恰爾格的武器加工〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 暴君地窖 ―墳墓與秘文―』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈魔法武器＋2〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 蠻族之怒』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈穢氣一擊加工〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 蠻族之怒』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈拉回之繩〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-emerald-400 font-bold">○</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 布魯萊特博物誌』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈力推的黃金穗〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 布魯萊特博物誌』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈藥溝加工〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 烏爾希拉博物誌』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">黃金咒刻術</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-emerald-400 font-bold">○</td>
+                  <td class="p-2.5 border border-zinc-800">『跑團實錄BIG feat.資料＆指南 劍與荒野與流浪者2』<br>『擴充書 獅鷲之路 ―黃金商隊―』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈黑刃加工〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-cyan-300 font-bold">○※1</td>
+                  <td class="p-2.5 border border-zinc-800">『跑團實錄 ALL格拉斯蘭納總進擊！』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">慣用武器強化</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 泡沫世界 龍骸劍刃譚』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈魔法武器＋2〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400 font-bold">×</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 泡沫世界 魔王宮殿』</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈劈砍武器〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-cyan-300 font-bold">○※2</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 泡沫世界 魔王宮殿』</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 font-bold text-zinc-200">〈超劈砍武器〉</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-cyan-300 font-bold">○※2</td>
+                  <td class="p-2.5 border border-zinc-800">『擴充書 泡沫世界 魔王宮殿』</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-zinc-950/80 border border-zinc-800 rounded-lg p-3 text-xs text-zinc-400 space-y-1">
+            <div>○：可行 ×：不可</div>
+            <div>※1 若在第二形態下變為純能量屬性，則不會產生效果</div>
+            <div>※2 「魔王宮殿」外世界的半人馬無法發動此效果（對同乘者亦同）</div>
+          </div>
+        </div>
+      </div>
+    `,
+  },
+  {
+    id: 'sec-magitech_prosthetic_rules',
+    title: '魔動義體規則 (Magitech Prosthetics Rules)',
+    icon: 'fa-solid fa-robot',
+    content: `
+      <div class="space-y-6 text-zinc-300">
+        <!-- 標題區塊 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl shadow-md">
+          <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+            <h2 class="text-xl font-bold text-amber-400 flex items-center">
+              <i class="fa-solid fa-robot mr-2.5 text-amber-500"></i>SW2.5 魔動義體規則 (Magitech Prosthetics Rules)
+            </h2>
+            <span class="text-xs bg-amber-950/80 text-amber-300 px-2.5 py-1 rounded border border-amber-800 font-bold">魔動機文明・義体換装</span>
+          </div>
+          <p class="text-xs text-zinc-400 leading-relaxed">
+            魔動義體的背景與形狀設定、<strong>肩／肘／手腕義腕義手</strong>、<strong>大腿／膝／足首義腳義足</strong>、<strong>下半身換裝義體</strong>、<strong>頭部安裝義體</strong>，以及<strong>穿脫時間、負荷點（上限 10）、負荷階段（1～4）、「穢」耐性低下與特殊失敗表</strong>完整對照。
+          </p>
+        </div>
+
+        <!-- 1. 魔動義體總論、形狀與負荷點總則 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-circle-info mr-2 text-amber-500"></i>1. 魔動義體總論、形狀與負荷點總則
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-amber-400 text-sm">【魔動義體背景與兩大缺陷】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>技術定位：</strong>魔動機文明時代為填補身體部位缺損或機能不全而發展的技術，將「人體的瑪那流動」與「義體側的感覺・控制機構」直接連結，僅憑意志即可運作，或無須透過感覺器官進行知覺。</li>
+                <li><strong>缺陷一（動作不安定與負擔）：</strong>異物義體與生身身體的連接無法完全，有時會引發動作不良；最壞情況會產生反饋，阻礙其他部位行動或造成身心極大負荷。</li>
+                <li><strong>缺陷二（對「穢」過度敏感）：</strong>與瑪那流動直連等同將「魂」的一部分暴露於外部，使裝著者受到「穢（穢れ）」時化為不死族（亡靈／レブナント）的危險升高；此為原理上無法避免的瑕疵，導致當年研究中止。</li>
+              </ul>
+            </div>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-cyan-300 text-sm">【魔動義體の形状】與【負荷ポイント總則】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>外型特徵：</strong>整體為套覆在角色生體上的形狀（四肢為大一號的手腳，眼部為護目鏡或面罩），以同時對應部位缺損與組織尚存的機能不全。初期多為框架外露，後期多以軟質外殼包覆，但兩者機能與性能差異不大。</li>
+                <li><strong>負荷點（負荷ポイント）：</strong>各魔動義體皆設定有「負荷點」，安裝時會加算此數值。負荷點關係到安裝者的負擔、陷入無法行動的風險，以及化為亡靈為止對「“穢”」的寬限。</li>
+                <li><strong>總計上限：</strong>角色無法安裝負荷點總計超過<strong>「10」</strong>的魔動義體。即使未達上限，高負荷點也會帶來巨大風險。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 上肢義體：肩安裝義腕、肘安裝義腕、手腕安裝義手 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-hand-fist mr-2 text-amber-500"></i>2. 上肢義體：肩安裝義腕・肘安裝義腕・手腕安裝義手
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <!-- 肩安裝義腕 -->
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+              <div class="font-bold text-amber-400 text-sm">【肩安裝義腕】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>安裝範圍與限制：</strong>安裝於肩膀，替換從上臂到前臂的整條手臂；前端<strong>必須</strong>另外準備並安裝「手腕安裝義手」。同一隻手臂無法同時安裝「肘安裝義腕」。</li>
+                <li><strong>基本效果：</strong>強化或補完<strong>器用度與筋力兩者</strong>（＋2／15、＋3／18、＋4／21）。修正後若仍未滿規定值（15／18／21），則進位補至該數值。</li>
+                <li><strong>僅限安裝臂原則：</strong>效果僅出現在安裝該義腕的手臂上。使用「用法：2H」武器或道具時，器用度與筋力取義腕與另一隻手臂的<strong>平均（無條件進位）</strong>；完全不使用該手臂的行動（如〈キック〉、〈尻尾〉）完全不適用。</li>
+                <li><strong>增幅效果（ブースト効果）：</strong>輔助動作消費 <strong>MP 3 點</strong>，10 秒（1 輪）內擇一使器用度或筋力<strong>＋6</strong>；或消費 <strong>MP 6 點</strong>使兩者皆<strong>＋6</strong>（無更高重複，同樣限安裝臂，2H 需取平均）。</li>
+              </ul>
+              <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800 mt-2">
+                <thead class="bg-zinc-900 text-amber-400 font-bold">
+                  <tr>
+                    <th class="p-2 border border-zinc-800">型別</th>
+                    <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                    <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800 font-mono">
+                  <tr><td class="p-2 border border-zinc-800">＋2／15</td><td class="p-2 border border-zinc-800 text-right">1,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋3／18</td><td class="p-2 border border-zinc-800 text-right">3,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋4／21</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">4</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 肘安裝義腕 -->
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+              <div class="font-bold text-amber-400 text-sm">【肘安裝義腕】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>安裝範圍與限制：</strong>安裝於手肘，替換前臂；前端<strong>必須</strong>另外準備並安裝「手腕安裝義手」。同一隻手臂無法同時安裝「肩安裝義腕」。</li>
+                <li><strong>基本效果：</strong>強化或補完<strong>器用度或筋力其中之一</strong>，各能力值分別有「＋2／15」「＋3／18」「＋4／21」3 種型別，修正方式與肩安裝義腕相同。</li>
+                <li><strong>僅限安裝臂原則：</strong>與肩安裝義腕相同，僅限安裝臂生效；「用法：2H」武器或道具取兩臂平均，不使用該臂的行動不適用。</li>
+                <li><strong>增幅效果（ブースト効果）：</strong>輔助動作消費 <strong>MP 3 點</strong>，10 秒（1 輪）內將該義腕所修正的能力值<strong>＋6</strong>（僅限安裝臂，2H 需取平均）。</li>
+              </ul>
+              <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800 mt-2">
+                <thead class="bg-zinc-900 text-amber-400 font-bold">
+                  <tr>
+                    <th class="p-2 border border-zinc-800">型別（單項能力）</th>
+                    <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                    <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800 font-mono">
+                  <tr><td class="p-2 border border-zinc-800">＋2／15</td><td class="p-2 border border-zinc-800 text-right">500</td><td class="p-2 border border-zinc-800 text-center">1</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋3／18</td><td class="p-2 border border-zinc-800 text-right">1,500</td><td class="p-2 border border-zinc-800 text-center">1.5</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋4／21</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 手腕安裝義手 -->
+          <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-3 text-xs leading-relaxed">
+            <div class="font-bold text-cyan-300 text-sm">【手腕安裝義手】（使用肩・肘安裝義腕時必裝，替換手指）</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>武器義手：</strong>類別〈格闘〉中「強化〈パンチ〉」或「強化〈投げ〉」類型。「用法：1H拳」者手掌側可作一般機能義手使用並可〈投げ〉。基本將雙手變為武器，但「用法：1H（含 1H拳）」可僅單手為武器義手（配合〈両手利き〉時僅 1 次為該武器攻擊，另一手為〈パンチ〉或另一強化〈パンチ〉武器）；單手安裝時購入價格與負荷點<strong>不變</strong>。可選用：一般魔動武器（〈格闘〉強化〈パンチ〉／〈投げ〉）、魔動義體專用魔動武器、魔動義體專用武器（非魔動武器）。</li>
+                <li><strong>精密義手：</strong>具備細長精密活動手指。技巧判定（含技能套組）<strong>＋1 獎勵修正</strong>；依判定所需時間消費 MP，可使 1 次技巧判定<strong>再＋1 獎勵修正</strong>（超過 1 天的判定不可用）。</li>
+                <li><strong>一般義手：</strong>無特別效果，單純作為一般手指替代品。</li>
+              </ul>
+              <div class="space-y-2.5">
+                <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+                  <thead class="bg-zinc-900 text-amber-400 font-bold">
+                    <tr>
+                      <th class="p-2 border border-zinc-800">手腕安裝義手型別</th>
+                      <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                      <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800 font-mono">
+                    <tr><td class="p-2 border border-zinc-800 font-sans">武器義手</td><td class="p-2 border border-zinc-800 text-right font-sans">依武器數據</td><td class="p-2 border border-zinc-800 text-center">1.5（雙手份）</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-sans">精密義手</td><td class="p-2 border border-zinc-800 text-right">1,000</td><td class="p-2 border border-zinc-800 text-center">1</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-sans">一般義手</td><td class="p-2 border border-zinc-800 text-right">200</td><td class="p-2 border border-zinc-800 text-center">0.5</td></tr>
+                  </tbody>
+                </table>
+                <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+                  <thead class="bg-zinc-900 text-cyan-300 font-bold">
+                    <tr>
+                      <th class="p-1.5 border border-zinc-800" colspan="5">精密義手／精密義足增幅消費 MP（超過 1 天不可使用）</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800 text-center font-mono">
+                    <tr class="bg-zinc-900/60 text-zinc-400 font-sans">
+                      <td class="p-1.5 border border-zinc-800">～1 分（6 輪）</td>
+                      <td class="p-1.5 border border-zinc-800">～10 分（60 輪）</td>
+                      <td class="p-1.5 border border-zinc-800">～1 小時</td>
+                      <td class="p-1.5 border border-zinc-800">～6 小時</td>
+                      <td class="p-1.5 border border-zinc-800">～24 小時</td>
+                    </tr>
+                    <tr>
+                      <td class="p-1.5 border border-zinc-800">3 MP</td>
+                      <td class="p-1.5 border border-zinc-800">6 MP</td>
+                      <td class="p-1.5 border border-zinc-800">9 MP</td>
+                      <td class="p-1.5 border border-zinc-800">12 MP</td>
+                      <td class="p-1.5 border border-zinc-800">15 MP</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 下肢義體：大腿安裝義腳、膝安裝義腳、足首安裝義足 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-shoe-prints mr-2 text-amber-500"></i>3. 下肢義體：大腿安裝義腳・膝安裝義腳・足首安裝義足
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <!-- 大腿安裝義腳 -->
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+              <div class="font-bold text-amber-400 text-sm">【大腿安裝義腳】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>安裝範圍與限制：</strong>安裝於大腿根部，替換從大腿到小腿的整條腿部；其前端<strong>必須</strong>另外安裝「足首安裝義足」，且同一條腿無法同時安裝「膝安裝義腳」。</li>
+                <li><strong>基本效果：</strong>強化或補完<strong>敏捷度與筋力兩者</strong>（＋2／15、＋3／18、＋4／21），但並非隨時適用。</li>
+                <li><strong>敏捷度前提（雙腳）：</strong>僅在雙腳皆安裝同級義腳時生效；單腳義腳維持原敏捷度，雙腳型別不同則取<strong>較低數值</strong>（如立定跳遠等 GM 許可情況可無視此原則）。</li>
+                <li><strong>筋力限制（原則限〈踢〉）：</strong>原則上僅限於計算該腳強化〈キック〉武器之必要筋力，以及命中時追加傷害的能力值獎勵（攀登等全身筋力判定由 GM 裁量適用與加減）。</li>
+                <li><strong>增幅效果（ブースト効果）：</strong>輔助動作消費 <strong>MP 3 點</strong>使敏捷度或筋力<strong>＋6</strong>（1 輪），或消費 <strong>MP 6 點</strong>使兩者皆<strong>＋6</strong>（同樣受上述適用範圍限制）。</li>
+              </ul>
+              <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800 mt-2">
+                <thead class="bg-zinc-900 text-amber-400 font-bold">
+                  <tr>
+                    <th class="p-2 border border-zinc-800">型別</th>
+                    <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                    <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800 font-mono">
+                  <tr><td class="p-2 border border-zinc-800">＋2／15</td><td class="p-2 border border-zinc-800 text-right">1,000</td><td class="p-2 border border-zinc-800 text-center">1</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋3／18</td><td class="p-2 border border-zinc-800 text-right">3,000</td><td class="p-2 border border-zinc-800 text-center">1.5</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋4／21</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- 膝安裝義腳 -->
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+              <div class="font-bold text-amber-400 text-sm">【膝安裝義腳】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>安裝範圍與限制：</strong>安裝於膝蓋，替換小腿；其前端<strong>必須</strong>另外準備並安裝「足首安裝義足」，且同一條腿無法同時安裝「大腿安裝義腳」。</li>
+                <li><strong>基本效果：</strong>強化或補完<strong>敏捷度或筋力其中之一</strong>，各能力值分別有「＋2／15」「＋3／18」「＋4／21」3 種型別；能力值修正與適用限制同大腿安裝義腳。</li>
+                <li><strong>增幅效果（ブースト効果）：</strong>輔助動作消費 <strong>MP 3 點</strong>，10 秒（1 輪）內將該義腳所修正的能力值<strong>＋6</strong>（適用範圍準用大腿安裝義腳）。</li>
+              </ul>
+              <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800 mt-2">
+                <thead class="bg-zinc-900 text-amber-400 font-bold">
+                  <tr>
+                    <th class="p-2 border border-zinc-800">型別（單項能力）</th>
+                    <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                    <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800 font-mono">
+                  <tr><td class="p-2 border border-zinc-800">＋2／15</td><td class="p-2 border border-zinc-800 text-right">500</td><td class="p-2 border border-zinc-800 text-center">0.5</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋3／18</td><td class="p-2 border border-zinc-800 text-right">1,500</td><td class="p-2 border border-zinc-800 text-center">1</td></tr>
+                  <tr><td class="p-2 border border-zinc-800">＋4／21</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">1.5</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 足首安裝義足 -->
+          <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-3 text-xs leading-relaxed">
+            <div class="font-bold text-cyan-300 text-sm">【足首安裝義足】（使用大腿・膝安裝義腳時必裝，替換腳掌）</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>武器義足：</strong>類別〈格闘〉中「強化〈キック〉」類型。基本將雙腳變為武器，亦可僅單腳作為武器義足，但購入價格與負荷點<strong>不變</strong>。可選用：一般魔動武器（〈格闘〉強化〈キック〉）、魔動義體專用魔動武器、魔動義體專用武器（非魔動武器）。</li>
+                <li><strong>精密義足（手指替代裝置）：</strong>平日摺疊於腳背，需要時展開如同手指使用（可使用道具、開鎖等，但<strong>無法裝備武器或盾牌</strong>）。進行該類動作時行為判定承受<strong>－4 懲罰修正</strong>；進行技巧判定（含技能套組）時依所需時間消費 MP（同精密義手 MP 表）可獲得<strong>＋1 獎勵修正</strong>。</li>
+                <li><strong>足裝飾品不可：</strong>失去裝飾品的「裝備部位：足」，無法於該處裝備裝飾品，且〈裝飾品：足〉也無法裝備在「裝備部位：其他」。</li>
+                <li><strong>一般義足：</strong>無特別效果，單純作為一般腳掌替代品。</li>
+              </ul>
+              <div>
+                <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+                  <thead class="bg-zinc-900 text-amber-400 font-bold">
+                    <tr>
+                      <th class="p-2 border border-zinc-800">足首安裝義足型別</th>
+                      <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                      <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-zinc-800 font-mono">
+                    <tr><td class="p-2 border border-zinc-800 font-sans">武器義足</td><td class="p-2 border border-zinc-800 text-right font-sans">依武器數據</td><td class="p-2 border border-zinc-800 text-center">1.5（雙足份）</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-sans">精密義足</td><td class="p-2 border border-zinc-800 text-right">1,000</td><td class="p-2 border border-zinc-800 text-center">1</td></tr>
+                    <tr><td class="p-2 border border-zinc-800 font-sans">一般義足</td><td class="p-2 border border-zinc-800 text-right">200</td><td class="p-2 border border-zinc-800 text-center">0.5</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 下半身換裝義體 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-motorcycle mr-2 text-amber-500"></i>4. 下半身換裝義體（替換整個下半身）
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-amber-400 text-sm">【共通能力與行動限制】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>固定數值取代：</strong>安裝於雙腰覆蓋整個下半身（自身腿部固定不動，非二足步行），敏捷度與移動速度直接改為義體規定值。</li>
+                <li><strong>不會倒下（二輪型除外）：</strong>除二輪型外，受到倒下效果也不會倒下。</li>
+                <li><strong>保持姿勢（增幅效果）：</strong>手番開始時消費 <strong>MP 10 點</strong>，該手番期間原本僅限「限制移動」進行的動作，在「通常移動」時也能進行。</li>
+                <li><strong>〈踢〉不可（多腳型除外）：</strong>除多腳型外，無法使用武器〈キック〉，也無法裝備強化〈キック〉的武器。</li>
+                <li><strong>騎乘不可：</strong>無法作為騎手或同乘者騎乘騎獸（但可被「搭載」）。</li>
+              </ul>
+            </div>
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-cyan-300 text-sm">【五種驅動形態與地形對應】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>二輪型：</strong>前後雙輪機車形態；基礎敏捷與速度優秀，無特殊要素。<strong>地形對應＝惡路走破</strong>（無視路況不良懲罰至「－2」，「－3」以下照常承受）。</li>
+                <li><strong>四輪型：</strong>2×2 四輪驅動，兼顧穩定與速度。<strong>地形對應＝惡路走破</strong>（無視路況不良懲罰至「－2」）。</li>
+                <li><strong>裝軌型：</strong>無限履帶驅動，犧牲速度換取穩定與小迴轉半徑。<strong>地形對應＝全地形對應</strong>（完全不受路況不良懲罰）。</li>
+                <li><strong>多腳型：</strong>四或六條腿生物式移動。可使用〈キック〉與強化〈キック〉武器，亦可於腳尖追加安裝「足首安裝義足」（不論腿數<strong>最多限裝 2 個</strong>，且裝備複數武器<strong>不會增加攻擊次數</strong>）。<strong>地形對應＝全地形對應</strong>。</li>
+                <li><strong>浮上型：</strong>離地數十公分浮游移動，動作較緩慢但可於水上移動。<strong>地形對應＝浮上移動</strong>（完全不受路況不良懲罰與接地不良影響）。</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+              <thead class="bg-zinc-950 text-amber-400 font-bold border-b border-zinc-800">
+                <tr>
+                  <th class="p-2.5 border border-zinc-800">型別</th>
+                  <th class="p-2.5 border border-zinc-800 text-center">敏捷度</th>
+                  <th class="p-2.5 border border-zinc-800">移動速度</th>
+                  <th class="p-2.5 border border-zinc-800">地形對應</th>
+                  <th class="p-2.5 border border-zinc-800 text-right">價格（G）</th>
+                  <th class="p-2.5 border border-zinc-800 text-center">負荷點</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-800 font-mono">
+                <tr><td class="p-2 border border-zinc-800 font-sans font-bold text-zinc-200" rowspan="3">二輪型</td><td class="p-2 border border-zinc-800 text-center">12</td><td class="p-2 border border-zinc-800 font-sans">30（車輪）／－</td><td class="p-2 border border-zinc-800 font-sans" rowspan="3">惡路走破（無視至－2）</td><td class="p-2 border border-zinc-800 text-right">2,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                <tr><td class="p-2 border border-zinc-800 text-center">18</td><td class="p-2 border border-zinc-800 font-sans">40（車輪）／－</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+                <tr><td class="p-2 border border-zinc-800 text-center">24</td><td class="p-2 border border-zinc-800 font-sans">50（車輪）／－</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">4</td></tr>
+                <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-sans font-bold text-zinc-200" rowspan="2">四輪型</td><td class="p-2 border border-zinc-800 text-center">12</td><td class="p-2 border border-zinc-800 font-sans">40（車輪）／－</td><td class="p-2 border border-zinc-800 font-sans" rowspan="2">惡路走破（無視至－2）</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 text-center">18</td><td class="p-2 border border-zinc-800 font-sans">50（車輪）／－</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+                <tr><td class="p-2 border border-zinc-800 font-sans font-bold text-zinc-200" rowspan="2">裝軌型</td><td class="p-2 border border-zinc-800 text-center">18</td><td class="p-2 border border-zinc-800 font-sans">20（無限軌道）／－</td><td class="p-2 border border-zinc-800 font-sans" rowspan="2">全地形對應</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+                <tr><td class="p-2 border border-zinc-800 text-center">24</td><td class="p-2 border border-zinc-800 font-sans">30（無限軌道）／－</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">4</td></tr>
+                <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 font-sans font-bold text-zinc-200" rowspan="2">多腳型</td><td class="p-2 border border-zinc-800 text-center">12</td><td class="p-2 border border-zinc-800 font-sans">20（四～六足）／－</td><td class="p-2 border border-zinc-800 font-sans" rowspan="2">全地形對應</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                <tr class="bg-zinc-950/40"><td class="p-2 border border-zinc-800 text-center">18</td><td class="p-2 border border-zinc-800 font-sans">30（四～六足）／－</td><td class="p-2 border border-zinc-800 text-right">10,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+                <tr><td class="p-2 border border-zinc-800 font-sans font-bold text-zinc-200" rowspan="2">浮上型</td><td class="p-2 border border-zinc-800 text-center">6</td><td class="p-2 border border-zinc-800 font-sans">－／20（浮遊）</td><td class="p-2 border border-zinc-800 font-sans" rowspan="2">浮上移動</td><td class="p-2 border border-zinc-800 text-right">2,000</td><td class="p-2 border border-zinc-800 text-center">2</td></tr>
+                <tr><td class="p-2 border border-zinc-800 text-center">12</td><td class="p-2 border border-zinc-800 font-sans">－／30（浮遊）</td><td class="p-2 border border-zinc-800 text-right">5,000</td><td class="p-2 border border-zinc-800 text-center">3</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. 頭部安裝義體與能力值變更優先順序 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-glasses mr-2 text-amber-500"></i>5. 頭部安裝義體與能力值變更順序
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2.5">
+              <div class="font-bold text-amber-400 text-sm">【頭部安裝義體（基本效果＋追加效果）】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>基本效果（必購必裝，不可卸除）：</strong>恢復因部位缺損或機能不全失去的知覺，並獲得視覺「暗視」。</li>
+                <li><strong>追加效果（可個別追加／卸除，不可重複同項）：</strong>
+                  <br>・<strong>感知補助：</strong>所有觀察判定<strong>＋1 獎勵修正</strong>。
+                  <br>・<strong>反響知覺：</strong>輔助動作消費 <strong>MP 1 點</strong>，10 秒（1 輪）內以超音波回音辨識周圍，無視「透明」效果（ルーンフォーク仍無法藉此行使妖精／森羅魔法，⇒『ML』10 頁）。
+                  <br>・<strong>頭部防護：</strong>安裝者防護點<strong>＋1</strong>。
+                </li>
+              </ul>
+              <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800 mt-2">
+                <thead class="bg-zinc-900 text-amber-400 font-bold">
+                  <tr>
+                    <th class="p-2 border border-zinc-800">效果項目</th>
+                    <th class="p-2 border border-zinc-800 text-right">價格（G）</th>
+                    <th class="p-2 border border-zinc-800 text-center">負荷點</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-800 font-mono">
+                  <tr><td class="p-2 border border-zinc-800 font-sans font-bold">基本（必購）</td><td class="p-2 border border-zinc-800 text-right">500</td><td class="p-2 border border-zinc-800 text-center">0.5</td></tr>
+                  <tr><td class="p-2 border border-zinc-800 font-sans">感知補助</td><td class="p-2 border border-zinc-800 text-right">＋2,000</td><td class="p-2 border border-zinc-800 text-center">＋1</td></tr>
+                  <tr><td class="p-2 border border-zinc-800 font-sans">反響知覺</td><td class="p-2 border border-zinc-800 text-right">＋2,000</td><td class="p-2 border border-zinc-800 text-center">＋1</td></tr>
+                  <tr><td class="p-2 border border-zinc-800 font-sans">頭部防護</td><td class="p-2 border border-zinc-800 text-right">＋3,000</td><td class="p-2 border border-zinc-800 text-center">＋0.5</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-emerald-400 text-sm">【能力值增減效果與義體能力值變更順序】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>先義體補完、後魔法／道具增減：</strong>魔動義體多為「提升能力值，未滿規定值時拉高至規定值」的機制。當裝備者受到增減能力值之魔法影響，或裝備・使用具該類效果的道具時，<strong>先適用魔動義體的規定值，之後再適用魔法或道具效果</strong>。</li>
+                <li><strong>計算範例：</strong>原能力值 14 者裝備「＋3／18」型魔動義體時，能力值會<strong>先被轉換為「18」</strong>；魔法【ブレス】或裝飾品〈能力增強的戒指／手環〉的加成則在「18」之後再行疊加。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. 穿脫時間、負荷階段與特殊失敗表 -->
+        <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-4">
+          <h3 class="text-base font-bold text-amber-400 border-b border-zinc-800 pb-2 flex items-center">
+            <i class="fa-solid fa-triangle-exclamation mr-2 text-amber-500"></i>6. 穿脫時間、負荷階段、「穢」耐性與特殊失敗表
+          </h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-cyan-300 text-sm">【穿脫時間與協助需求】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>新部位初次安裝：</strong>在至今未安裝過魔動義體的部位新規安裝需 <strong>1 小時</strong>。</li>
+                <li><strong>卸除義體：</strong>卸除已安裝的魔動義體需 <strong>10 分鐘</strong>。</li>
+                <li><strong>替換安裝：</strong>在曾安裝過義體的部位重新安裝需 <strong>10 分鐘</strong>；將已安裝義體換成另一件（卸除 10 分＋安裝 10 分）合計需 <strong>20 分鐘</strong>。</li>
+                <li><strong>協助必要性：</strong><strong>下半身換裝義體</strong>穿脫時需要 <strong>1 名其他角色協助</strong>；其他魔動義體皆可由安裝者單人穿脫。</li>
+                <li><strong>死後卸除無效：</strong>角色死亡後即使卸除魔動義體也無法減少負荷點，死亡時間點即固定負荷點（階段）。</li>
+              </ul>
+            </div>
+
+            <div class="bg-zinc-950 p-4 rounded-lg border border-zinc-800 space-y-2">
+              <div class="font-bold text-pink-400 text-sm">【負荷階段風險與「“穢”」耐性低下】</div>
+              <ul class="list-disc list-inside space-y-1.5 text-zinc-300">
+                <li><strong>負荷點算定：</strong>以安裝中各魔動義體的負荷點單純合計（上限 10），每次穿脫皆重新計算。</li>
+                <li><strong>「“穢”」耐性低下：</strong>一般角色累積「5」點穢會化為不死族，但魔動義體安裝者在累積<strong>「5 － 負荷階段」點</strong>的「“穢”」時便會化為不死族。</li>
+                <li><strong>階段 1（0.5～4.5）：</strong>主動動作行為判定自動失敗（含出目 2 以外規定的自動失敗）時觸發「特殊失敗」（擲 1d 參照下表）。</li>
+                <li><strong>階段 2（5.0～7.5）：</strong>主動動作行為判定出目<strong>「3」也成為自動失敗</strong>並誘發特殊失敗（重骰或直接變更出目有效，獎勵修正無效；出目 3 自動失敗無法獲得經驗點 50 點）。</li>
+                <li><strong>階段 3（8.0～9.5）：</strong>參照特殊失敗表時須<strong>擲 2 次 1d，採用較低出目</strong>（相同則採用該目）。</li>
+                <li><strong>階段 4（10）：</strong>主動動作行為判定出目<strong>「4」也成為自動失敗</strong>並誘發特殊失敗（獎勵修正無效，出目 4 失敗無法獲得經驗點 50 點）。</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- 負荷階段總表 -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+              <thead class="bg-zinc-950 text-amber-400 font-bold border-b border-zinc-800">
+                <tr>
+                  <th class="p-2.5 border border-zinc-800 text-center w-28">負荷點</th>
+                  <th class="p-2.5 border border-zinc-800 text-center w-24">負荷階段</th>
+                  <th class="p-2.5 border border-zinc-800 text-center w-32">不死族化「穢」閾值</th>
+                  <th class="p-2.5 border border-zinc-800">特殊失敗與自動失敗風險（累積適用）</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-800">
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono">0.5 ～ 4.5</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-amber-300">1</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400">4 點</td>
+                  <td class="p-2.5 border border-zinc-800">自動失敗時發生特殊失敗（擲 1d 參照特殊失敗表）</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono">5.0 ～ 7.5</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-amber-300">2</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400">3 點</td>
+                  <td class="p-2.5 border border-zinc-800">主動性行動在出目「3」也成為自動失敗（無 50 EXP）</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono">8.0 ～ 9.5</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-amber-300">3</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400">2 點</td>
+                  <td class="p-2.5 border border-zinc-800">特殊失敗表參照變為「擲 2 次 1d 取較低出目」</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono">10</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-amber-300">4</td>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono text-pink-400">1 點</td>
+                  <td class="p-2.5 border border-zinc-800">主動性行動在出目「4」也成為自動失敗（無 50 EXP）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 特殊失敗表 -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-zinc-300 border-collapse border border-zinc-800">
+              <thead class="bg-zinc-950 text-pink-400 font-bold border-b border-zinc-800">
+                <tr>
+                  <th class="p-2.5 border border-zinc-800 text-center w-16">1d</th>
+                  <th class="p-2.5 border border-zinc-800">特殊失敗表結果</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-zinc-800">
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-pink-400">1</td>
+                  <td class="p-2.5 border border-zinc-800">直到本手番剩餘的全部時間與下一手番結束時為止，無法進行移動、主動動作、輔助動作的全部行動。這段期間進行的所有行為判定皆自動失敗。</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-pink-400">2</td>
+                  <td class="p-2.5 border border-zinc-800">倒下。本手番無法起身。即使是不會倒下的角色，也因動作不良直到下一手番開始時為止，所有行為判定皆承受－2 的懲罰修正。</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-pink-400">3</td>
+                  <td class="p-2.5 border border-zinc-800">HP 與 MP＊兩者皆受到等同於自身「冒險者等級」點的確定傷害。</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-pink-400">4</td>
+                  <td class="p-2.5 border border-zinc-800">MP＊受到等同於自身「冒險者等級」點的確定傷害。</td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-pink-400">5</td>
+                  <td class="p-2.5 border border-zinc-800">HP 受到等同於自身「冒險者等級」點的確定傷害。</td>
+                </tr>
+                <tr class="bg-zinc-950/40">
+                  <td class="p-2.5 border border-zinc-800 text-center font-mono font-bold text-emerald-400">6</td>
+                  <td class="p-2.5 border border-zinc-800">不會發生特別的追加不良影響。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-zinc-950/80 border border-zinc-800 rounded-lg p-3 text-xs text-zinc-400">
+            ＊MP 降至未滿 0 時的不足部分（「MP：無」的角色則為全量），轉為對 HP 的傷害。
+          </div>
+        </div>
+      </div>
+    `,
   }
 ];

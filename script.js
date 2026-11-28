@@ -64,10 +64,68 @@ function getNormalizedItemsDataset() {
     return [];
 }
 
+// 判斷是否為魔導武器或魔導義肢（支援 category / subCategory / tags / 名稱判定）
+function isMagitechWeaponItem(item) {
+    if (!item) return false;
+    const cat = String(item.category || '');
+    const sub = String(getSkillSubType(item) || '');
+    const tags = Array.isArray(item.tags) ? item.tags : (Array.isArray(item.extra?.tags) ? item.extra.tags : []);
+    return (
+        cat.includes('魔導武器') ||
+        sub.includes('魔導武器') ||
+        tags.some(t => String(t).includes('魔導武器')) ||
+        Boolean(item.isMagitechWeapon || item.extra?.isMagitechWeapon)
+    );
+}
+
+function isMagitechProsthesisItem(item) {
+    if (!item) return false;
+    const cat = String(item.category || '');
+    const sub = String(getSkillSubType(item) || '');
+    const tags = Array.isArray(item.tags) ? item.tags : (Array.isArray(item.extra?.tags) ? item.extra.tags : []);
+    return (
+        cat.includes('魔導義肢') ||
+        sub.includes('魔導義肢') ||
+        tags.some(t => String(t).includes('魔導義肢')) ||
+        Boolean(item.isMagitechProsthesis || item.extra?.isMagitechProsthesis)
+    );
+}
+
+function syncItemCategorySelectOptions(dataset) {
+    const categoryFilter = document.getElementById('item-category-filter');
+    if (!categoryFilter || categoryFilter.dataset.magiSynced === '1') return;
+
+    const existingValues = new Set(Array.from(categoryFilter.options).map(opt => opt.value));
+    const priorityCategories = existingValues.has('武器-魔導武器')
+        ? ['魔導義肢']
+        : ['魔導武器', '魔導義肢'];
+
+    priorityCategories.forEach(cat => {
+        if (!existingValues.has(cat)) {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            categoryFilter.appendChild(opt);
+            existingValues.add(cat);
+        }
+    });
+
+    dataset.forEach(item => {
+        if (item?.category && !existingValues.has(item.category)) {
+            const opt = document.createElement('option');
+            opt.value = item.category;
+            opt.textContent = item.category;
+            categoryFilter.appendChild(opt);
+            existingValues.add(item.category);
+        }
+    });
+
+    categoryFilter.dataset.magiSynced = '1';
+}
+
 // ==================== 自定義頁面（收藏與快捷牌組）核心管理 ====================
 const CUSTOM_STORAGE_KEY = 'sw25_custom_deck_v1';
 
-// 讀取收藏清單
 function getCustomItems() {
     try {
         return JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY)) || [];
@@ -76,7 +134,6 @@ function getCustomItems() {
     }
 }
 
-// 寫入收藏清單並更新徽章計數
 function saveCustomItems(list) {
     localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(list));
     updateCustomBadgeCount();
@@ -87,7 +144,6 @@ function updateCustomBadgeCount() {
     if (badge) badge.textContent = getCustomItems().length;
 }
 
-// 產生唯一識別碼
 function getItemUniqueId(type, name, category = '') {
     return `${type}::${category}::${name}`;
 }
@@ -96,7 +152,6 @@ function isItemPinned(id) {
     return getCustomItems().some(item => item.id === id);
 }
 
-// 切換收藏狀態（技能、戰鬥特技、道具、騎獸通用）
 window.togglePinDataItem = function(encodedData) {
     const payload = JSON.parse(decodeURIComponent(encodedData));
     const list = getCustomItems();
@@ -123,7 +178,6 @@ window.togglePinDataItem = function(encodedData) {
     }
 };
 
-// 收藏整頁規則（供規則頁面使用）
 window.pinCurrentRuleSection = function(ruleId, ruleTitle, htmlContent) {
     const id = getItemUniqueId('rule', ruleTitle, ruleId);
     const list = getCustomItems();
@@ -153,7 +207,6 @@ window.pinCurrentRuleSection = function(ruleId, ruleTitle, htmlContent) {
     }
 };
 
-// 更新自定義卡片的個人筆記
 window.updateCustomItemNote = function(id, noteText) {
     const list = getCustomItems();
     const target = list.find(x => x.id === id);
@@ -163,7 +216,6 @@ window.updateCustomItemNote = function(id, noteText) {
     }
 };
 
-// 匯出／匯入 JSON 備份
 window.exportCustomDeck = function() {
     const dataStr = JSON.stringify(getCustomItems(), null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -194,7 +246,6 @@ window.importCustomDeck = function(event) {
     reader.readAsText(file);
 };
 
-// 輔助函式：自動擷取 HTML 內的第一個 <h2> 作為規則標題，並掛載「收藏整頁規則」按鈕
 function attachRulePinButton(ruleId, fallbackTitle, htmlContent) {
     const rulesContainer = document.getElementById('rules-container');
     if (!rulesContainer || !htmlContent) return;
@@ -214,7 +265,6 @@ function attachRulePinButton(ruleId, fallbackTitle, htmlContent) {
         </button>
     `;
 
-    // 尋找「SW2.5 種族資料」標題卡片，將按鈕併入同一列並排
     const h2El = rulesContainer.querySelector('h2');
     const titleCard = h2El ? h2El.closest('.bg-zinc-900\\/90, .rounded-xl') : null;
 
@@ -232,7 +282,6 @@ function attachRulePinButton(ruleId, fallbackTitle, htmlContent) {
         return;
     }
 
-    // 備援：若頁面沒有符合的標題卡片，維持原本置右列但縮緊間距
     const bar = document.createElement('div');
     bar.className = 'flex justify-end mb-2';
     bar.innerHTML = buttonHtml;
@@ -475,19 +524,28 @@ function executeItemFilter() {
 
     if (!container) return;
 
+    const dataset = getNormalizedItemsDataset();
+    syncItemCategorySelectOptions(dataset);
+
     const rawQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const selectedCategory = categoryFilter ? categoryFilter.value : '';
-
-    const dataset = getNormalizedItemsDataset();
 
     const filtered = dataset.filter(item => {
         if (!item) return false;
 
-        const matchesCategory = !selectedCategory || item.category === selectedCategory;
+        let matchesCategory = !selectedCategory || item.category === selectedCategory;
+        if (selectedCategory === '魔導武器' || selectedCategory === '武器-魔導武器') {
+            matchesCategory = isMagitechWeaponItem(item);
+        } else if (selectedCategory === '魔導義肢') {
+            matchesCategory = isMagitechProsthesisItem(item);
+        }
+
         const extraValues = (item.extra && typeof item.extra === 'object') ? Object.values(item.extra).join(' ') : '';
         const searchableText = [
             item.name,
             item.nameJp,
+            item.category,
+            getSkillSubType(item),
             item.effect,
             item.note,
             item.req,
@@ -589,7 +647,9 @@ export function renderCombatFeatCard(feat) {
 // ==================== 6. 道具與裝備專用卡片 HTML 生成 ====================
 export function renderItemCard(item) {
     const subType = getSkillSubType(item);
-    const isWeapon = ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
+    const isMagitechWeapon = isMagitechWeaponItem(item);
+    const isMagitechProsthesis = isMagitechProsthesisItem(item);
+    const isWeapon = isMagitechWeapon || ["劍", "槍", "斧", "打擊", "拋射", "格鬥", "扔擲", "魔動機槍", "魔導武器", "武器-劍", "武器-斧", "武器-槍", "武器-鈍器/錘", "武器-戰錘", "武器-長杖", "武器-弓", "武器-弩", "武器-魔導槍", "武器-魔導武器", "武器-連枷", "武器-格鬥/抓握", "武器-投擲"].includes(item.category);
     const isArmor = ["非金屬鎧", "金屬鎧", "盾", "防具-金屬鎧甲", "防具-非金屬鎧甲", "防具-盾牌"].includes(item.category);
     const isAccessory =
         item.category === "裝飾品" ||
@@ -600,7 +660,7 @@ export function renderItemCard(item) {
     const isGrimoire =
         item.category === "魔導書" ||
         (typeof item.effect === "string" && item.effect.includes("<魔導書>")) ||
-        (item.rank !== undefined && item.usage !== undefined && !isWeapon && !isArmor);
+        (item.rank !== undefined && item.usage !== undefined && !isWeapon && !isArmor && !isMagitechProsthesis);
 
     const uid = getItemUniqueId('item', item.name, item.category);
     const pinned = isItemPinned(uid);
@@ -609,6 +669,17 @@ export function renderItemCard(item) {
     let attrTableHTML = '';
 
     if (isWeapon) {
+        const weaponSubRow = (isMagitechWeapon || item.rank || item.req || (subType && subType !== item.category))
+            ? `
+            <div class="grid grid-cols-6 border-t border-zinc-800/60 py-1.5 px-3 bg-zinc-950/80 text-xs">
+                <span class="text-zinc-500 font-medium">分類</span>
+                <span class="col-span-2 text-center text-cyan-300 font-medium">${subType || item.rank || item.category}</span>
+                <span class="text-zinc-500 font-medium text-center">需求／備註</span>
+                <span class="col-span-2 text-right text-amber-300 font-medium">${item.req || (isMagitechWeapon ? '魔動機術／魔導武器' : '－')}</span>
+            </div>
+            `
+            : '';
+
         attrTableHTML = `
             <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
                 <span class="text-zinc-500 font-medium">用法</span>
@@ -625,6 +696,22 @@ export function renderItemCard(item) {
                 <span class="text-center text-purple-300 font-bold">${item.crit || '－'}</span>
                 <span class="text-zinc-500 font-medium text-center">價格</span>
                 <span class="text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+            ${weaponSubRow}
+        `;
+    } else if (isMagitechProsthesis) {
+        const partSlot = getExtraField(item, 'part', '') || getExtraField(item, 'slot', '') || subType || '指定肢體部位';
+        const reqInfo = item.req || getExtraField(item, 'prerequisite', '－');
+        attrTableHTML = `
+            <div class="grid grid-cols-6 border-b border-zinc-800/60 py-1.5 px-3 text-xs">
+                <span class="text-zinc-500 font-medium">部位</span>
+                <span class="col-span-2 text-center text-cyan-300 font-bold">${partSlot}</span>
+                <span class="text-zinc-500 font-medium text-center">價格</span>
+                <span class="col-span-2 text-right text-amber-400 font-bold">${item.price || '－'}</span>
+            </div>
+            <div class="grid grid-cols-6 py-1.5 px-3 bg-zinc-900/40 text-xs">
+                <span class="text-zinc-500 font-medium">裝備條件</span>
+                <span class="col-span-5 text-right text-emerald-300 font-medium">${reqInfo}</span>
             </div>
         `;
     } else if (isArmor) {
@@ -737,15 +824,43 @@ export function renderItemCard(item) {
         `;
     }
 
+    const badgeStyle = isMount
+        ? 'bg-amber-950 text-amber-300 border-amber-800'
+        : isMagitechWeapon
+        ? 'bg-purple-950 text-purple-300 border-purple-700'
+        : isMagitechProsthesis
+        ? 'bg-cyan-950 text-cyan-300 border-cyan-700'
+        : 'bg-emerald-950 text-emerald-300 border-emerald-800';
+
+    const itemIcon = isMount
+        ? 'fa-horse'
+        : isGrimoire
+        ? 'fa-book-skull'
+        : isMagitechWeapon
+        ? 'fa-wand-sparkles'
+        : isMagitechProsthesis
+        ? 'fa-hand-sparkles'
+        : 'fa-box-open';
+
     return `
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden shadow-lg hover:border-zinc-700 transition-all flex flex-col">
             <div class="p-4 bg-zinc-950/60 border-b border-zinc-800 flex justify-between items-center gap-2">
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-xs px-2 py-0.5 rounded border ${isMount ? 'bg-amber-950 text-amber-300 border-amber-800' : 'bg-emerald-950 text-emerald-300 border-emerald-800'} font-medium">
+                    <span class="text-xs px-2 py-0.5 rounded border ${badgeStyle} font-medium">
                         ${item.category || '道具'}
                     </span>
+                    ${isMagitechWeapon && item.category !== '魔導武器' ? `
+                        <span class="text-xs px-2 py-0.5 rounded border bg-purple-950/80 text-purple-300 border-purple-700/80 font-medium">
+                            魔導武器
+                        </span>
+                    ` : ''}
+                    ${isMagitechProsthesis && item.category !== '魔導義肢' ? `
+                        <span class="text-xs px-2 py-0.5 rounded border bg-cyan-950/80 text-cyan-300 border-cyan-700/80 font-medium">
+                            魔導義肢
+                        </span>
+                    ` : ''}
                     <h3 class="text-base font-bold text-amber-400 ml-1">
-                        <i class="fa-solid ${isMount ? 'fa-horse' : isGrimoire ? 'fa-book-skull' : 'fa-box-open'} mr-1.5 text-amber-500"></i>${item.name}
+                        <i class="fa-solid ${itemIcon} mr-1.5 text-amber-500"></i>${item.name}
                         ${item.nameJp ? `<span class="text-xs text-zinc-500 font-normal ml-1 font-mono">(${item.nameJp})</span>` : ''}
                     </h3>
                 </div>
@@ -1196,7 +1311,6 @@ function renderBardSongs(isNewSearch = false) {
     container.appendChild(fragment.content);
 }
 
-// 捲動到底部自動載入技能下一頁
 window.addEventListener('scroll', () => {
     const secBards = document.getElementById('sec-bards');
     if (secBards && !secBards.classList.contains('hidden')) {
@@ -1212,6 +1326,7 @@ window.addEventListener('scroll', () => {
 // ==================== 9. 頁面初始化 ====================
 document.addEventListener('DOMContentLoaded', () => {
     updateCustomBadgeCount();
+    syncItemCategorySelectOptions(getNormalizedItemsDataset());
     switchMainTab('bards');
     initCharSheetQuickAddObserver();
 });
@@ -2009,7 +2124,6 @@ function matchesFeatTreeFilter(feat, allFeats) {
     return true;
 }
 
-// 將習得樹中的戰鬥特技加入當前角色卡
 window.addFeatTreeItemToCharSheet = function(featName, event) {
     if (event) event.stopPropagation();
 
@@ -2318,7 +2432,7 @@ export function initDemonActionSimulator(tableData) {
         selectedDemon: tableData.demons[0] || null,
         lastRoll: null,
         rerollUsed: false,
-        summonPenaltyStack: 0, // 累積送還判定減值（上限 -8）
+        summonPenaltyStack: 0,
         logs: [],
     };
 
@@ -2675,6 +2789,7 @@ export function initDemonActionSimulator(tableData) {
     renderCard();
     renderLogs();
 }
+
 window.jumpToRaceAnchor = function(anchorId) {
     const target = document.getElementById(anchorId);
     if (!target) return;
